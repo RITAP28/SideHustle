@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -25,7 +25,7 @@ export default function Register() {
       const res = await axios.post("http://localhost:7070/register", formData, {
         withCredentials: true,
       });
-      navigate("/");
+      navigate("/videos");
       console.log(res.data);
     } catch (error) {
       console.error("Error while registering: ", error);
@@ -69,7 +69,7 @@ export default function Register() {
               />
             </div>
             <button type="submit" disabled={loading}>
-                {loading ? "Registering..." : "Register"}
+              {loading ? "Registering..." : "Register"}
             </button>
           </form>
         </div>
