@@ -26,7 +26,7 @@ model User {
   role     Role      @default(USER)
   password String
   Session  Session[]
-  Videos   Videos[]
+  // Videos   Videos[]
 }
 
 model Session {
@@ -40,7 +40,7 @@ model Videos {
   videoId          String   @id
   title            String
   dateOfPublishing DateTime
-  publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)
-  publisherId      String   @unique
+  // publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)
+  // publisherId      String   @unique
   link             String   @unique
 }
