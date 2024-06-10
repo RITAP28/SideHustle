@@ -3,10 +3,10 @@ import cors from 'cors';
 import router from './routes/user.routes';
 import path from 'path';
 import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 
 const app = express();
-const PORT = process.env.PORT || 8001;
+const PORT = 7070;
 
 app.use(
     cors({
@@ -15,6 +15,7 @@ app.use(
     })
 );
 
+dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

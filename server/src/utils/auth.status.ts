@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-interface decoded {
-    username: string;
-    iat: number;
+interface Decoded extends JwtPayload {
+    userId: string;
 }
 
 export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
@@ -18,13 +17,24 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
         });
     };
 
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY as string);
-    console.log("decodedToken: ", decodedToken);
+    try {
+        const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY as string) as Decoded;
+        
+        const existingUser = await prisma.user.findUnique({
+            where: {
+                id: decodedToken.userId
+            }
+        });
 
-    res.status(200).json({
-        success: true,
-        msg: "Authenticated"
-    });
+        if(existingUser){
+            next();
+        }
+    } catch (error) {
+        return res.status(401).json({
+            success: false,
+            msg: "Invalid token"
+        })
+    }
 
-    next();
+    // next();
 }

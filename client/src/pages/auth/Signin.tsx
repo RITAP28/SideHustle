@@ -1,10 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { checkAuth } from "../../state/atoms/authAtom";
 
 export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
+  const [, setIsAuthenticated] = useRecoilState(checkAuth);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,8 +27,10 @@ export default function Login() {
       const res = await axios.post("http://localhost:7070/login", formData, {
         withCredentials: true,
       });
-      navigate("/upload");
+      navigate("/");
       console.log(res.data);
+      setIsAuthenticated(true);
+      localStorage.setItem("isAuthenticated", "true");
     } catch (error) {
       console.error("Error while logging in: ", error);
     }

@@ -35,18 +35,27 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
             console.log(`stdout: ${stdout}`);
             console.log(`stderr: ${stderr}`);
             const videoURL = `http://localhost:${process.env.PORT}/uploads/${lessonId}/index.m3u8`;
-            try {
-                await prisma.videos.create({
-                    data: {
-                        videoId: lessonId,
-                        title: title,
-                        dateOfPublishing: new Date(Date.now()),
-                        link: videoURL
-                    }
-                })
-            } catch (error) {
-                console.error("Error while inserting the video into the database: ", error);
-            }
+            // try {
+            //     await prisma.videos.create({
+            //         data: {
+            //             videoId: lessonId,
+            //             title: title,
+            //             dateOfPublishing: new Date(Date.now()),
+            //             link: videoURL
+            //         }
+            //     });
+
+            //     res.status(200).json({
+            //         success: true,
+            //         msg: "video uploaded successfully"
+            //     });
+            // } catch (error) {
+            //     console.error("Error while inserting the video into the database: ", error);
+            // }
+            res.status(200).json({
+                success: true,
+                msg: "Video uploaded successfully"
+            });
         });
     } catch (error) {
         console.log("Error: ", error);
