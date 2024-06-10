@@ -42,7 +42,7 @@ function Videos() {
     
     <div className="w-[60rem]">
       <video
-        src="/testVideo1.mp4"
+        src="http://localhost:7070/uploads/fdf44170-4020-4995-921a-8ad017181277/index.m3u8"
         controls={false}
         className="w-full"
         ref={videoRef}

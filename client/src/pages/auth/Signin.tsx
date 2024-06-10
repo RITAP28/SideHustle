@@ -3,9 +3,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { checkAuth } from "../../state/atoms/authAtom";
+// import { emailAtom, idAtom, userAtom, usernameAtom } from "../../state/atoms/userAtom";
 
 export default function Login() {
   const navigate = useNavigate();
+  // const [, setUsernameAtom] = useRecoilState(usernameAtom);
+  // const [, setEmailAtom] = useRecoilState(userAtom);
+  // const [, setIdAtom] = useRecoilState(idAtom);
   const [loading, setLoading] = useState<boolean>(false);
   const [, setIsAuthenticated] = useRecoilState(checkAuth);
   const [formData, setFormData] = useState({
@@ -48,7 +52,9 @@ export default function Login() {
                 className=""
                 id="email"
                 placeholder="Enter your email"
-                onChange={handleInputChange}
+                onChange={() => {
+                  handleInputChange;
+                }}
               />
             </div>
             <div className="">

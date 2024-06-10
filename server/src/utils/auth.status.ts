@@ -26,15 +26,18 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
             }
         });
 
-        if(existingUser){
-            next();
-        }
+        if(!existingUser){
+            return res.status(401).json({
+                success: false,
+                msg: "Not Authorized"
+            })
+        };
+
+        next();
     } catch (error) {
         return res.status(401).json({
             success: false,
             msg: "Invalid token"
         })
     }
-
-    // next();
 }

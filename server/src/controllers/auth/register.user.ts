@@ -3,6 +3,7 @@ import { uuid } from "uuidv4"
 const prisma = new PrismaClient();
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import { sendToken } from "../../utils/send.token";
 
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -33,6 +34,8 @@ export const registerUser = async (req: Request, res: Response) => {
                 password: hashedPassword
             }
         });
+
+        sendToken(newUser, 200, res);
 
         res.status(200).json({
             msg: "User registered successfully",

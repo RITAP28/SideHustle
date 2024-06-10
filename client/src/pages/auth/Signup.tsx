@@ -1,10 +1,17 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { checkAuth } from "../../state/atoms/authAtom";
+import { emailAtom, usernameAtom } from "../../state/atoms/userAtom";
 
 export default function Register() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
+  const [, setIsAuthenticated] = useRecoilState(checkAuth);
+  const [, setUsernameAtom] = useRecoilState(usernameAtom);
+  const [, setEmailAtom] = useRecoilState(emailAtom);
+  // const [, setUser] = useRecoilState(userAtom);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,7 +20,7 @@ export default function Register() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value,
+      [e.target.id]: e.target.value
     });
   };
 
@@ -26,6 +33,8 @@ export default function Register() {
         withCredentials: true,
       });
       navigate("/videos");
+      setIsAuthenticated(true);
+      localStorage.setItem("isAuthenticated", "true");
       console.log(res.data);
     } catch (error) {
       console.error("Error while registering: ", error);
@@ -45,7 +54,10 @@ export default function Register() {
                 className=""
                 id="name"
                 placeholder="Enter your username"
-                onChange={handleInputChange}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  handleInputChange;
+                  setUsernameAtom(e.target.value);
+                }}
               />
             </div>
             <div className="">
@@ -55,7 +67,10 @@ export default function Register() {
                 className=""
                 id="email"
                 placeholder="Enter your email"
-                onChange={handleInputChange}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  handleInputChange;
+                  setEmailAtom(e.target.value);
+                }}
               />
             </div>
             <div className="">

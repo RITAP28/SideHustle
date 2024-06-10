@@ -36,7 +36,10 @@ const Upload = () => {
         console.log(formData);
         try {
             const res = await axios.post("http://localhost:7070/pages/upload", formData, {
-                withCredentials: true
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
             });
             console.log(res.data);
         } catch (error) {
