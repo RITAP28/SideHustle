@@ -8,6 +8,14 @@ import { getAllVideos } from '../controllers/video.controller';
 const upload = multer({ storage: storage });
 
 export default (router: express.Router) => {
-    router.post('/pages/upload', isAuthenticated, upload.single('file'), handleUploadVideo);
+    router.post('/pages/upload', isAuthenticated, upload.fields([
+        {
+            name: "video",
+            maxCount: 1
+        },{
+            name: "thumbnail",
+            maxCount: 1
+        }
+    ]), handleUploadVideo);
     router.get('/getallvideos', getAllVideos);
 };

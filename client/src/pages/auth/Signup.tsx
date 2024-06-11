@@ -1,17 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { checkAuth } from "../../state/atoms/authAtom";
-import { emailAtom, usernameAtom } from "../../state/atoms/userAtom";
+import { emailState, userNameState } from "../../state/atoms/userAtom";
 
 export default function Register() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [, setIsAuthenticated] = useRecoilState(checkAuth);
-  const [, setUsernameAtom] = useRecoilState(usernameAtom);
-  const [, setEmailAtom] = useRecoilState(emailAtom);
-  // const [, setUser] = useRecoilState(userAtom);
+  const setUsername = useSetRecoilState(userNameState);
+  const setEmail = useSetRecoilState(emailState);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,10 +31,14 @@ export default function Register() {
       const res = await axios.post("http://localhost:7070/register", formData, {
         withCredentials: true,
       });
-      navigate("/videos");
+      navigate(`/`);
       setIsAuthenticated(true);
       localStorage.setItem("isAuthenticated", "true");
       console.log(res.data);
+      setUsername(res.data.newUser.name);
+      setEmail(res.data.newUser.email);
+      localStorage.setItem("username", res.data.newUser.name);
+      localStorage.setItem("email", res.data.newUser.email);
     } catch (error) {
       console.error("Error while registering: ", error);
     }
@@ -54,10 +57,7 @@ export default function Register() {
                 className=""
                 id="name"
                 placeholder="Enter your username"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  handleInputChange;
-                  setUsernameAtom(e.target.value);
-                }}
+                onChange={handleInputChange}
               />
             </div>
             <div className="">
@@ -67,10 +67,7 @@ export default function Register() {
                 className=""
                 id="email"
                 placeholder="Enter your email"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  handleInputChange;
-                  setEmailAtom(e.target.value);
-                }}
+                onChange={handleInputChange}
               />
             </div>
             <div className="">

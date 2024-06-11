@@ -7,35 +7,47 @@ import Videos from "./pages/upload/Videos";
 import Upload from "./pages/upload/Upload";
 import { ProtectedRoutes } from "./utils/ProtectedRoutes";
 import Appbar from "./components/Appbar";
+import { RecoilRoot } from "recoil";
+import Profile from "./pages/common/Profile";
 
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <Appbar />
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Home />} />
+      <RecoilRoot>
+        <BrowserRouter>
+          <Appbar />
+          <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Home />} />
 
-          <Route
-            path="/videos"
-            element={
-              <ProtectedRoutes>
-                <Videos />
-              </ProtectedRoutes>
-            }
-          />
-          <Route
-            path="/upload"
-            element={
-              <ProtectedRoutes>
-                <Upload />
-              </ProtectedRoutes>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+            <Route
+              path="/videos"
+              element={
+                <ProtectedRoutes>
+                  <Videos />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="/upload"
+              element={
+                <ProtectedRoutes>
+                  <Upload />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoutes>
+                  <Profile />
+                </ProtectedRoutes>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </RecoilRoot>
     </>
   );
 }

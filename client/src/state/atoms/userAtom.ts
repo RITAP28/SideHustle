@@ -1,52 +1,31 @@
 import { atom, selector } from "recoil";
 
-export const usernameAtom = atom<string>({
-    key: 'usernameAtom',
-    default: ''
-});
-
-export const emailAtom = atom<string>({
-    key: 'emailAtom',
-    default: ''
-});
-
-export const idAtom = atom<string>({
-    key: 'idAtom',
-    default: ''
-});
-
-const user = {
-    id: '',
-    name: '',
-    email: ''
+const getInitialNameState = () => {
+    const storedState = localStorage.getItem("username");
+    return storedState === "";
 };
 
-export const userAtom = atom({
-    key: 'userAtom',
-    default: user
-})
+const getInitialEmailState = () => {
+    const storedState = localStorage.getItem("email");
+    return storedState === ""
+}
 
-export const userInfoState = selector({
-    key: 'userSelector',
-    get: ({ get }) => {
-        const username = get(usernameAtom);
-        const email = get(emailAtom);
-        const id = get(idAtom);
+export const userNameState = atom({
+    key: 'userNameState',
+    default: getInitialNameState()
+});
 
-        return { username, email, id }
-    }
+export const emailState = atom({
+    key: 'emailState',
+    default: getInitialEmailState()
 });
 
 export const userSelector = selector({
-    key: 'userSelectorr',
+    key: 'userSelector',
     get: ({ get }) => {
-        return get(userAtom);
+        const name = get(userNameState);
+        const email = get(emailState);
+
+        return { name, email };
     }
 });
-
-// export const userSelector = selector({
-//     key: 'userSelector',
-//     get: ({ get }) => {
-//         return get(userAtom);
-//     }
-// });

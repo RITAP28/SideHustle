@@ -20,18 +20,18 @@ enum Role {
 }
 
 model User {
-  id       String    @id
+  id       Int       @id @default(autoincrement())
   name     String
   email    String    @unique
   role     Role      @default(USER)
   password String
   Session  Session[]
-  // Videos   Videos[]
+  Videos   Videos[]
 }
 
 model Session {
-  id        String   @id
-  userId    String
+  id        Int      @id @default(autoincrement())
+  userId    Int
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
@@ -40,7 +40,8 @@ model Videos {
   videoId          String   @id
   title            String
   dateOfPublishing DateTime
-  // publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)
-  // publisherId      String   @unique
+  thumnail         String
+  publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)
+  publisherId      Int   @unique
   link             String   @unique
 }

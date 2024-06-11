@@ -4,7 +4,7 @@ import { Response } from "express";
 import jwt from "jsonwebtoken";
 
 interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   password: string;
@@ -13,7 +13,7 @@ interface User {
 export const sendToken = async (user: User, statusCode: number, res: Response) => {
   const token = jwt.sign(
     {
-      userId: user.id,
+      email: user.email,
     },
     process.env.TOKEN_SECRET_KEY as string
   );
@@ -37,12 +37,10 @@ export const sendToken = async (user: User, statusCode: number, res: Response) =
 
     await prisma.session.create({
       data: {
-        id: Math.random().toString(),
-        userId: loggedInUser?.id as string,
+        userId: loggedInUser?.id as number,
         expiresAt: options.expires
       }
     });
-    console.log(loggedInUser?.id);
   } catch (error) {
     console.log("Error while inserting a session into the database: ", error);
   }

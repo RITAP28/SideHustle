@@ -3,15 +3,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { checkAuth } from "../../state/atoms/authAtom";
-// import { emailAtom, idAtom, userAtom, usernameAtom } from "../../state/atoms/userAtom";
+import { emailState } from "../../state/atoms/userAtom";
 
 export default function Login() {
   const navigate = useNavigate();
-  // const [, setUsernameAtom] = useRecoilState(usernameAtom);
-  // const [, setEmailAtom] = useRecoilState(userAtom);
-  // const [, setIdAtom] = useRecoilState(idAtom);
   const [loading, setLoading] = useState<boolean>(false);
   const [, setIsAuthenticated] = useRecoilState(checkAuth);
+  const [, setEmail] = useRecoilState(emailState);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,10 +29,12 @@ export default function Login() {
       const res = await axios.post("http://localhost:7070/login", formData, {
         withCredentials: true,
       });
-      navigate("/");
+      navigate(`/`);
       console.log(res.data);
       setIsAuthenticated(true);
+      setEmail(res.data.user.email);
       localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("email", res.data.user.email);
     } catch (error) {
       console.error("Error while logging in: ", error);
     }
@@ -52,9 +52,7 @@ export default function Login() {
                 className=""
                 id="email"
                 placeholder="Enter your email"
-                onChange={() => {
-                  handleInputChange;
-                }}
+                onChange={handleInputChange}
               />
             </div>
             <div className="">

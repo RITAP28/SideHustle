@@ -3,14 +3,16 @@ import { useState } from "react";
 
 interface formdata {
     title: string;
-    file: File | null;
+    video: File | null;
+    thumbnail: File | null;
 }
 
 const Upload = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState<formdata>({
         title: "",
-        file: null
+        video: null,
+        thumbnail: null
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,10 +20,20 @@ const Upload = () => {
             const file: File = e.target.files[0];
             setFormData({
                 ...formData,
-                file: file
+                video: file
             });
         }
     };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if(e.target.files !== null){
+            const file: File = e.target.files[0];
+            setFormData({
+                ...formData,
+                thumbnail: file
+            })
+        }
+    }
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -51,18 +63,24 @@ const Upload = () => {
   return (
     <div>
         <div className="m-8">
-            <form action="" onSubmit={handleFormSubmit}>
+            <form action="/pages/upload" method="post" onSubmit={handleFormSubmit}>
                 <div className="">
                     <label htmlFor="">
                         Title
                     </label>
-                    <input type="text" className="border-2 border-black pl-2 py-2" onChange={handleTitleChange} />
+                    <input type="text" className="border-2 border-black pl-2 py-2 ml-4" onChange={handleTitleChange} />
                 </div>
-                <div className="">
+                <div className="my-4">
                 <label htmlFor="">
                     Upload File:
                 </label>
-                <input type="file" accept="video/*" className="mx-2" onChange={handleFileChange} />
+                <input type="file" name="video" accept="video/*" id="video" className="mx-2" onChange={handleFileChange} />
+                </div>
+                <div className="my-4">
+                    <label htmlFor="">
+                        Thumbnail
+                    </label>
+                    <input type="file" name="thumbnail" accept="image/*" id="thumbnail" className="mx-2" onChange={handleImageChange} />
                 </div>
                 <button type="submit">
                     {loading ? "Uploading..." : "Upload"}

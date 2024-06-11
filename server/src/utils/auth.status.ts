@@ -4,10 +4,18 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 interface Decoded extends JwtPayload {
-    userId: string;
+    email: string;
 }
 
-export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
+interface AuthenticatedRequest extends Request {
+    user?: {
+        id: number;
+        name: string;
+        email: string;
+    }
+};
+
+export const isAuthenticated = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { token } = req.cookies;
 
     if(!token){
@@ -22,7 +30,7 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
         
         const existingUser = await prisma.user.findUnique({
             where: {
-                id: decodedToken.userId
+                email: decodedToken.email
             }
         });
 
@@ -31,6 +39,12 @@ export const isAuthenticated = async (req: Request, res: Response, next: NextFun
                 success: false,
                 msg: "Not Authorized"
             })
+        };
+
+        req.user = {
+            id: existingUser.id,
+            name: existingUser.name,
+            email: existingUser.email
         };
 
         next();

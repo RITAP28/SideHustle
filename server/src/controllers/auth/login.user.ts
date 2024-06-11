@@ -37,5 +37,6 @@ export const loginUser = async (req: Request, res: Response) => {
     };
 
     sendToken(existingUser, 200, res);
+    console.log("Logged in successfully!");
     
 };

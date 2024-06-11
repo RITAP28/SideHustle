@@ -1,14 +1,13 @@
 import { PrismaClient } from "@prisma/client";
-import { uuid } from "uuidv4"
 const prisma = new PrismaClient();
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { sendToken } from "../../utils/send.token";
+import { uuid } from "uuidv4";
 
 
 export const registerUser = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
-    const userId = uuid();
 
     try {
         const existingUser = await prisma.user.findFirst({
@@ -28,7 +27,6 @@ export const registerUser = async (req: Request, res: Response) => {
     
         const newUser = await prisma.user.create({
             data: {
-                id: userId,
                 name: name,
                 email: email,
                 password: hashedPassword

@@ -1,31 +1,63 @@
-import { NextFunction, Response, Request } from "express";
+import { Response, Request } from "express";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
 import { exec } from "child_process";
 import { PrismaClient } from "@prisma/client";
+import sharp from "sharp";
 const prisma = new PrismaClient();
 
 interface MulterRequest extends Request {
-  file: any;
-}
+  files: {
+    video?: Express.Multer.File[];
+    thumbnail?: Express.Multer.File[];
+  };
+  body: {
+    title: string;
+  };
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+};
 
-// controller that lets a user upload a video
-export const handleUploadVideo = (req: Request, res: Response) => {
+export const handleUploadVideo = async (req: Request, res: Response) => {
   const lessonId = uuidv4();
-  const videoPath = (req as MulterRequest).file?.path;
+  const video = (req as MulterRequest).files.video?.[0];
+  const thumbnail = (req as MulterRequest).files.thumbnail?.[0];
   const title = req.body.title;
-  const outputPath = path.join(__dirname, "uploads", lessonId);
+  const outputPath = path.join(__dirname, "uploads/videos", lessonId);
   const hlsPath = path.join(outputPath, "index.m3u8");
   console.log("hlsPath", hlsPath);
 
-    if (!fs.existsSync(outputPath)) {
-      fs.mkdirSync(outputPath, {
-        recursive: true,
-      });
-    }
+  if (!video || !thumbnail) {
+    return res.status(400).json({
+      sucess: false,
+      msg: "Both fields are required",
+    });
+  };
 
-    const ffmpegCommand = `ffmpeg -i ${videoPath} -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename "${outputPath}/segment%03d.ts" -start_number 0 ${hlsPath}`;
+  const userId = (req as MulterRequest).user.id;
+
+  if (!fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath, {
+      recursive: true,
+    });
+  }
+
+  const thumbnailPath = path.join(
+    __dirname,
+    "uploads/thumbnails",
+    `${Date.now()}-${thumbnail.originalname}.webp`
+  );
+  try {
+    await sharp(thumbnail.path).webp({ quality: 20 }).toFile(thumbnailPath);
+    const thumbnailLink = `http://localhost:${process.env.PORT}/${path.basename(
+      thumbnailPath
+    )}`;
+
+    const ffmpegCommand = `ffmpeg -i ${video.path} -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename "${outputPath}/segment%03d.ts" -start_number 0 ${hlsPath}`;
 
     exec(ffmpegCommand, async (error, stdout, stderr) => {
       if (error) {
@@ -34,25 +66,34 @@ export const handleUploadVideo = (req: Request, res: Response) => {
       console.log(`stdout: ${stdout}`);
       console.log(`stderr: ${stderr}`);
       const videoURL = `http://localhost:${process.env.PORT}/uploads/${lessonId}/index.m3u8`;
-      try {
-          await prisma.videos.create({
-              data: {
-                  videoId: lessonId,
-                  title: title,
-                  dateOfPublishing: new Date(Date.now()),
-                  link: videoURL
-              }
-          });
 
-          res.status(200).json({
-            success: true,
-            msg: "video uploaded successfully",
-            videoURL: videoURL,
-            lessonId: lessonId,
+      try {
+        await prisma.videos.create({
+          data: {
+            videoId: lessonId,
             title: title,
-          });
+            dateOfPublishing: new Date(Date.now()),
+            link: videoURL,
+            thumnail: thumbnailLink,
+            publisherId: userId,
+          },
+        });
+
+        res.status(200).json({
+          success: true,
+          msg: "video uploaded successfully",
+          videoURL: videoURL,
+          lessonId: lessonId,
+          title: title,
+        });
       } catch (error) {
-          console.error("Error while inserting the video into the database: ", error);
+        console.error(
+          "Error while inserting the video into the database: ",
+          error
+        );
       }
     });
+  } catch (error) {
+    console.error("Error while uploading files overall: ", error);
+  }
 };

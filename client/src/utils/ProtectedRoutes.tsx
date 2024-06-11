@@ -1,5 +1,5 @@
-import { useRecoilValue } from "recoil";
-import { checkAuth } from "../state/atoms/authAtom";
+// import { useRecoilValue } from "recoil";
+// import { checkAuth } from "../state/atoms/authAtom";
 import { Navigate } from "react-router-dom";
 
 interface ProtectedRoutesProps {
@@ -7,7 +7,7 @@ interface ProtectedRoutesProps {
 }
 
 export const ProtectedRoutes: React.FC<ProtectedRoutesProps> = ({children}) => {
-    const isAuthenticated = useRecoilValue(checkAuth);
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
 
     if(!isAuthenticated){
         return <Navigate to="/login" />;
