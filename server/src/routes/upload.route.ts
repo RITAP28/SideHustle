@@ -3,7 +3,7 @@ import { handleUploadVideo } from '../controllers/upload.service';
 import multer from 'multer';
 import { storage } from '../middlewares/multer.upload';
 import { isAuthenticated } from '../utils/auth.status';
-import { getAllVideos } from '../controllers/video.controller';
+import { getAllVideos, handleGetOneVideo } from '../controllers/video.controller';
 
 const upload = multer({ storage: storage });
 
@@ -18,4 +18,5 @@ export default (router: express.Router) => {
         }
     ]), handleUploadVideo);
     router.get('/getallvideos', getAllVideos);
+    router.get('/videos/:id', isAuthenticated, handleGetOneVideo);
 };

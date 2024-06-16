@@ -56,7 +56,7 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
       .webp({ quality: 20 })
       .toBuffer();
     await fs.promises.writeFile(`${thumbnailPath}.webp`, resizedImageBuffer);
-    const thumbnailLink = `http://localhost:${process.env.PORT}/static/thumbnails/${path.basename(thumbnailPath)}.webp`;
+    const thumbnailLink = `http://localhost:${process.env.PORT}/thumbnails/${path.basename(thumbnailPath)}.webp`;
 
     const ffmpegCommand = `ffmpeg -i ${video.path} -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename "${outputPath}/segment%03d.ts" -start_number 0 ${hlsPath}`;
 
@@ -66,7 +66,7 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
       }
       console.log(`stdout: ${stdout}`);
       console.log(`stderr: ${stderr}`);
-      const videoURL = `http://localhost:${process.env.PORT}/static/videos/${lessonId}/index.m3u8`;
+      const videoURL = `http://localhost:${process.env.PORT}/videos/${lessonId}/index.m3u8`;
 
       try {
         await prisma.videos.create({

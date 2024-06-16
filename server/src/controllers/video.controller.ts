@@ -21,3 +21,23 @@ export const getAllVideos = async (req: Request, res: Response) => {
         });
     };
 };
+
+export const handleGetOneVideo = async (req: Request, res: Response) => {
+    try {
+        const video: Video = await prisma.videos.findUniqueOrThrow({
+            where: {
+                videoId: req.params.videoid
+            }
+        });
+        res.status(200).json({
+            success: false,
+            video
+        });
+    } catch (error) {
+        console.error("Error while fetching video: ", error);
+        res.status(500).json({
+            success: false,
+            msg: "Error while fetching video"
+        });
+    };
+};

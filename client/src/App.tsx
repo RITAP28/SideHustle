@@ -1,6 +1,6 @@
 // import { lazy } from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./Home";
+import Home from "./pages/common/Home";
 import Register from "./pages/auth/Signup";
 import Login from "./pages/auth/Signin";
 import Videos from "./pages/upload/Videos";

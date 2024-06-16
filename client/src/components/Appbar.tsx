@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
-import { useAppSelector } from "../redux/hooks/hook";
+import { useAppDispatch, useAppSelector } from "../redux/hooks/hook";
+import { UserNotExist } from "../redux/Slices/user.slice";
 
 const Appbar = () => {
   const { isAuthenticated, currentUser } = useAppSelector((state) => state.user);
   const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
     setLoading(true);
@@ -14,6 +16,7 @@ const Appbar = () => {
         withCredentials: true,
       });
       console.log(res.data);
+      dispatch(UserNotExist());
     } catch (error) {
       console.error("Error while logging out: ", error);
     }

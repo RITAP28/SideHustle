@@ -19,7 +19,7 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use("static", express.static("public"));
+app.use(express.static("public"));
 app.use('/', router());
 
 app.listen(PORT, () => {
