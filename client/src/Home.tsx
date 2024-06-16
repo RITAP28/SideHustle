@@ -5,6 +5,8 @@ interface Video {
   id: string;
   title: string;
   link: string;
+  thumbnail: string;
+  publisherId: number;
   dateOfPublishing: Date;
 }
 
@@ -28,13 +30,15 @@ const Home = () => {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2 mx-2">
         {videos.map((video, index) => (
-          <div key={index}>
-            <h1>{video.title}</h1>
-            <p>{video.link}</p>
-            <p>{new Date(video.dateOfPublishing).toLocaleDateString()}</p>
-            <p>{video.id}</p>
+          <div key={index} className="bg-black text-white">
+            <div className="w-[400px] h-[120px] object-cover">
+              <img src={video.thumbnail} alt="" className="w-full h-full" />
+            </div>
+            <div>
+              {video.title}
+            </div>
           </div>
         ))}
       </div>

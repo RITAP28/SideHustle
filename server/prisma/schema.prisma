@@ -42,6 +42,6 @@ model Videos {
   dateOfPublishing DateTime
   thumnail         String
   publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)
-  publisherId      Int   @unique
+  publisherId      Int  
   link             String   @unique
 }

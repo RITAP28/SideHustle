@@ -20,14 +20,14 @@ interface MulterRequest extends Request {
     name: string;
     email: string;
   };
-};
+}
 
 export const handleUploadVideo = async (req: Request, res: Response) => {
   const lessonId = uuidv4();
   const video = (req as MulterRequest).files.video?.[0];
   const thumbnail = (req as MulterRequest).files.thumbnail?.[0];
   const title = req.body.title;
-  const outputPath = path.join(__dirname, "uploads/videos", lessonId);
+  const outputPath = path.join("public/videos", lessonId);
   const hlsPath = path.join(outputPath, "index.m3u8");
   console.log("hlsPath", hlsPath);
 
@@ -36,7 +36,7 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
       sucess: false,
       msg: "Both fields are required",
     });
-  };
+  }
 
   const userId = (req as MulterRequest).user.id;
 
@@ -47,15 +47,16 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
   }
 
   const thumbnailPath = path.join(
-    __dirname,
-    "uploads/thumbnails",
-    `${Date.now()}-${thumbnail.originalname}.webp`
+    "public/thumbnails",
+    `${Date.now()}-${lessonId}`
   );
   try {
-    await sharp(thumbnail.path).webp({ quality: 20 }).toFile(thumbnailPath);
-    const thumbnailLink = `http://localhost:${process.env.PORT}/${path.basename(
-      thumbnailPath
-    )}`;
+    // const resizedImageBuffer = await sharp(thumbnail.path).webp({ quality: 20 }).toFile(thumbnailPath);
+    const resizedImageBuffer = await sharp(thumbnail.path)
+      .webp({ quality: 20 })
+      .toBuffer();
+    await fs.promises.writeFile(`${thumbnailPath}.webp`, resizedImageBuffer);
+    const thumbnailLink = `http://localhost:${process.env.PORT}/static/thumbnails/${path.basename(thumbnailPath)}.webp`;
 
     const ffmpegCommand = `ffmpeg -i ${video.path} -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename "${outputPath}/segment%03d.ts" -start_number 0 ${hlsPath}`;
 
@@ -65,7 +66,7 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
       }
       console.log(`stdout: ${stdout}`);
       console.log(`stderr: ${stderr}`);
-      const videoURL = `http://localhost:${process.env.PORT}/uploads/${lessonId}/index.m3u8`;
+      const videoURL = `http://localhost:${process.env.PORT}/static/videos/${lessonId}/index.m3u8`;
 
       try {
         await prisma.videos.create({
