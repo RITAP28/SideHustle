@@ -1,14 +1,11 @@
-import { useRecoilState, useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
-import { checkAuth } from "../state/atoms/authAtom";
-import { userSelector } from "../state/atoms/userAtom";
+import { useAppSelector } from "../redux/hooks/hook";
 
 const Appbar = () => {
-  const [isAuthenticated, setIsAuthenticated] = useRecoilState(checkAuth);
+  const { isAuthenticated, currentUser } = useAppSelector((state) => state.user);
   const [loading, setLoading] = useState<boolean>(false);
-  const user = useRecoilValue(userSelector);
   const navigate = useNavigate();
   const handleLogout = async () => {
     setLoading(true);
@@ -17,10 +14,6 @@ const Appbar = () => {
         withCredentials: true,
       });
       console.log(res.data);
-      setIsAuthenticated(false);
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("username");
-      localStorage.removeItem("email");
     } catch (error) {
       console.error("Error while logging out: ", error);
     }
@@ -60,7 +53,7 @@ const Appbar = () => {
               </button>
             </div>
             <div>
-              Username: {user?.name}
+              Username: {currentUser?.name}
             </div>
           </div>
         </div>

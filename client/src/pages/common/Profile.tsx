@@ -1,13 +1,23 @@
+import { useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
 
 const Profile = () => {
-  const email = localStorage.getItem("email");
-  const name = localStorage.getItem("username");
+  const { isAuthenticated, currentUser } = useSelector((state: RootState) => state.user);
   return (
-    <div>
+    <>
+    {isAuthenticated ? (
+      <div>
       Profile
-      Username: {name}
-      Email: {email}
+      Username: {currentUser?.name}
+      Email: {currentUser?.email}
     </div>
+    ) : (
+      <div>
+        You are not signed in
+      </div>
+    )}
+    
+    </>
   )
 }
 

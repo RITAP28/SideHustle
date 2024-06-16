@@ -1,16 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { checkAuth } from "../../state/atoms/authAtom";
-import { emailState, userNameState } from "../../state/atoms/userAtom";
+import { SignupSuccess } from "../../redux/Slices/user.slice";
 
 export default function Register() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
-  const [, setIsAuthenticated] = useRecoilState(checkAuth);
-  const setUsername = useSetRecoilState(userNameState);
-  const setEmail = useSetRecoilState(emailState);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,15 +29,11 @@ export default function Register() {
         withCredentials: true,
       });
       navigate(`/`);
-      setIsAuthenticated(true);
-      localStorage.setItem("isAuthenticated", "true");
       console.log(res.data);
-      setUsername(res.data.newUser.name);
-      setEmail(res.data.newUser.email);
-      localStorage.setItem("username", res.data.newUser.name);
-      localStorage.setItem("email", res.data.newUser.email);
+      dispatch(SignupSuccess(res.data));
     } catch (error) {
       console.error("Error while registering: ", error);
+      // dispatch(SignupFailure(res.data));
     }
     setLoading(false);
   };

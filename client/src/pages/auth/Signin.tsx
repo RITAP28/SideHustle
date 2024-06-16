@@ -1,15 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import { checkAuth } from "../../state/atoms/authAtom";
-import { emailState } from "../../state/atoms/userAtom";
+import { SigninSuccess } from "../../redux/Slices/user.slice";
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
-  const [, setIsAuthenticated] = useRecoilState(checkAuth);
-  const [, setEmail] = useRecoilState(emailState);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,11 +29,8 @@ export default function Login() {
       });
       navigate(`/`);
       console.log(res.data);
-      setIsAuthenticated(true);
-      setEmail(res.data.user.email);
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("email", res.data.user.email);
-    } catch (error) {
+      dispatch(SigninSuccess(res.data.user));
+    } catch (error: unknown) {
       console.error("Error while logging in: ", error);
     }
     setLoading(false);

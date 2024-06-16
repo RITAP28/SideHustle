@@ -11,6 +11,7 @@ interface Video {
 }
 
 const Home = () => {
+
   const [videos, setVideos] = useState<Video[]>([]);
   const handleGetAllPosts = async () => {
     try {
