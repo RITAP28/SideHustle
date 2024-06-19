@@ -71,11 +71,10 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
       try {
         await prisma.videos.create({
           data: {
-            videoId: lessonId,
             title: title,
             dateOfPublishing: new Date(Date.now()),
             link: videoURL,
-            thumnail: thumbnailLink,
+            thumbnail: thumbnailLink,
             publisherId: userId,
           },
         });

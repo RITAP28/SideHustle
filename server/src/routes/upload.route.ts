@@ -18,5 +18,5 @@ export default (router: express.Router) => {
         }
     ]), handleUploadVideo);
     router.get('/getallvideos', getAllVideos);
-    router.get('/videos/:id', isAuthenticated, handleGetOneVideo);
+    router.get('/videos', isAuthenticated, handleGetOneVideo);
 };

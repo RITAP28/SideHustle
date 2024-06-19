@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 interface Video {
-    videoId: string;
+    videoId: number;
     title: string;
     link: string;
     dateOfPublishing: Date;
@@ -24,13 +24,28 @@ export const getAllVideos = async (req: Request, res: Response) => {
 
 export const handleGetOneVideo = async (req: Request, res: Response) => {
     try {
-        const video: Video = await prisma.videos.findUniqueOrThrow({
+        const videoId = Number(req.query.videoId);
+        console.log(videoId);
+        if(isNaN(videoId)){
+            return res.status(400).json({
+                success: false,
+                msg: "Invalid video ID"
+            })
+        };
+        const video = await prisma.videos.findUnique({
             where: {
-                videoId: req.params.videoid
+                videoId: videoId
             }
         });
+        if(!videoId){
+            return res.status(404).json({
+                success: false,
+                msg: "Video not found"
+            })
+        };
+
         res.status(200).json({
-            success: false,
+            success: true,
             video
         });
     } catch (error) {

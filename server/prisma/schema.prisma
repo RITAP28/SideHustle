@@ -37,10 +37,10 @@ model Session {
 }
 
 model Videos {
-  videoId          String   @id
+  videoId          Int   @id@default(autoincrement())@unique
   title            String
   dateOfPublishing DateTime
-  thumnail         String
+  thumbnail         String
   publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)
   publisherId      Int  
   link             String   @unique
