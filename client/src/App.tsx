@@ -9,6 +9,7 @@ import { ProtectedRoutes } from "./utils/ProtectedRoutes";
 import Appbar from "./components/Appbar";
 import { RecoilRoot } from "recoil";
 import Profile from "./pages/common/Profile";
+import Editor from "./pages/common/Editor";
 
 function App() {
 
@@ -43,6 +44,14 @@ function App() {
               element={
                 <ProtectedRoutes>
                   <Profile />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="/editor"
+              element={
+                <ProtectedRoutes>
+                  <Editor />
                 </ProtectedRoutes>
               }
             />

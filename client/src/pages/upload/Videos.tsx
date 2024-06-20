@@ -104,74 +104,83 @@ function Videos() {
 
   return (
     <>
-      {loading ? (
-        "Loading..."
-      ) : (
-        <>
-          <div className="w-[30rem] h-[20rem]">
-            <video
-              controls={false}
-              className="w-full"
-              ref={videoRef}
-              onTimeUpdate={handleTimeUpdate}
-              onLoadedMetadata={handleLoadedMetaData}
-            >
-              <source src={video?.link} type="application/x-mpegURL" />
-              Your browser does not support the video tag.
-            </video>
-            <div className="flex flex-row w-full">
-              <div className="basis-3/10 flex flex-row">
-                <div className="basis-1/3 mr-2">
-                  <IoPlayBack />
-                </div>
-                <div className="basis-1/3 mx-2">
-                  {duration === 0 ? (
-                    <button
-                      type="button"
-                      className=""
-                      onClick={() => {
-                        if (videoRef.current !== null) {
-                          videoRef.current.play();
-                          setIsPlaying(true);
-                        }
-                      }}
-                    >
-                      <FaPause />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className=""
-                      onClick={togglePlayPause}
-                    >
-                      {isPlaying ? <FaPlay /> : <FaPause />}
-                    </button>
-                  )}
-                </div>
-                <div className="basis-1/3 mx-2">
-                  <IoPlayForward />
-                </div>
+      <div className="w-full min-h-screen bg-black">
+        {loading ? (
+          "Loading..."
+        ) : (
+          <>
+            <div className="w-[70%] h-[90%] pt-2 ml-[4rem]">
+              <div className="flex justify-center">
+                <video
+                  controls={false}
+                  className="w-full h-full object-contain aspect-video bg-slate-700 rounded-lg"
+                  ref={videoRef}
+                  onTimeUpdate={handleTimeUpdate}
+                  onLoadedMetadata={handleLoadedMetaData}
+                >
+                  <source src={video?.link} type="application/x-mpegURL" />
+                  
+                  Your browser does not support the video tag.
+                </video>
               </div>
-              <div className="basis-5/10 w-full mx-4">
-                <input
-                  type="range"
-                  className="w-full"
-                  min="0"
-                  max={duration}
-                  value={currentTime}
-                  onChange={handleSeek}
-                />
-              </div>
-              <div className="basis-1/10 mx-3">
-                <IoIosSettings />
-              </div>
-              <div className="basis-1/10 ml-3 mr-2">
-                <MdFullscreen />
-              </div>
+            <div className="flex flex-row w-full pt-2">
+                    <div className="basis-3/10 flex flex-row">
+                      <div className="basis-1/3 mr-2">
+                        <IoPlayBack className="text-white text-xl" />
+                      </div>
+                      <div className="basis-1/3 mx-2">
+                        {duration === 0 ? (
+                          <button
+                            type="button"
+                            className=""
+                            onClick={() => {
+                              if (videoRef.current !== null) {
+                                videoRef.current.play();
+                                setIsPlaying(true);
+                              }
+                            }}
+                          >
+                            <FaPause className="text-white text-xl" />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className=""
+                            onClick={togglePlayPause}
+                          >
+                            {isPlaying ? (
+                              <FaPlay className="text-white text-xl" />
+                            ) : (
+                              <FaPause className="text-white text-xl" />
+                            )}
+                          </button>
+                        )}
+                      </div>
+                      <div className="basis-1/3 mx-2">
+                        <IoPlayForward className="text-white text-xl" />
+                      </div>
+                    </div>
+                    <div className="basis-5/10 w-full mx-4">
+                      <input
+                        type="range"
+                        className="w-full"
+                        min="0"
+                        max={duration}
+                        value={currentTime}
+                        onChange={handleSeek}
+                      />
+                    </div>
+                    <div className="basis-1/10 mx-3">
+                      <IoIosSettings className="text-white text-xl" />
+                    </div>
+                    <div className="basis-1/10 ml-3 mr-2">
+                      <MdFullscreen className="text-white text-xl" />
+                    </div>
+                  </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </>
   );
 }

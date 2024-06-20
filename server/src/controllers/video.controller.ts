@@ -25,7 +25,7 @@ export const getAllVideos = async (req: Request, res: Response) => {
 export const handleGetOneVideo = async (req: Request, res: Response) => {
     try {
         const videoId = Number(req.query.videoId);
-        console.log(videoId);
+        // console.log(videoId);
         if(isNaN(videoId)){
             return res.status(400).json({
                 success: false,
