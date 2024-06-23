@@ -17,15 +17,15 @@ const LanguageSelector = ({ language, onSelect } : {
 }) => {
   return (
     <>
-    <Box>
-        <Menu>
+    <Box ml={2} mb={4}>
+        <Menu isLazy>
             <MenuButton as={Button}>
                 {language}
             </MenuButton>
-            <MenuList>
-                {languages.map((language, version) => (
-                  <MenuItem onClick={() => onSelect(language[0])}>
-                    {language}
+            <MenuList bg="black">
+                {languages.map((lang, version) => (
+                  <MenuItem key={version} onClick={() => onSelect(lang[0])}>
+                    {lang}
                     &nbsp;
                     <Text as="span" color="gray.500" fontSize="sm">
                       {version}

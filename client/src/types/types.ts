@@ -1,3 +1,5 @@
+import * as monaco from "monaco-editor";
+
 export type User = {
     id: number;
     name: string;
@@ -13,3 +15,5 @@ export type Video = {
     thumbnail: string;
     publisherId: number;
 }
+
+export type EditorRef = React.RefObject<monaco.editor.IStandaloneCodeEditor | null>

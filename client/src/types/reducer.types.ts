@@ -1,4 +1,4 @@
-import { User, Video } from "./types";
+import { EditorRef, User, Video } from "./types";
 
 export interface userReducerInitialState {
     currentUser: User | null;
@@ -13,4 +13,9 @@ export interface videoReducerInitialState {
     currentVideo: Video | null;
     error: string | null;
     loading: boolean;
+}
+
+export interface CodeOutput {
+    editorRef: EditorRef;
+    language: string;
 }
