@@ -11,6 +11,7 @@ import { CurrentVideo } from "../../redux/Slices/video.slice";
 import { Video } from "../../types/types";
 // import ReactPlayer from "react-player";
 import Hls from "hls.js";
+import MonacoEditor from "../../components/MonacoEditor";
 // import { MdFullscreenExit } from "react-icons/md";
 
 function Videos() {
@@ -72,7 +73,6 @@ function Videos() {
     handleGetVideo();
   }, [handleGetVideo]);
 
-  // const videoSrc = String(currentVideo?.link);
   const handleHLSVideoPlayer = useCallback(async () => {
     const videoSrc = String(video?.link);
     try {
@@ -109,74 +109,78 @@ function Videos() {
           "Loading..."
         ) : (
           <>
-            <div className="w-[70%] h-[90%] pt-2 ml-[4rem]">
-              <div className="flex justify-center">
-                <video
-                  controls={false}
-                  className="w-full h-full object-contain aspect-video bg-slate-700 rounded-lg"
-                  ref={videoRef}
-                  onTimeUpdate={handleTimeUpdate}
-                  onLoadedMetadata={handleLoadedMetaData}
-                >
-                  <source src={video?.link} type="application/x-mpegURL" />
-                  
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            <div className="flex flex-row w-full pt-2">
-                    <div className="basis-3/10 flex flex-row">
-                      <div className="basis-1/3 mr-2">
-                        <IoPlayBack className="text-white text-xl" />
-                      </div>
-                      <div className="basis-1/3 mx-2">
-                        {duration === 0 ? (
-                          <button
-                            type="button"
-                            className=""
-                            onClick={() => {
-                              if (videoRef.current !== null) {
-                                videoRef.current.play();
-                                setIsPlaying(true);
-                              }
-                            }}
-                          >
+            <div className="pt-2 ml-[2rem] flex flex-row gap-4">
+              <div className="basis-1/2 w-[70%] h-[95%] pt-[4.5rem]">
+                <div className="flex justify-center">
+                  <video
+                    controls={false}
+                    className="w-full h-full object-contain aspect-video bg-slate-700 rounded-lg"
+                    ref={videoRef}
+                    onTimeUpdate={handleTimeUpdate}
+                    onLoadedMetadata={handleLoadedMetaData}
+                  >
+                    <source src={video?.link} type="application/x-mpegURL" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                <div className="flex flex-row w-full pt-2">
+                  <div className="basis-3/10 flex flex-row">
+                    <div className="basis-1/3 mr-2">
+                      <IoPlayBack className="text-white text-xl" />
+                    </div>
+                    <div className="basis-1/3 mx-2">
+                      {duration === 0 ? (
+                        <button
+                          type="button"
+                          className=""
+                          onClick={() => {
+                            if (videoRef.current !== null) {
+                              videoRef.current.play();
+                              setIsPlaying(true);
+                            }
+                          }}
+                        >
+                          <FaPause className="text-white text-xl" />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className=""
+                          onClick={togglePlayPause}
+                        >
+                          {isPlaying ? (
+                            <FaPlay className="text-white text-xl" />
+                          ) : (
                             <FaPause className="text-white text-xl" />
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            className=""
-                            onClick={togglePlayPause}
-                          >
-                            {isPlaying ? (
-                              <FaPlay className="text-white text-xl" />
-                            ) : (
-                              <FaPause className="text-white text-xl" />
-                            )}
-                          </button>
-                        )}
-                      </div>
-                      <div className="basis-1/3 mx-2">
-                        <IoPlayForward className="text-white text-xl" />
-                      </div>
+                          )}
+                        </button>
+                      )}
                     </div>
-                    <div className="basis-5/10 w-full mx-4">
-                      <input
-                        type="range"
-                        className="w-full"
-                        min="0"
-                        max={duration}
-                        value={currentTime}
-                        onChange={handleSeek}
-                      />
-                    </div>
-                    <div className="basis-1/10 mx-3">
-                      <IoIosSettings className="text-white text-xl" />
-                    </div>
-                    <div className="basis-1/10 ml-3 mr-2">
-                      <MdFullscreen className="text-white text-xl" />
+                    <div className="basis-1/3 mx-2">
+                      <IoPlayForward className="text-white text-xl" />
                     </div>
                   </div>
+                  <div className="basis-5/10 w-full mx-4">
+                    <input
+                      type="range"
+                      className="w-full"
+                      min="0"
+                      max={duration}
+                      value={currentTime}
+                      onChange={handleSeek}
+                    />
+                  </div>
+                  <div className="basis-1/10 mx-3">
+                    <IoIosSettings className="text-white text-xl" />
+                  </div>
+                  <div className="basis-1/10 ml-3 mr-2">
+                    <MdFullscreen className="text-white text-xl" />
+                  </div>
+                </div>
+              </div>
+              <div className="basis-1/2">
+                  <MonacoEditor />
+              </div>
             </div>
           </>
         )}

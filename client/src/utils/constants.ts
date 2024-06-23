@@ -1,14 +1,26 @@
-export interface languageVersion {
-    [key: string]: string;
-};
+interface language {
+    language: string;
+    version: string;
+}
 
-export const LANGUAGE_VERSIONS: languageVersion = {
-    javascript: '18.15.0',
-    python: '3.10.0',
-    typescript: '5.0.3',
-    java: '15.0.3',
-    php: '8.2.3'
-};
+export const LANGUAGE_VERSIONS: language[] = [
+    {
+        language: "javascript",
+        version: "18.15.0"
+    },{
+        language: "python",
+        version: "3.10.0"
+    },{
+        language: "typescript",
+        version: "5.0.3"
+    },{
+        language: "java",
+        version: "15.0.3"
+    },{
+        language: "php",
+        version: "8.2.3"
+    }
+]
 
 export interface CodeSnippets {
     [key: string]: string;
