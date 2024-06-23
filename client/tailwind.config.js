@@ -5,7 +5,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        Dmsans: ["DM Sans", "sans-serif"],
+        Philosopher: ["Philosopher", "sans-serif"],
+        SpaceGrotesk: ["SpaceGrotesk", "sans-serif"],
+        Dmserif: ["DM Serif Text", "serif"],
+        Code: ["Source Code Pro", "monospace"]
+      }
+    },
   },
   plugins: [],
 }

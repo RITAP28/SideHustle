@@ -10,6 +10,7 @@ import Appbar from "./components/Appbar";
 import { RecoilRoot } from "recoil";
 import Profile from "./pages/common/Profile";
 import Editor from "./pages/common/Editor";
+import Landing from "./pages/common/Landing";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Home />} />
+            <Route path="/landing" element={<Landing />} />
 
             <Route
               path="/videos"

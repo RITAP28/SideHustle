@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks/hook";
 import { UserNotExist } from "../redux/Slices/user.slice";
 
 const Appbar = () => {
-  const { isAuthenticated, currentUser } = useAppSelector(
+  const { isAuthenticated } = useAppSelector(
     (state) => state.user
   );
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,39 +25,51 @@ const Appbar = () => {
     setLoading(false);
   };
   return (
-    <div className="flex flex-row bg-black pt-[1rem] pb-2">
-      <div className="basis-1/3 flex justify-start">
-        {isAuthenticated ? (
-          <div className="font-bold text-white ml-[6rem] text-lg underline">
-            {currentUser?.name}
-          </div>
-        ) : (
-          <div>
-            <div className="font-bold text-white ml-[1rem] text-lg underline">
-              You are not authenticated
-            </div>
-          </div>
-        )}
-      </div>
+    <div className="absolute z-20 w-full flex flex-row bg-black pt-[1rem] pb-2 h-[5rem] font-Code">
       <div className="basis-1/3 flex justify-center">
         <p className="text-white font-bold text-xl flex items-center">
-          onlyDevs
+          NexusCode
         </p>
       </div>
-      <div className="basis-1/3 flex justify-end">
-        {isAuthenticated ? (
-          <div className="mr-[1rem]">
+      <div className="basis-1/3 flex justify-center"></div>
+      <div className="basis-1/3">
+        <div className="flex flex-row">
+          <div className="basis-1/4 flex justify-center">
             <button
-            type="button"
-            className="px-4 py-1 bg-black text-white rounded-md hover:cursor-pointer"
-            onClick={handleLogout}
-          >
-            {loading ? "Logging you out..." : "Logout"}
-          </button>
+              type="button"
+              className="px-4 py-1 bg-black text-white rounded-md hover:cursor-pointer"
+            >
+              Our Story
+            </button>
           </div>
-        ) : (
-          <>
-            <div className="">
+          <div className="basis-1/4 flex justify-center">
+            <button
+              type="button"
+              className="px-4 py-1 bg-black text-white rounded-md hover:cursor-pointer"
+            >
+              Features
+            </button>
+          </div>
+          <div className="basis-1/4 flex justify-center">
+            <button
+              type="button"
+              className="px-4 py-1 bg-black text-white rounded-md hover:cursor-pointer"
+            >
+              Pricing
+            </button>
+          </div>
+          {isAuthenticated ? (
+            <div className="basis-1/4 flex justify-center">
+              <button
+                type="button"
+                className="px-4 py-1 bg-black text-white rounded-md hover:cursor-pointer"
+                onClick={handleLogout}
+              >
+                {loading ? "Logging you out..." : "Logout"}
+              </button>
+            </div>
+          ) : (
+            <div className="basis-1/4 flex justify-center">
               <button
                 type="button"
                 className="px-4 py-1 bg-black text-white rounded-md hover:cursor-pointer"
@@ -65,22 +77,11 @@ const Appbar = () => {
                   navigate("/login");
                 }}
               >
-                Sign-In
+                Login
               </button>
             </div>
-            <div className="mr-4">
-              <button
-                type="button"
-                className="px-4 py-1 bg-black text-white rounded-md hover:cursor-pointer"
-                onClick={() => {
-                  navigate("/register");
-                }}
-              >
-                Register
-              </button>
-            </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

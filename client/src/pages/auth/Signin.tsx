@@ -37,32 +37,60 @@ export default function Login() {
   };
   return (
     <>
-      <div className="">
-        <div className="">
-          <form action="" className="p-4" onSubmit={handleLogin}>
-            <div className="">
-              <label htmlFor="">Email:</label>
+      <div className="w-full h-screen bg-black flex justify-center items-center absolute">
+        <div className="text-white">
+          <form
+            action=""
+            className="p-4 border-2 border-white max-w-sm mx-auto px-[3rem]"
+            onSubmit={handleLogin}
+          >
+            <div className="font-Code flex justify-center text-2xl font-bold pt-4 w-full">
+              NexusCode
+            </div>
+            <div className="font-Code flex justify-center text-lg font-semibold pt-[1rem] w-full">
+              Log in to your account
+            </div>
+            <div className="font-Code flex justify-center text-sm w-full">
+              No account?<span>Register here</span>
+            </div>
+            <div className="flex flex-col pt-[2rem] pb-2">
+              <label htmlFor="" className="font-Code">
+                Email:
+              </label>
               <input
                 type="email"
-                className=""
+                className="font-Code text-sm px-2 py-2"
                 id="email"
                 placeholder="Enter your email"
                 onChange={handleInputChange}
               />
             </div>
-            <div className="">
-              <label htmlFor="">Password:</label>
+            <div className="flex flex-col pt-2 pb-8">
+              <label htmlFor="" className="font-Code">
+                Password:
+              </label>
               <input
                 type="password"
-                className=""
+                className="font-Code text-sm px-2 py-2 text-black"
                 id="password"
                 placeholder="Enter your password"
                 onChange={handleInputChange}
               />
             </div>
-            <button type="submit" disabled={loading}>
-              {loading ? "Signing you in..." : "Sign-In"}
-            </button>
+            <div className="">
+              <button
+                type="submit"
+                disabled={loading}
+                className="font-Code flex justify-center w-full"
+              >
+                {loading ? "Signing you in..." : "Sign-In"}
+              </button>
+            </div>
+            <div className="pt-4 pb-4">
+              <button type="button" className="font-Code flex justify-center w-full">
+                Continue with Google
+              </button>
+            </div>
           </form>
         </div>
       </div>
