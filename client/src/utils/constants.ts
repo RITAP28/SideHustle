@@ -15,7 +15,7 @@ export const LANGUAGE_VERSIONS: language[] = [
         version: "5.0.3"
     },{
         language: "java",
-        version: "15.0.3"
+        version: "15.0.2"
     },{
         language: "php",
         version: "8.2.3"

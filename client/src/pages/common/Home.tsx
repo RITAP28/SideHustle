@@ -32,7 +32,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex flex-row">
+      <div className="flex flex-row pt-[5rem]">
         <div className="basis-1/6 w-full bg-black border-r-2 border-slate-500">
           <div className="w-full text-white flex justify-center my-[1rem]">
             <button
@@ -105,7 +105,7 @@ const Home = () => {
                     className="w-full h-full rounded-xl shadow-xl"
                   />
                 </div>
-                <div className="pt-4 text-white font-bold">{video.title}</div>
+                <div className="pt-4 text-white font-bold font-Code text-sm">{video.title}</div>
               </div>
             ))}
           </div>

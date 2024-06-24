@@ -18,7 +18,7 @@ export const userSlice = createSlice({
             state.currentUser = action.payload;
             state.error = null;
             state.loading = false;
-            state.isAuthenticated = false;
+            state.isAuthenticated = true;
         },
         UserExist: (state, action) => {
             state.currentUser = action.payload;

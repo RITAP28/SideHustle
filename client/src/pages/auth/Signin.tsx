@@ -41,7 +41,7 @@ export default function Login() {
         <div className="text-white">
           <form
             action=""
-            className="p-4 border-2 border-white max-w-sm mx-auto px-[3rem]"
+            className="p-4 border-2 border-white w-[22rem] mx-auto"
             onSubmit={handleLogin}
           >
             <div className="font-Code flex justify-center text-2xl font-bold pt-4 w-full">
@@ -51,7 +51,7 @@ export default function Login() {
               Log in to your account
             </div>
             <div className="font-Code flex justify-center text-sm w-full">
-              No account?<span>Register here</span>
+              No account? <a href="/register"><span className="underline">Register</span></a>
             </div>
             <div className="flex flex-col pt-[2rem] pb-2">
               <label htmlFor="" className="font-Code">

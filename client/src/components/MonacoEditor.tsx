@@ -45,8 +45,8 @@ const MonacoEditor = () => {
         const codeOutput = await axios.post(
           "https://emkc.org/api/v2/piston/execute",
           {
-            language: language,
-            version: version,
+            language: language ? language : "javascript",
+            version: version ? version : "18.15.0",
             files: [
               {
                 content: sourceCode,

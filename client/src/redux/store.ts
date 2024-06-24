@@ -4,7 +4,6 @@ import videoReducer from "./Slices/video.slice";
 
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-// import { thunk } from "redux-thunk";
 
 const persistConfig = {
     key: 'Root',
@@ -12,12 +11,12 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, userReducer);
-const persistedVideo = persistReducer(persistConfig, videoReducer)
+// const persistedVideo = persistReducer(persistConfig, videoReducer)
 
 export const store = configureStore({
     reducer: {
         user: persistedReducer,
-        video: persistedVideo
+        video: videoReducer
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware({

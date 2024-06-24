@@ -3,11 +3,16 @@ const prisma = new PrismaClient();
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { sendToken } from "../../utils/send.token";
-import { uuid } from "uuidv4";
 
 
 export const registerUser = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
+    if(!req.body.name || !req.body.email || !req.body.password) {
+        return res.status(400).json({
+            success: false,
+            msg: "Enter all fields"
+        })
+    }
 
     try {
         const existingUser = await prisma.user.findFirst({
@@ -33,14 +38,10 @@ export const registerUser = async (req: Request, res: Response) => {
             }
         });
 
-        sendToken(newUser, 200, res);
-
-        res.status(200).json({
-            msg: "User registered successfully",
-            newUser
-        });
+        return sendToken(newUser, 200, res);
 
     } catch (error) {
         console.error("Error while registering: ", error);
-    }
+    };
+
 }

@@ -45,8 +45,6 @@ export const sendToken = async (user: User, statusCode: number, res: Response) =
     console.log("Error while inserting a session into the database: ", error);
   }
 
-  // res.cookie("token", token, options);
-
   res.status(statusCode).cookie("token", token, options).json({
     success: true,
     user,
