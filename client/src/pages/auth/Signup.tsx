@@ -2,17 +2,22 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { SignUpInitial } from "../../redux/Slices/user.slice";
+import { SignUpInitial, SignupSuccess } from "../../redux/Slices/user.slice";
 import { useAppSelector } from "../../redux/hooks/hook";
 
 let currentOTPIndex: number = 0;
 
 export default function Register() {
-  const { currentUser } = useAppSelector((state) => state.user);
+  const { currentUser, isAuthenticated } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [seconds, setSeconds] = useState<number>(60);
+
   const [loading, setLoading] = useState<boolean>(false);
+  const [register, setRegister] = useState<boolean>(true);
   const [details, setDetails] = useState<boolean>(false);
+  const [verifyComp, setVerifyComp] = useState<boolean>(false);
 
   const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
   const [otp, setOTP] = useState(new Array(6).fill(""));
@@ -44,9 +49,11 @@ export default function Register() {
 
   const handleVerifyOtp = async () => {
     setVerifyLoading(true);
-    const otpString = Number(otp.join(""));
+    // e.preventDefault();
+    const otpString = String(otp.join(""));
+    console.log(otpString);
     try {
-      const res = await axios.put(
+      const res = await axios.post(
         "http://localhost:7070/verify",
         { otp: otpString, email: currentUser?.email },
         {
@@ -54,6 +61,9 @@ export default function Register() {
         }
       );
       console.log(res.data);
+      dispatch(SignupSuccess(res.data.existingUser));
+      setDetails(false);
+      setVerifyComp(true);
     } catch (error) {
       console.error("Error while verifying OTP: ", error);
     }
@@ -80,15 +90,25 @@ export default function Register() {
       const res = await axios.post("http://localhost:7070/register", formData, {
         withCredentials: true,
       });
-      navigate(`/`);
       console.log(res.data);
       dispatch(SignUpInitial(res.data.user));
+      setRegister(false);
       setDetails(true);
     } catch (error) {
       console.error("Error while registering: ", error);
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (seconds > 0) {
+      const interval = setInterval(() => {
+        setSeconds((prevSeconds) => prevSeconds - 1);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [seconds]);
 
   return (
     <>
@@ -119,7 +139,7 @@ export default function Register() {
                 <span>Login</span>
               </a>
             </div>
-            {!details && (
+            {register && (
               <form
                 action=""
                 className="p-4 px-[3rem]"
@@ -135,6 +155,7 @@ export default function Register() {
                     id="name"
                     placeholder="Enter your username"
                     onChange={handleInputChange}
+                    disabled={isAuthenticated}
                   />
                 </div>
                 <div className="flex flex-col pt-2 pb-2">
@@ -147,6 +168,7 @@ export default function Register() {
                     id="email"
                     placeholder="Enter your email"
                     onChange={handleInputChange}
+                    disabled={isAuthenticated}
                   />
                 </div>
                 <div className="flex flex-col pt-2 pb-8">
@@ -157,15 +179,16 @@ export default function Register() {
                     id="password"
                     placeholder="Enter your password"
                     onChange={handleInputChange}
+                    disabled={isAuthenticated}
                   />
                 </div>
                 <div className="mb-4">
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || isAuthenticated}
                     className="font-Code flex justify-center w-full"
                   >
-                    {loading ? "Sending OTP..." : "Register"}
+                    {(loading ? "Sending OTP..." : "Register") || (isAuthenticated ? "You are registered" : "Register")}
                   </button>
                 </div>
               </form>
@@ -174,38 +197,70 @@ export default function Register() {
               <form
                 action=""
                 className="p-4 px-[3rem]"
-                onSubmit={handleVerifyOtp}
               >
                 <div className="flex flex-col">
-                  <div className="">Otp verification</div>
-                  <div className="">
+                  <div className="font-Code flex justify-center pt-[1rem] text-sm">
+                    Enter OTP sent to
+                  </div>
+                  <div className="font-Code flex justify-center font-bold text-lg">
+                    {currentUser?.email}
+                  </div>
+                  <div className="py-[2rem] flex flex-row gap-2 justify-center">
                     {otp.map((_, index) => {
                       return (
                         <React.Fragment key={index}>
-                          <input
-                            ref={activeIndex === index ? inputRef : null}
-                            type="number"
-                            className={
-                              "w-12 h-12 border-2 rounded-xl bg-transparent outline-none text-center font-semibold text-xl spin-button-none border-gray-400 focus:border-gray-700 focus:text-gray-700 text-gray-400 transition"
-                            }
-                            onChange={handleOnChange}
-                            onKeyDown={(e) => handleOnKeyDown(e, index)}
-                            value={otp[index]}
-                          />
-                          {index === otp.length - 1 ? null : (
-                            <span className={"w-2 py-0.5"} />
-                          )}
+                          <div className="">
+                            <input
+                              ref={activeIndex === index ? inputRef : null}
+                              type="number"
+                              className={
+                                "w-10 h-10 border-2 bg-transparent outline-none text-center font-semibold text-xl spin-button-none border-slate-300 focus:border-white focus:text-white text-slate-200 transition"
+                              }
+                              onChange={handleOnChange}
+                              onKeyDown={(e) => handleOnKeyDown(e, index)}
+                              value={otp[index]}
+                            />
+                            {index === otp.length - 1 ? null : (
+                              <span className={"w-2 py-0.5"} />
+                            )}
+                          </div>
                         </React.Fragment>
                       );
                     })}
                   </div>
-                  <div className="">
-                    <button type="submit" className="" disabled={verifyLoading}>
+                  <div className="flex justify-center font-Code py-4">
+                    Resend OTP in {seconds}
+                  </div>
+                  <div className="w-full flex justify-center pb-[2rem]">
+                    <button
+                      type="button"
+                      className="w-full bg-black text-white py-2 font-Code font-bold border-2 border-white hover:bg-white hover:text-black transition ease-linear duration-100 hover:cursor-pointer"
+                      disabled={verifyLoading || seconds == 0}
+                      onClick={handleVerifyOtp}
+                    >
                       {verifyLoading ? "Verifying OTP..." : "Verify"}
                     </button>
                   </div>
                 </div>
               </form>
+            )}
+            {verifyComp && (
+              <div className="font-Code">
+                <div className="flex justify-center py-[2rem]">
+                  Your email {currentUser?.email} has been verified!
+                </div>
+                <div className="pb-[2rem] w-full flex justify-center">
+                  <button
+                    type="button"
+                    className="w-[80%] py-2 border-2 border-white hover:cursor-pointer"
+                    onClick={() => {
+                      navigate("/");
+                    }}
+                  >
+                    Go to Home
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>

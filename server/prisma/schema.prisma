@@ -20,15 +20,16 @@ enum Role {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  name       String
-  email      String    @unique
-  role       Role      @default(USER)
-  password   String
-  isVerified Boolean   @default(false)
-  Session    Session[]
-  Videos     Videos[]
-  OTP        OTP[]
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  role            Role      @default(USER)
+  password        String
+  isAuthenticated Boolean   @default(false)
+  isVerified      Boolean   @default(false)
+  Session         Session[]
+  Videos          Videos[]
+  OTP             OTP[]
 }
 
 model Session {

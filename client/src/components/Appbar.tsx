@@ -27,7 +27,9 @@ const Appbar = () => {
   return (
     <div className="absolute z-20 w-full flex flex-row bg-black pt-[1rem] pb-2 h-[5rem] font-Code">
       <div className="basis-1/3 flex justify-center">
-        <p className="text-white font-bold text-xl flex items-center">
+        <p className="text-white font-bold text-xl flex items-center hover:cursor-pointer" onClick={() => {
+          navigate('/');
+        }}>
           NexusCode
         </p>
       </div>
