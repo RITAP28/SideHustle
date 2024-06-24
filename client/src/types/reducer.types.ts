@@ -5,6 +5,7 @@ export interface userReducerInitialState {
     error: string | null;
     loading: boolean;
     isAuthenticated: boolean;
+    isVerified: boolean;
     normal: boolean;
     google: boolean;
 }

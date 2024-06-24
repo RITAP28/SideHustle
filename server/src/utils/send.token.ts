@@ -8,6 +8,7 @@ interface User {
   name: string;
   email: string;
   password: string;
+  isVerified: boolean;
 }
 
 export const sendToken = async (user: User, statusCode: number, res: Response) => {

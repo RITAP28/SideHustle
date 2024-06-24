@@ -6,6 +6,7 @@ const initialState: userReducerInitialState = {
     error: null,
     loading: false,
     isAuthenticated: false,
+    isVerified: false,
     normal: false,
     google: false
 };
@@ -19,6 +20,14 @@ export const userSlice = createSlice({
             state.error = null;
             state.loading = false;
             state.isAuthenticated = true;
+            state.isVerified = true;
+        },
+        SignUpInitial: (state, action) => {
+            state.currentUser = action.payload;
+            state.error = null;
+            state.loading = false;
+            state.isAuthenticated = true;
+            state.isVerified = false;
         },
         UserExist: (state, action) => {
             state.currentUser = action.payload;
@@ -53,5 +62,5 @@ export const userSlice = createSlice({
     }
 });
 
-export const { SignupFailure, SignupSuccess, SigninFailure, SigninSuccess, UserExist, UserNotExist } = userSlice.actions;
+export const { SignupFailure, SignupSuccess, SigninFailure, SigninSuccess, UserExist, UserNotExist, SignUpInitial } = userSlice.actions;
 export default userSlice.reducer;
