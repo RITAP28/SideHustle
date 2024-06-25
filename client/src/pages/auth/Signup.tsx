@@ -246,8 +246,14 @@ export default function Register() {
             )}
             {verifyComp && (
               <div className="font-Code">
-                <div className="flex justify-center py-[2rem]">
-                  Your email {currentUser?.email} has been verified!
+                <div className="flex justify-center pt-[2rem]">
+                  Your email
+                </div>
+                <div className="flex justify-center font-bold text-xl py-1">
+                {currentUser?.email} 
+                </div>
+                <div className="flex justify-center pb-[2rem]">
+                has been verified!
                 </div>
                 <div className="pb-[2rem] w-full flex justify-center">
                   <button

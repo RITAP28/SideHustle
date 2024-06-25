@@ -19,6 +19,11 @@ enum Role {
   CREATOR
 }
 
+enum Plan {
+  Free
+  Premium
+}
+
 model User {
   id              Int       @id @default(autoincrement())
   name            String
@@ -27,6 +32,8 @@ model User {
   password        String
   isAuthenticated Boolean   @default(false)
   isVerified      Boolean   @default(false)
+  isPaid          Boolean   @default(false)
+  plan            Plan      @default(Free)
   Session         Session[]
   Videos          Videos[]
   OTP             OTP[]

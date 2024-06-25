@@ -12,6 +12,14 @@ import { Video } from "../../types/types";
 // import ReactPlayer from "react-player";
 import Hls from "hls.js";
 import MonacoEditor from "../../components/MonacoEditor";
+import {
+  Box,
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+} from "@chakra-ui/react";
 // import { MdFullscreenExit } from "react-icons/md";
 
 function Videos() {
@@ -102,6 +110,10 @@ function Videos() {
     handleHLSVideoPlayer();
   }, [handleHLSVideoPlayer]);
 
+  // const toggleFullScreen = () => {
+
+  // }
+
   return (
     <>
       <div className="w-full min-h-screen bg-black pt-[5rem]">
@@ -113,6 +125,7 @@ function Videos() {
               <div className="basis-1/2 w-[70%] h-[95%] pt-[4.5rem]">
                 <div className="flex justify-center">
                   <video
+                    id="fullScreen"
                     controls={false}
                     className="w-full h-full object-contain aspect-video bg-slate-700 rounded-lg"
                     ref={videoRef}
@@ -125,8 +138,15 @@ function Videos() {
                 </div>
                 <div className="flex flex-row w-full pt-2">
                   <div className="basis-3/10 flex flex-row">
-                    <div className="basis-1/3 mr-2">
-                      <IoPlayBack className="text-white text-xl" />
+                    <div className="basis-1/3">
+                      {/* <IoPlayBack className="text-white text-xl" /> */}
+                      <Box
+                        bg={"black"}
+                        as={Button}
+                        _hover={{ background: "none" }}
+                      >
+                        <IoPlayBack className="text-white text-xl" />
+                      </Box>
                     </div>
                     <div className="basis-1/3 mx-2">
                       {duration === 0 ? (
@@ -140,7 +160,14 @@ function Videos() {
                             }
                           }}
                         >
-                          <FaPause className="text-white text-xl" />
+                          {/* <FaPause className="text-white text-xl" /> */}
+                          <Box
+                            bg={"black"}
+                            as={Button}
+                            _hover={{ background: "none" }}
+                          >
+                            <FaPause className="text-white text-xl" />
+                          </Box>
                         </button>
                       ) : (
                         <button
@@ -149,18 +176,36 @@ function Videos() {
                           onClick={togglePlayPause}
                         >
                           {isPlaying ? (
-                            <FaPlay className="text-white text-xl" />
+                            <Box
+                              bg={"black"}
+                              as={Button}
+                              _hover={{ background: "none" }}
+                            >
+                              <FaPlay className="text-white text-xl" />
+                            </Box>
                           ) : (
-                            <FaPause className="text-white text-xl" />
+                            <Box
+                              bg={"black"}
+                              as={Button}
+                              _hover={{ background: "none" }}
+                            >
+                              <FaPause className="text-white text-xl" />
+                            </Box>
                           )}
                         </button>
                       )}
                     </div>
-                    <div className="basis-1/3 mx-2">
-                      <IoPlayForward className="text-white text-xl" />
+                    <div className="basis-1/3">
+                      <Box
+                        bg={"black"}
+                        as={Button}
+                        _hover={{ background: "none" }}
+                      >
+                        <IoPlayForward className="text-white text-xl" />
+                      </Box>
                     </div>
                   </div>
-                  <div className="basis-5/10 w-full mx-4">
+                  <div className="basis-5/10 w-full mx-4 mt-3">
                     <input
                       type="range"
                       className="w-full"
@@ -170,16 +215,59 @@ function Videos() {
                       onChange={handleSeek}
                     />
                   </div>
-                  <div className="basis-1/10 mx-3">
-                    <IoIosSettings className="text-white text-xl" />
+                  <div className="basis-1/10 font-Code text-sm bg-black">
+                    <Box bg={"black"}>
+                      <Menu isLazy placement="top-end">
+                        <MenuButton
+                          as={Button}
+                          bg={"black"}
+                          _hover={{ background: "none" }}
+                        >
+                          <IoIosSettings className="text-xl text-white" />
+                        </MenuButton>
+                        <MenuList bg="black" mb={2}>
+                          <MenuItem
+                            bg={"black"}
+                            fontStyle={"bold"}
+                            color={"whitesmoke"}
+                            _hover={{ background: "gray.800" }}
+                          >
+                            Playback Speed
+                          </MenuItem>
+                          <MenuItem
+                            bg={"black"}
+                            fontStyle={"bold"}
+                            color={"whitesmoke"}
+                            _hover={{ background: "gray.800" }}
+                          >
+                            Quality
+                          </MenuItem>
+                          <MenuItem
+                            bg={"black"}
+                            fontStyle={"bold"}
+                            color={"whitesmoke"}
+                            _hover={{ background: "gray.800" }}
+                          >
+                            Subtitles
+                          </MenuItem>
+                        </MenuList>
+                      </Menu>
+                    </Box>
                   </div>
-                  <div className="basis-1/10 ml-3 mr-2">
-                    <MdFullscreen className="text-white text-xl" />
+                  <div className="basis-1/10">
+                    {/* <MdFullscreen className="text-white text-xl" /> */}
+                    <Box
+                      bg={"black"}
+                      as={Button}
+                      _hover={{ background: "none" }}
+                    >
+                      <MdFullscreen className="text-white text-2xl" />
+                    </Box>
                   </div>
                 </div>
               </div>
               <div className="basis-1/2">
-                  <MonacoEditor />
+                <MonacoEditor />
               </div>
             </div>
           </>

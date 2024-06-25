@@ -13,7 +13,7 @@ const MonacoEditor = () => {
   const [language, setLanguage] = useState<string>("javascript");
   const [activeTab, setActiveTab] = useState<string>("code");
   const [, setInactivetab] = useState<string>("");
-  const [activeRunButton, setActiveRunButton] = useState<boolean>(false);
+  const [activeRunButton, setActiveRunButton] = useState<boolean>(true);
   const [activeOutputButton, setActiveOutputButton] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const  [output, setOutput] = useState<string>("");
@@ -68,7 +68,7 @@ const MonacoEditor = () => {
   };
 
   return (
-    <div className="">
+    <div className="font-Code">
       <div className="flex flex-row mx-4 gap-2">
         <div className="w-full">
           <div className="flex justify-end w-full py-2 pr-4">
@@ -145,7 +145,7 @@ const MonacoEditor = () => {
           </button>
         </div>
         <div className="">
-          <button type="button" className="px-4 py-2 font-bold bg-white text-black" onClick={runCode}>
+          <button type="button" className="px-4 py-2 font-bold bg-black text-white disabled:cursor-not-allowed" disabled={activeOutputButton} onClick={runCode}>
             {isLoading ? "Running..." : "Run"}
           </button>
         </div>
