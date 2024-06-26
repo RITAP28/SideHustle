@@ -59,7 +59,7 @@ export default function Login() {
               </label>
               <input
                 type="email"
-                className="font-Code text-sm px-2 py-2"
+                className="font-Code text-sm px-2 py-2 text-black"
                 id="email"
                 placeholder="Enter your email"
                 onChange={handleInputChange}

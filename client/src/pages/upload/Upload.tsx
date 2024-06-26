@@ -61,7 +61,7 @@ const Upload = () => {
     };
 
   return (
-    <div>
+    <div className="pt-[5rem]">
         <div className="m-8">
             <form action="/pages/upload" method="post" onSubmit={handleFormSubmit}>
                 <div className="">
