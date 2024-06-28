@@ -49,6 +49,7 @@ model Session {
 model Videos {
   videoId          Int      @id @unique @default(autoincrement())
   title            String
+  description      String 
   dateOfPublishing DateTime
   thumbnail        String
   publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)

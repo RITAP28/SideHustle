@@ -5,7 +5,11 @@ import fs from "fs";
 import { exec } from "child_process";
 import { PrismaClient } from "@prisma/client";
 import sharp from "sharp";
+import { CreateMultipartUploadCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import dotenv from 'dotenv';
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const prisma = new PrismaClient();
+dotenv.config();
 
 interface MulterRequest extends Request {
   files: {
@@ -14,19 +18,21 @@ interface MulterRequest extends Request {
   };
   body: {
     title: string;
+    description: string;
   };
   user: {
     id: number;
     name: string;
     email: string;
   };
-}
+};
 
 export const handleUploadVideo = async (req: Request, res: Response) => {
   const lessonId = uuidv4();
   const video = (req as MulterRequest).files.video?.[0];
   const thumbnail = (req as MulterRequest).files.thumbnail?.[0];
   const title = req.body.title;
+  const desc = req.body.description;
   const outputPath = path.join("public/videos", lessonId);
   const hlsPath = path.join(outputPath, "index.m3u8");
   console.log("hlsPath", hlsPath);
@@ -72,6 +78,7 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
         await prisma.videos.create({
           data: {
             title: title,
+            description: desc,
             dateOfPublishing: new Date(Date.now()),
             link: videoURL,
             thumbnail: thumbnailLink,
