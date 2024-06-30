@@ -3,9 +3,9 @@ import express from 'express';
 import multer from 'multer';
 import { storage } from '../middlewares/multer.upload';
 import { isAuthenticated } from '../utils/auth.status';
-import { handleGetOneVideo } from '../controllers/video.controller';
+import { getAllVideos, handleGetOneVideo } from '../controllers/video.controller';
 // import { handleUploadVideos } from '../controllers/services/upload.service';
-import { getAllVideos } from '../controllers/services/watch.service';
+// import { getAllVideos } from '../controllers/services/watch.service';
 import { handleUploadVideo } from '../controllers/upload.service';
 
 const upload = multer({ storage: storage });

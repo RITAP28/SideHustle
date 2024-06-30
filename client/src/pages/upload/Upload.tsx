@@ -5,6 +5,7 @@ import { Textarea } from "@chakra-ui/react";
 
 interface formdata {
   title: string;
+  description: string;
   video: File | null;
   thumbnail: File | null;
 }
@@ -13,6 +14,7 @@ const Upload = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<formdata>({
     title: "",
+    description: "",
     video: null,
     thumbnail: null,
   });
@@ -41,6 +43,13 @@ const Upload = () => {
     setFormData({
       ...formData,
       title: e.target.value,
+    });
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      description: e.target.value,
     });
   };
 
@@ -142,6 +151,7 @@ const Upload = () => {
                     width={"80%"}
                     className="ml-4 font-Code focus:text-white text-black font-semibold"
                     resize={"none"}
+                    onChange={handleDescriptionChange}
                   />
                 </div>
                 <div className="basis-1/2 flex flex-col py-4">

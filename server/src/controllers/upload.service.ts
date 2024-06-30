@@ -8,6 +8,7 @@ import sharp from "sharp";
 import dotenv from 'dotenv';
 const prisma = new PrismaClient();
 dotenv.config();
+import ffmpeg from "fluent-ffmpeg";
 
 interface MulterRequest extends Request {
   files: {
@@ -49,6 +50,8 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
       recursive: true,
     });
   }
+
+  console.log(video.path);
 
   const thumbnailPath = path.join(
     "public/thumbnails",
