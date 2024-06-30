@@ -5,9 +5,7 @@ import fs from "fs";
 import { exec } from "child_process";
 import { PrismaClient } from "@prisma/client";
 import sharp from "sharp";
-import { CreateMultipartUploadCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const prisma = new PrismaClient();
 dotenv.config();
 
