@@ -1,5 +1,5 @@
 // import { lazy } from "react"
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/common/Home";
 import Register from "./pages/auth/Signup";
 import Login from "./pages/auth/Signin";
@@ -10,20 +10,31 @@ import Appbar from "./components/Appbar";
 import Profile from "./pages/common/Profile";
 import Editor from "./pages/common/Editor";
 import Landing from "./pages/common/Landing";
+import { useAppSelector } from "./redux/hooks/hook";
 
 function App() {
   const location = useLocation();
+  const { isAuthenticated } = useAppSelector((state) => state.user);
   const hideAppBarRoutes = ["/", "/login", "register"];
   return (
     <>
       {!hideAppBarRoutes.includes(location.pathname) && <Appbar />}
       <Routes>
+        {!isAuthenticated && (
+          <>
+          <Route path="/" element={<Landing />} />
+          <Route path="/home" element={<Navigate to='/' />} />
+          </>
+        )}
+        {isAuthenticated && (
+          <>
+          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Navigate to="/home" />} />
+          </>
+        )}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/" element={<Landing />} />
         <Route path="/profile" element={<Profile />} />
-
         <Route
           path="/videos"
           element={
@@ -40,14 +51,6 @@ function App() {
             </ProtectedRoutes>
           }
         />
-        {/* <Route
-              path="/profile"
-              element={
-                <ProtectedRoutes>
-                  <Profile />
-                </ProtectedRoutes>
-              }
-            /> */}
         <Route
           path="/editor"
           element={

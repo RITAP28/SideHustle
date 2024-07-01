@@ -8,16 +8,13 @@ import { useAppSelector } from "../../redux/hooks/hook";
 let currentOTPIndex: number = 0;
 
 export default function Register() {
-  const { currentUser, isAuthenticated } = useAppSelector((state) => state.user);
+  const { currentUser, isAuthenticated, isVerified } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [seconds, setSeconds] = useState<number>(60);
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [register, setRegister] = useState<boolean>(true);
-  const [details, setDetails] = useState<boolean>(false);
-  const [verifyComp, setVerifyComp] = useState<boolean>(false);
 
   const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
   const [otp, setOTP] = useState(new Array(6).fill(""));
@@ -62,8 +59,6 @@ export default function Register() {
       );
       console.log(res.data);
       dispatch(SignupSuccess(res.data.existingUser));
-      setDetails(false);
-      setVerifyComp(true);
     } catch (error) {
       console.error("Error while verifying OTP: ", error);
     }
@@ -92,8 +87,6 @@ export default function Register() {
       });
       console.log(res.data);
       dispatch(SignUpInitial(res.data.user));
-      setRegister(false);
-      setDetails(true);
     } catch (error) {
       console.error("Error while registering: ", error);
     }
@@ -139,7 +132,7 @@ export default function Register() {
                 <span>Login</span>
               </a>
             </div>
-            {register && (
+            {(isAuthenticated !== true && isVerified !== true) && (
               <form
                 action=""
                 className="p-4 px-[3rem]"
@@ -193,7 +186,7 @@ export default function Register() {
                 </div>
               </form>
             )}
-            {details && (
+            {isAuthenticated && !isVerified && (
               <form
                 action=""
                 className="p-4 px-[3rem]"
@@ -244,7 +237,7 @@ export default function Register() {
                 </div>
               </form>
             )}
-            {verifyComp && (
+            {isAuthenticated && isVerified && (
               <div className="font-Code">
                 <div className="flex justify-center pt-[2rem]">
                   Your email

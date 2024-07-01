@@ -97,7 +97,7 @@ export default function Login() {
                 </label>
                 <input
                   type="password"
-                  className="font-Code text-sm px-2 py-2 text-black"
+                  className={`font-Code text-sm px-2 py-2 text-black`}
                   id="password"
                   placeholder="Enter your password"
                   onChange={handleInputChange}

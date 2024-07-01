@@ -40,6 +40,7 @@ export const userSlice = createSlice({
             state.error = null;
             state.loading = false;
             state.isAuthenticated = true;
+            state.isVerified = true;
         },
         SigninFailure: (state, action) => {
             state.currentUser = null;
@@ -52,6 +53,7 @@ export const userSlice = createSlice({
             state.error = null;
             state.loading = false;
             state.isAuthenticated = false;
+            state.isVerified = false;
         },
         SignupFailure: (state, action) => {
             state.currentUser = null;
