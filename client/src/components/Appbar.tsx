@@ -26,7 +26,7 @@ const Appbar = () => {
   };
   return (
     <div className="absolute z-20 w-full flex flex-row bg-black pt-[1rem] pb-2 h-[5rem] font-Code">
-      <div className="basis-1/3 flex justify-center">
+      <div className="basis-1/3 flex justify-start pl-8">
         <p className="text-white font-bold text-xl flex items-center hover:cursor-pointer" onClick={() => {
           navigate('/');
         }}>

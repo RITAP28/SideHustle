@@ -13,6 +13,7 @@ export type Video = {
     dateOfPublishing: Date;
     link: string;
     thumbnail: string;
+    description: string;
     publisherId: number;
 }
 

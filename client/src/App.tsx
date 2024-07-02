@@ -11,6 +11,7 @@ import Profile from "./pages/common/Profile";
 import Editor from "./pages/common/Editor";
 import Landing from "./pages/common/Landing";
 import { useAppSelector } from "./redux/hooks/hook";
+import Rooms from "./pages/common/Rooms";
 
 function App() {
   const location = useLocation();
@@ -56,6 +57,14 @@ function App() {
           element={
             <ProtectedRoutes>
               <Editor />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/rooms"
+          element={
+            <ProtectedRoutes>
+              <Rooms />
             </ProtectedRoutes>
           }
         />

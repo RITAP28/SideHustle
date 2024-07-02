@@ -68,7 +68,7 @@ const MonacoEditor = () => {
   };
 
   return (
-    <div className="font-Code">
+    <div className="font-Code w-full h-full">
       <div className="flex flex-row mx-4 gap-2">
         <div className="w-full">
           <div className="flex justify-end w-full py-2 pr-4">
@@ -79,7 +79,7 @@ const MonacoEditor = () => {
               <Editor
                 language={language}
                 defaultValue={CODE_SNIPPETS[language]}
-                height="50vh"
+                height="70vh"
                 theme="vs-dark"
                 value={value}
                 onMount={onMount}

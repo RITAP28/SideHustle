@@ -31,8 +31,10 @@ function Videos() {
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [creatorInfo, setCreatorInfo] = useState();
   const urlParams = new URLSearchParams(window.location.search);
   const videoId = urlParams.get("videoId");
+  const creatorId = urlParams.get("creator");
   const dispatch = useAppDispatch();
 
   const togglePlayPause = () => {
@@ -110,9 +112,24 @@ function Videos() {
     handleHLSVideoPlayer();
   }, [handleHLSVideoPlayer]);
 
-  // const toggleFullScreen = () => {
+  const getCreatorInfo = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:7070/getCreator?creator=${creatorId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(res.data);
+      setCreatorInfo(res.data);
+    } catch (error) {
+      console.error("Error while getting creator info in frontend: ", error);
+    }
+  }
 
-  // }
+  useEffect(() => {
+    getCreatorInfo()
+  });
 
   return (
     <>
@@ -122,12 +139,19 @@ function Videos() {
         ) : (
           <>
             <div className="pt-2 ml-[2rem] flex flex-row gap-4">
-              <div className="basis-1/2 w-[70%] h-[95%] pt-[4.5rem]">
-                <div className="flex justify-center">
+              <div className="w-[60%] h-[95%] pt-[2.5rem]">
+                {/* video part */}
+                {/* scrollable content in the page */}
+                <div className="w-full">
+                  <p className="font-Code font-bold text-white text-lg">
+                    <span className="underline">title</span>: {video?.title}
+                  </p>
+                </div>
+                <div className="flex justify-center pt-[0.5rem]">
                   <video
                     id="fullScreen"
                     controls={false}
-                    className="w-full h-full object-contain aspect-video bg-slate-700 rounded-lg"
+                    className="w-full h-full object-contain aspect-video bg-slate-700 rounded-xl"
                     ref={videoRef}
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetaData}
@@ -265,8 +289,38 @@ function Videos() {
                     </Box>
                   </div>
                 </div>
+
+                {/* metadata of the video */}
+                <div className="w-full flex flex-row">
+                  <div className="w-[40%] bg-red-300 flex flex-row">
+                    <div className="w-[50%]">{creatorInfo}</div>
+                  </div>
+                  <div className="w-[60%] bg-green-300"></div>
+                </div>
+                <div className="w-full">
+                  <div className="w-full bg-slate-600 pb-4 px-2 rounded-lg">
+                    <div className="w-full font-Code font-semibold">
+                      <p className="">
+                        5000 views{" "}
+                        <span className="px-2">
+                          {video?.dateOfPublishing !== undefined &&
+                            new Date(
+                              video?.dateOfPublishing
+                            ).toLocaleDateString()}
+                        </span>{" "}
+                      </p>
+                    </div>
+                    <div className="w-full pt-2">
+                      <p className="font-Code text-white font-semibold">
+                        {video?.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="basis-1/2">
+
+              {/* the editor should be unscrollable */}
+              <div className="w-[40%] h-full">
                 <MonacoEditor />
               </div>
             </div>

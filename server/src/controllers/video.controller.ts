@@ -56,3 +56,34 @@ export const handleGetOneVideo = async (req: Request, res: Response) => {
         });
     };
 };
+
+export const handleGetCreatorInfo = async (req: Request, res: Response) => {
+    try {
+        const creatorId = Number(req.query.id);
+        console.log(creatorId);
+        if(isNaN(creatorId)){
+            return res.status(400).json({
+                success: false,
+                msg: "Invalid creator ID"
+            });
+        };
+
+        const creator = await prisma.user.findUnique({
+            where: {
+                id: creatorId
+            }
+        });
+        console.log(creator);
+        return res.status(200).json({
+            success: true,
+            msg: "Creator found",
+            creator
+        });
+    } catch (error) {
+        console.error("Error while fetching the name of the creator: ", error);
+        return res.status(404).json({
+            success: false,
+            msg: "Creator not found"
+        });
+    };
+};
