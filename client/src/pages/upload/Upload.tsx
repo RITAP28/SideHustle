@@ -2,6 +2,10 @@ import axios from "axios";
 import { useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import { Textarea } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../redux/hooks/hook";
+import { useDispatch } from "react-redux";
+import { UserBecomesCreator } from "../../redux/Slices/user.slice";
 
 interface formdata {
   title: string;
@@ -11,6 +15,9 @@ interface formdata {
 }
 
 const Upload = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentUser } = useAppSelector((state) => state.user);
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<formdata>({
     title: "",
@@ -67,14 +74,25 @@ const Upload = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      await axios.put(`http://localhost:7070/rolecreator?id=${userId}`, {
-        withCredentials: true
-      });
+
+      if(currentUser?.role != "CREATOR"){
+        try {
+          const becomingCreator = await axios.post(`http://localhost:7070/rolecreator?id=${userId}`, null, {
+            withCredentials: true,
+          });
+          dispatch(UserBecomesCreator());
+          console.log(becomingCreator.data);
+        } catch (error) {
+          console.log("Error while becoming a creator: ", error);
+        }
+      }
+      
       console.log(res.data);
     } catch (error) {
       console.error("Error while uploading: ", error);
     }
     setLoading(false);
+    navigate('/');
   };
 
   return (

@@ -7,6 +7,7 @@ const initialState: userReducerInitialState = {
     loading: false,
     isAuthenticated: false,
     isVerified: false,
+    isCreator: false,
     normal: false,
     google: false
 };
@@ -60,9 +61,17 @@ export const userSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
             state.isAuthenticated = false;
+        },
+        UserBecomesCreator: (state) => {
+            if(state.currentUser !== null){
+                state.currentUser.role = "CREATOR";
+            }
+            state.isCreator = true;
+            state.loading = false;
+            state.error = null;
         }
     }
 });
 
-export const { SignupFailure, SignupSuccess, SigninFailure, SigninSuccess, UserExist, UserNotExist, SignUpInitial } = userSlice.actions;
+export const { SignupFailure, SignupSuccess, SigninFailure, SigninSuccess, UserExist, UserNotExist, SignUpInitial, UserBecomesCreator } = userSlice.actions;
 export default userSlice.reducer;

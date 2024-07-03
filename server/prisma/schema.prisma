@@ -31,6 +31,7 @@ model User {
   Session         Session[]
   Videos          Videos[]
   OTP             OTP[]
+  Creator         Creator[]
 }
 
 model Session {
@@ -43,7 +44,7 @@ model Session {
 model Videos {
   videoId          Int      @id @unique @default(autoincrement())
   title            String
-  description      String 
+  description      String
   dateOfPublishing DateTime
   thumbnail        String
   publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)
@@ -58,4 +59,18 @@ model OTP {
   otpExpiresAt DateTime
   userId       Int      @unique
   user         User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model Creator {
+  creatorId   Int    @id @default(autoincrement())
+  creator     String
+  displayName String
+  videos      Int    @default(autoincrement())
+  subscribers Int    @default(0)
+  views       Int    @default(0)
+  stars       Int    @default(0)
+  comments    Int    @default(0)
+  userId      Int    @unique
+  userEmail   String @unique
+  user        User   @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
