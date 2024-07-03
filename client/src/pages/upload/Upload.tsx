@@ -19,6 +19,9 @@ const Upload = () => {
     thumbnail: null,
   });
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get("id");
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
       const file: File = e.target.files[0];
@@ -63,6 +66,9 @@ const Upload = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+      });
+      await axios.put(`http://localhost:7070/rolecreator?id=${userId}`, {
+        withCredentials: true
       });
       console.log(res.data);
     } catch (error) {

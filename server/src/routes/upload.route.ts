@@ -7,6 +7,7 @@ import { getAllVideos, handleGetCreatorInfo, handleGetOneVideo } from '../contro
 // import { handleUploadVideos } from '../controllers/services/upload.service';
 // import { getAllVideos } from '../controllers/services/watch.service';
 import { handleUploadVideo } from '../controllers/upload.service';
+import { handleBecomeCreator } from '../controllers/user.controller';
 
 const upload = multer({ storage: storage });
 
@@ -23,4 +24,5 @@ export default (router: express.Router) => {
     router.get('/getallvideos', getAllVideos);
     router.get('/videos', isAuthenticated, handleGetOneVideo);
     router.get('/getCreator', isAuthenticated, handleGetCreatorInfo);
+    router.put('/rolecreator', isAuthenticated, handleBecomeCreator);
 };
