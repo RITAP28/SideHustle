@@ -25,7 +25,6 @@ export const getAllVideos = async (req: Request, res: Response) => {
 export const handleGetOneVideo = async (req: Request, res: Response) => {
     try {
         const videoId = Number(req.query.videoId);
-        // console.log(videoId);
         if(isNaN(videoId)){
             return res.status(400).json({
                 success: false,
@@ -59,7 +58,7 @@ export const handleGetOneVideo = async (req: Request, res: Response) => {
 
 export const handleGetCreatorInfo = async (req: Request, res: Response) => {
     try {
-        const creatorId = Number(req.query.id);
+        const creatorId = Number(req.query.creator);
         console.log(creatorId);
         if(isNaN(creatorId)){
             return res.status(400).json({
@@ -77,7 +76,8 @@ export const handleGetCreatorInfo = async (req: Request, res: Response) => {
         return res.status(200).json({
             success: true,
             msg: "Creator found",
-            creator
+            creatorName: creator?.name as string,
+            creatorEmail: creator?.email as string
         });
     } catch (error) {
         console.error("Error while fetching the name of the creator: ", error);

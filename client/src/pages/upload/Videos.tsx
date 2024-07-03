@@ -9,6 +9,7 @@ import axios from "axios";
 import { useAppDispatch } from "../../redux/hooks/hook";
 import { CurrentVideo } from "../../redux/Slices/video.slice";
 import { Video } from "../../types/types";
+import { RxAvatar } from "react-icons/rx";
 // import ReactPlayer from "react-player";
 import Hls from "hls.js";
 import MonacoEditor from "../../components/MonacoEditor";
@@ -31,11 +32,12 @@ function Videos() {
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [creatorInfo, setCreatorInfo] = useState();
   const urlParams = new URLSearchParams(window.location.search);
   const videoId = urlParams.get("videoId");
-  const creatorId = urlParams.get("creator");
   const dispatch = useAppDispatch();
+  const [creatorEmail, setCreatorEmail] = useState<string>("");
+  const [creatorName, setCreatorName] = useState<string>("");
+  const creatorId = urlParams.get("creator") as string;
 
   const togglePlayPause = () => {
     if (videoRef.current !== null && videoRef.current.paused) {
@@ -112,28 +114,32 @@ function Videos() {
     handleHLSVideoPlayer();
   }, [handleHLSVideoPlayer]);
 
-  const getCreatorInfo = async () => {
+  const getCreatorInfo = async (id: string) => {
     try {
-      const res = await axios.get(
-        `http://localhost:7070/getCreator?creator=${creatorId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      console.log(res.data);
-      setCreatorInfo(res.data);
+        const creator = await axios.get(`http://localhost:7070/getCreator?creator=${id}`, {
+            withCredentials: true
+        });
+        console.log(creator.data);
+        console.log(creator.data.creatorName);
+        setCreatorName(String(creator.data.creatorName));
+        setCreatorEmail(creator.data.creatorEmail);
     } catch (error) {
-      console.error("Error while getting creator info in frontend: ", error);
+        console.error("Error getting creator information: ", error);
     }
-  }
+};
 
-  useEffect(() => {
-    getCreatorInfo()
-  });
+const nameEmail = () => {
+  console.log(creatorName);
+  console.log(creatorEmail);
+};
+
+useEffect(() => {
+    getCreatorInfo(creatorId);
+}, [creatorId]);
 
   return (
     <>
-      <div className="w-full min-h-screen bg-black pt-[5rem]">
+      <div className="w-full min-h-screen bg-black pt-[5rem] pb-[2rem]">
         {loading ? (
           "Loading..."
         ) : (
@@ -291,11 +297,24 @@ function Videos() {
                 </div>
 
                 {/* metadata of the video */}
-                <div className="w-full flex flex-row">
-                  <div className="w-[40%] bg-red-300 flex flex-row">
-                    <div className="w-[50%]">{creatorInfo}</div>
+                <div className="w-full text-white py-4">
+                  <div className="w-full">
+                    <div className="w-1/2 flex flex-row">
+                      <div className="w-[20%] flex justify-center">
+                        <RxAvatar className="text-[3rem]" />
+                      </div>
+                      <div className="w-[50%]">
+                        <p className="font-Philosopher text-xl">{creatorName}</p>
+                        <p className="">number of subscribers</p>
+                      </div>
+                      <div className="w-[30%]">
+                        <button type="button" className="px-4 py-2 bg-white text-black font-Code">
+                          Subscribe
+                        </button>
+                      </div>
+                    </div>
+                    <div className="w-1/2"></div>
                   </div>
-                  <div className="w-[60%] bg-green-300"></div>
                 </div>
                 <div className="w-full">
                   <div className="w-full bg-slate-600 pb-4 px-2 rounded-lg">
