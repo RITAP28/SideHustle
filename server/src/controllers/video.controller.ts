@@ -67,17 +67,17 @@ export const handleGetCreatorInfo = async (req: Request, res: Response) => {
             });
         };
 
-        const creator = await prisma.user.findUnique({
+        const creator = await prisma.creator.findUnique({
             where: {
-                id: creatorId
+                userId: creatorId
             }
         });
         console.log(creator);
         return res.status(200).json({
             success: true,
             msg: "Creator found",
-            creatorName: creator?.name as string,
-            creatorEmail: creator?.email as string
+            creatorName: creator?.creator as string,
+            creatorEmail: creator?.userEmail as string
         });
     } catch (error) {
         console.error("Error while fetching the name of the creator: ", error);

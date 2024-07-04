@@ -4,7 +4,7 @@ import { storage } from '../middlewares/multer.upload';
 import { isAuthenticated } from '../utils/auth.status';
 import { getAllVideos, handleGetCreatorInfo, handleGetOneVideo } from '../controllers/video.controller';
 import { handleUploadVideo } from '../controllers/upload.service';
-import { handleBecomeCreator } from '../controllers/user.controller';
+import { handleBecomeCreator, handleSubscribe } from '../controllers/user.controller';
 
 const upload = multer({ storage: storage });
 
@@ -22,4 +22,5 @@ export default (router: express.Router) => {
     router.get('/videos', isAuthenticated, handleGetOneVideo);
     router.get('/getCreator', isAuthenticated, handleGetCreatorInfo);
     router.post('/rolecreator', isAuthenticated, handleBecomeCreator);
+    router.post('/subscribe', isAuthenticated, handleSubscribe);
 };

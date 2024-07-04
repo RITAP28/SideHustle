@@ -15,6 +15,7 @@ export const handleGetUser = async (req: Request, res: Response) => {
     });
 };
 
+// function which gets called when a user uploads a video for the first time
 export const handleBecomeCreator = async (req: Request, res: Response) => {
     const userId = Number(req.query.id);
     try {
@@ -68,6 +69,7 @@ export const handleBecomeCreator = async (req: Request, res: Response) => {
     };
 };
 
+// function which gets called when the user clicks on the subscribe button on any creator page
 export const handleSubscribe = async (req: Request, res: Response) => {
     try {
         // found the user
@@ -85,7 +87,7 @@ export const handleSubscribe = async (req: Request, res: Response) => {
         // found the creator
         const creator = await prisma.creator.findUnique({
             where: {
-                creatorId: Number(req.query.creator)
+                userId: Number(req.query.creator)
             }
         });
         if(!creator){
@@ -94,6 +96,34 @@ export const handleSubscribe = async (req: Request, res: Response) => {
                 msg: "Creator not found"
             })
         };
+
+        // adding the creator to the subscriptions of the user
+        const subscriptionAdded = await prisma.subscriptions.create({
+            data: {
+                userid: user.id,
+                userName: user.name,
+                creatorId: creator.userId,
+                creatorName: creator.creator
+            }
+        });
+        console.log(subscriptionAdded);
+
+        // adding the user to the subscribers of the creator
+        const subscriberAdded = await prisma.creatorSubscribers.create({
+            data: {
+                subscriberId: user.id,
+                userName: user.name,
+                creatorId: creator.userId,
+                creatorName: creator.creator
+            }
+        });
+        console.log(subscriberAdded);
+
+        return res.status(200).json({
+            success: true,
+            msg: `user ${user.name} has been added as a subscriber to the creator ${creator.creator}`
+        });
+        
     } catch (error) {
         console.error("Error subscribing: ", error);
         return res.status(500).json({
@@ -101,4 +131,4 @@ export const handleSubscribe = async (req: Request, res: Response) => {
             msg: "Error subscribing"
         });
     }
-}
+};

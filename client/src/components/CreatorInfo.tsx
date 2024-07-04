@@ -9,7 +9,9 @@ const CreatorInfo = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const [, setCreatorEmail] = useState<string>("");
   const [creatorName, setCreatorName] = useState<string>("");
+  const [subscribe, setSubscribe] = useState<boolean>(false);
   const creatorId = urlParams.get("creator") as string;
+  const userId = urlParams.get("user") as string;
   const getCreatorInfo = async (id: string) => {
     try {
       const creator = await axios.get(
@@ -30,6 +32,19 @@ const CreatorInfo = () => {
   useEffect(() => {
     getCreatorInfo(creatorId);
   }, [creatorId]);
+
+  const handleSubscribe = async () => {
+    try {
+      const subscriber = await axios.post(`http://localhost:7070/subscribe?user=${userId}&creator=${creatorId}`, null, {
+        withCredentials: true
+      });
+      console.log(subscriber.data);
+      setSubscribe(true);
+    } catch (error) {
+      console.error("Error subscribing to creator: ", error);
+    }
+  };
+
   return (
     <>
       <div className="w-full flex flex-row">
@@ -44,9 +59,10 @@ const CreatorInfo = () => {
           <div className="w-[40%] flex items-center pl-2">
             <button
               type="button"
-              className="px-4 py-2 bg-white text-black font-bold font-Code"
+              className={`px-4 py-2 bg-white text-black font-bold font-Code ${subscribe === true && "bg-black text-white"}`}
+              onClick={handleSubscribe}
             >
-              Subscribe
+              {subscribe ? "Subscribed" : "Subscribe"}
             </button>
           </div>
         </div>
