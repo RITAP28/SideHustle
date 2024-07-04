@@ -5,15 +5,16 @@ import { BiDislike } from "react-icons/bi";
 import { BsThreeDots } from "react-icons/bs";
 import { RxAvatar } from "react-icons/rx";
 
-const CreatorInfo = ({ userId, creatorId } : {
+const CreatorInfo = ({ userId, creatorId, isSubscribed } : {
   userId: number,
-  creatorId: number
+  creatorId: number,
+  isSubscribed: boolean
 }) => {
   // const urlParams = new URLSearchParams(window.location.search);
   const [, setCreatorEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [creatorName, setCreatorName] = useState<string>("");
-  const [subscribe, setSubscribe] = useState<boolean>(false);
+  const [subscribed, setSubscribed] = useState<boolean>(isSubscribed);
   const getCreatorInfo = async (id: number) => {
     try {
       const creator = await axios.get(
@@ -42,10 +43,10 @@ const CreatorInfo = ({ userId, creatorId } : {
       });
       console.log(subscriber.data);
       setLoading(false);
+      setSubscribed(true);
     } catch (error) {
       console.error("Error subscribing to creator: ", error);
     }
-    setSubscribe(true);
   };
 
   return (
@@ -62,11 +63,11 @@ const CreatorInfo = ({ userId, creatorId } : {
           <div className="w-[40%] flex items-center pl-2">
             <button
               type="button"
-              className={`px-4 py-2 bg-white text-black font-bold font-Code ${subscribe && "bg-black text-white"}`}
+              className={`px-4 py-2 font-bold font-Code ${subscribed ? "bg-black text-white" : "bg-white text-black"}`}
               onClick={handleSubscribe}
-              disabled={loading}
+              disabled={loading || subscribed}
             >
-              {subscribe ? "Subscribed" : "Subscribe"}
+              {subscribed ? "Subscribed" : "Subscribe"}
             </button>
           </div>
         </div>

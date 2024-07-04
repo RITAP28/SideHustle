@@ -137,3 +137,34 @@ export const handleSubscribe = async (req: Request, res: Response) => {
         });
     }
 };
+
+// function which says whether the user is subscribed to that particular creator or not
+export const handleIsSubscribed = async (req: Request, res: Response) => {
+    const userId = Number(req.query.user);
+    const creatorId = Number(req.query.creator);
+    try {
+        const existingSubscription = await prisma.subscriptions.findFirst({
+            where: {
+                userId: userId,
+                creatorUserId: creatorId
+            }
+        });
+        
+        if(!existingSubscription){
+            return res.json({
+                success: false
+            });
+        };
+
+        console.log("User is not subscribed yet");
+        return res.json({
+            success: true
+        });
+    } catch (error) {
+        console.error("Error while checking if the user is subscribed: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        })
+    };
+};

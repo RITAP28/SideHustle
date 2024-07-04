@@ -31,6 +31,7 @@ function Videos() {
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const urlParams = new URLSearchParams(window.location.search);
   const videoId = urlParams.get("videoId");
   const creatorId = Number(urlParams.get("creator"));
@@ -112,6 +113,22 @@ function Videos() {
     handleHLSVideoPlayer();
   }, [handleHLSVideoPlayer]);
 
+  const handleIsSubscribed = useCallback(async () => {
+    try {
+      const res = await axios.get(`http://localhost:7070/isSubscribed?creator=${creatorId}&user=${userId}`, {
+        withCredentials: true
+      });
+      console.log(res.data);
+      setIsSubscribed(res.data.success);
+    } catch (error) {
+      console.error("Error while checking whether the user is subscribed or not: ", error);
+    }
+  }, [creatorId, userId]);
+
+  useEffect(() => {
+    handleIsSubscribed();
+  }, [handleIsSubscribed]);
+
   return (
     <>
       <div className="w-full min-h-screen bg-black pt-[5rem] pb-[2rem]">
@@ -155,36 +172,27 @@ function Videos() {
                     </div>
                     <div className="basis-1/3 mx-2">
                       {duration === 0 ? (
-                        <button
-                          type="button"
-                          className=""
-                          onClick={() => {
-                            if (videoRef.current !== null) {
-                              videoRef.current.play();
-                              setIsPlaying(true);
-                            }
-                          }}
-                        >
-                          {/* <FaPause className="text-white text-xl" /> */}
                           <Box
                             bg={"black"}
                             as={Button}
                             _hover={{ background: "none" }}
+                            onClick={() => {
+                              if (videoRef.current !== null) {
+                                videoRef.current.play();
+                                setIsPlaying(true);
+                              }
+                            }}
                           >
                             <FaPause className="text-white text-xl" />
                           </Box>
-                        </button>
                       ) : (
-                        <button
-                          type="button"
-                          className=""
-                          onClick={togglePlayPause}
-                        >
+                        <div>
                           {isPlaying ? (
                             <Box
                               bg={"black"}
                               as={Button}
                               _hover={{ background: "none" }}
+                              onClick={togglePlayPause}
                             >
                               <FaPlay className="text-white text-xl" />
                             </Box>
@@ -193,11 +201,12 @@ function Videos() {
                               bg={"black"}
                               as={Button}
                               _hover={{ background: "none" }}
+                              onClick={togglePlayPause}
                             >
                               <FaPause className="text-white text-xl" />
                             </Box>
                           )}
-                        </button>
+                        </div>
                       )}
                     </div>
                     <div className="basis-1/3">
@@ -287,7 +296,7 @@ function Videos() {
                       </p>
                     </div>
                     <div className="w-full text-white py-4">
-                      <CreatorInfo userId={userId} creatorId={creatorId} />
+                      <CreatorInfo userId={userId} creatorId={creatorId} isSubscribed={isSubscribed} />
                     </div>
                     <div className="w-full pt-2">
                       <p className="font-Code text-white font-semibold">
