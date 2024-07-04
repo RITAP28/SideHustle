@@ -22,6 +22,7 @@ export const userSlice = createSlice({
             state.loading = false;
             state.isAuthenticated = true;
             state.isVerified = true;
+            state.isCreator = false;
         },
         SignUpInitial: (state, action) => {
             state.currentUser = action.payload;
@@ -29,6 +30,7 @@ export const userSlice = createSlice({
             state.loading = false;
             state.isAuthenticated = true;
             state.isVerified = false;
+            state.isCreator = false;
         },
         UserExist: (state, action) => {
             state.currentUser = action.payload;
@@ -42,12 +44,16 @@ export const userSlice = createSlice({
             state.loading = false;
             state.isAuthenticated = true;
             state.isVerified = true;
+            if(state.currentUser != null && state.currentUser.role == "CREATOR"){
+                state.isCreator = true;
+            }
         },
         SigninFailure: (state, action) => {
             state.currentUser = null;
             state.error = action.payload;
             state.loading = false;
             state.isAuthenticated = false;
+            state.isCreator = false;
         },
         UserNotExist: (state) => {
             state.currentUser = null;

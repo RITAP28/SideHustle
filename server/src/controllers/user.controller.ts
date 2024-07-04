@@ -67,3 +67,38 @@ export const handleBecomeCreator = async (req: Request, res: Response) => {
         });
     };
 };
+
+export const handleSubscribe = async (req: Request, res: Response) => {
+    try {
+        // found the user
+        const user = await prisma.user.findUnique({
+            where: {
+                id: Number(req.query.user)
+            }
+        });
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                msg: "Not Authenticated"
+            })
+        };
+        // found the creator
+        const creator = await prisma.creator.findUnique({
+            where: {
+                creatorId: Number(req.query.creator)
+            }
+        });
+        if(!creator){
+            return res.status(404).json({
+                success: false,
+                msg: "Creator not found"
+            })
+        };
+    } catch (error) {
+        console.error("Error subscribing: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Error subscribing"
+        });
+    }
+}

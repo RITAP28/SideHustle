@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
+import { useAppSelector } from "../../redux/hooks/hook";
 
 interface Video {
   videoId: number;
@@ -14,6 +15,7 @@ interface Video {
 
 const Home = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAppSelector((state) => state.user);
   const [videos, setVideos] = useState<Video[]>([]);
   const handleGetAllPosts = async () => {
     try {
@@ -46,7 +48,7 @@ const Home = () => {
                   className="text-black hover:cursor-pointer w-full h-[15rem] py-[2rem]"
                   onClick={() => {
                     navigate(
-                      `/videos?creator=${video.publisherId}&videoId=${video.videoId}&title=${video.title}`
+                      `/videos?creator=${video.publisherId}&user=${currentUser?.id}&videoId=${video.videoId}&title=${video.title}`
                     );
                   }}
                 >

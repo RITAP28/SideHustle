@@ -35,7 +35,6 @@ function Videos() {
   const videoId = urlParams.get("videoId");
   const dispatch = useAppDispatch();
 
-
   const togglePlayPause = () => {
     if (videoRef.current !== null && videoRef.current.paused) {
       videoRef.current.play();
@@ -110,8 +109,6 @@ function Videos() {
   useEffect(() => {
     handleHLSVideoPlayer();
   }, [handleHLSVideoPlayer]);
-
- 
 
   return (
     <>
@@ -273,10 +270,8 @@ function Videos() {
                 </div>
 
                 {/* metadata of the video */}
-                <div className="w-full text-white py-4">
-                  <CreatorInfo />
-                </div>
-                <div className="w-full">
+
+                <div className="w-full pt-[2rem]">
                   <div className="w-full bg-slate-600 pb-4 px-2 rounded-lg">
                     <div className="w-full font-Code font-semibold">
                       <p className="">
@@ -288,6 +283,9 @@ function Videos() {
                             ).toLocaleDateString()}
                         </span>{" "}
                       </p>
+                    </div>
+                    <div className="w-full text-white py-4">
+                      <CreatorInfo />
                     </div>
                     <div className="w-full pt-2">
                       <p className="font-Code text-white font-semibold">

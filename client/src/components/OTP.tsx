@@ -40,7 +40,6 @@ const OTPComponent = () => {
 
   const handleVerifyOtp = async () => {
     setVerifyLoading(true);
-    // e.preventDefault();
     const otpString = String(otp.join(""));
     console.log(otpString);
     try {
