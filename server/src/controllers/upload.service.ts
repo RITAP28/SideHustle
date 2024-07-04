@@ -5,7 +5,7 @@ import fs from "fs";
 import { exec } from "child_process";
 import { PrismaClient } from "@prisma/client";
 import sharp from "sharp";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 const prisma = new PrismaClient();
 dotenv.config();
 import ffmpeg from "fluent-ffmpeg";
@@ -24,7 +24,7 @@ interface MulterRequest extends Request {
     name: string;
     email: string;
   };
-};
+}
 
 export const handleUploadVideo = async (req: Request, res: Response) => {
   const lessonId = uuidv4();
@@ -63,7 +63,9 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
       .webp({ quality: 20 })
       .toBuffer();
     await fs.promises.writeFile(`${thumbnailPath}.webp`, resizedImageBuffer);
-    const thumbnailLink = `http://localhost:${process.env.PORT}/thumbnails/${path.basename(thumbnailPath)}.webp`;
+    const thumbnailLink = `http://localhost:${
+      process.env.PORT
+    }/thumbnails/${path.basename(thumbnailPath)}.webp`;
 
     const ffmpegCommand = `ffmpeg -i ${video.path} -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename "${outputPath}/segment%03d.ts" -start_number 0 ${hlsPath}`;
 
@@ -100,6 +102,15 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
           error
         );
       }
+      // Set user as creator of the uploaded video
+      await prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          isCreator: true,
+        },
+      });
     });
   } catch (error) {
     console.error("Error while uploading files overall: ", error);

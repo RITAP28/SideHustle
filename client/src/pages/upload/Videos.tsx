@@ -33,6 +33,8 @@ function Videos() {
   const [loading, setLoading] = useState<boolean>(false);
   const urlParams = new URLSearchParams(window.location.search);
   const videoId = urlParams.get("videoId");
+  const creatorId = Number(urlParams.get("creator"));
+  const userId = Number(urlParams.get("user"));
   const dispatch = useAppDispatch();
 
   const togglePlayPause = () => {
@@ -285,7 +287,7 @@ function Videos() {
                       </p>
                     </div>
                     <div className="w-full text-white py-4">
-                      <CreatorInfo />
+                      <CreatorInfo userId={userId} creatorId={creatorId} />
                     </div>
                     <div className="w-full pt-2">
                       <p className="font-Code text-white font-semibold">

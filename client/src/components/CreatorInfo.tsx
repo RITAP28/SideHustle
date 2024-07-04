@@ -5,14 +5,16 @@ import { BiDislike } from "react-icons/bi";
 import { BsThreeDots } from "react-icons/bs";
 import { RxAvatar } from "react-icons/rx";
 
-const CreatorInfo = () => {
-  const urlParams = new URLSearchParams(window.location.search);
+const CreatorInfo = ({ userId, creatorId } : {
+  userId: number,
+  creatorId: number
+}) => {
+  // const urlParams = new URLSearchParams(window.location.search);
   const [, setCreatorEmail] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [creatorName, setCreatorName] = useState<string>("");
   const [subscribe, setSubscribe] = useState<boolean>(false);
-  const creatorId = urlParams.get("creator") as string;
-  const userId = urlParams.get("user") as string;
-  const getCreatorInfo = async (id: string) => {
+  const getCreatorInfo = async (id: number) => {
     try {
       const creator = await axios.get(
         `http://localhost:7070/getCreator?creator=${id}`,
@@ -20,10 +22,9 @@ const CreatorInfo = () => {
           withCredentials: true,
         }
       );
-      console.log(creator.data);
-      console.log(creator.data.creatorName);
       setCreatorName(String(creator.data.creatorName));
       setCreatorEmail(creator.data.creatorEmail);
+
     } catch (error) {
       console.error("Error getting creator information: ", error);
     }
@@ -35,14 +36,16 @@ const CreatorInfo = () => {
 
   const handleSubscribe = async () => {
     try {
-      const subscriber = await axios.post(`http://localhost:7070/subscribe?user=${userId}&creator=${creatorId}`, null, {
+      setLoading(true);
+      const subscriber = await axios.post(`http://localhost:7070/subscribe?creator=${creatorId}&user=${userId}`, null, {
         withCredentials: true
       });
       console.log(subscriber.data);
-      setSubscribe(true);
+      setLoading(false);
     } catch (error) {
       console.error("Error subscribing to creator: ", error);
     }
+    setSubscribe(true);
   };
 
   return (
@@ -59,8 +62,9 @@ const CreatorInfo = () => {
           <div className="w-[40%] flex items-center pl-2">
             <button
               type="button"
-              className={`px-4 py-2 bg-white text-black font-bold font-Code ${subscribe === true && "bg-black text-white"}`}
+              className={`px-4 py-2 bg-white text-black font-bold font-Code ${subscribe && "bg-black text-white"}`}
               onClick={handleSubscribe}
+              disabled={loading}
             >
               {subscribe ? "Subscribed" : "Subscribe"}
             </button>

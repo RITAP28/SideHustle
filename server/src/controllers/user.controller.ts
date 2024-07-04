@@ -78,6 +78,7 @@ export const handleSubscribe = async (req: Request, res: Response) => {
                 id: Number(req.query.user)
             }
         });
+        console.log(user);
         if(!user){
             return res.status(404).json({
                 success: false,
@@ -90,6 +91,7 @@ export const handleSubscribe = async (req: Request, res: Response) => {
                 userId: Number(req.query.creator)
             }
         });
+        console.log(creator);
         if(!creator){
             return res.status(404).json({
                 success: false,
@@ -97,27 +99,30 @@ export const handleSubscribe = async (req: Request, res: Response) => {
             })
         };
 
+        // checking authentic subscription
+        const existingSubscription = await prisma.subscriptions.findFirst({
+            where: {
+                userId: user.id
+            }
+        });
+
+        if(existingSubscription){
+            return res.status(400).json({
+                success: false,
+                msg: `Already subscribed to ${creator.creator}`
+            })
+        };
+
         // adding the creator to the subscriptions of the user
         const subscriptionAdded = await prisma.subscriptions.create({
             data: {
-                userid: user.id,
+                userId: user.id,
                 userName: user.name,
-                creatorId: creator.userId,
+                creatorUserId: creator.userId,
                 creatorName: creator.creator
             }
         });
-        console.log(subscriptionAdded);
-
-        // adding the user to the subscribers of the creator
-        const subscriberAdded = await prisma.creatorSubscribers.create({
-            data: {
-                subscriberId: user.id,
-                userName: user.name,
-                creatorId: creator.userId,
-                creatorName: creator.creator
-            }
-        });
-        console.log(subscriberAdded);
+        console.log("Subscription added: ", subscriptionAdded);
 
         return res.status(200).json({
             success: true,

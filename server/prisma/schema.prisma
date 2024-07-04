@@ -19,20 +19,21 @@ enum Plan {
 }
 
 model User {
-  id              Int            @id @default(autoincrement())
+  id              Int             @id @default(autoincrement())
   name            String
-  email           String         @unique
-  role            Role           @default(USER)
+  email           String          @unique
+  role            Role            @default(USER)
   password        String
-  isAuthenticated Boolean        @default(false)
-  isVerified      Boolean        @default(false)
-  isPaid          Boolean        @default(false)
-  plan            Plan           @default(Free)
+  isAuthenticated Boolean         @default(false)
+  isVerified      Boolean         @default(false)
+  isCreator       Boolean         @default(false)
+  isPaid          Boolean         @default(false)
+  plan            Plan            @default(Free)
   Session         Session[]
   Videos          Videos[]
   OTP             OTP[]
   Creator         Creator[]
-  Subscriptions   Subscriptions?
+  Subscriptions   Subscriptions[]
 }
 
 model Session {
@@ -63,43 +64,24 @@ model OTP {
 }
 
 model Creator {
-  creatorId          Int                  @id @default(autoincrement())
-  creator            String
-  displayName        String
-  videos             Int                  @default(autoincrement())
-  subscribers        Int                  @default(0)
-  views              Int                  @default(0)
-  stars              Int                  @default(0)
-  comments           Int                  @default(0)
-  userId             Int                  @unique
-  userEmail          String               @unique
-  user               User                 @relation(references: [id], fields: [userId], onDelete: Cascade)
-  CreatorSubscribers CreatorSubscribers[]
-}
-
-model Subscribers {
-  id                 Int                  @unique
-  name               String
-  CreatorSubscribers CreatorSubscribers[]
-}
-
-model CreatorSubscribers {
-  subscriberId Int         @unique
-  userName     String
-  creatorId    Int         @unique
-  creatorName  String
-  creator      Creator     @relation(references: [creatorId], fields: [creatorId], onDelete: Cascade)
-  subscribers  Subscribers @relation(fields: [subscriberId], references: [id])
-
-  @@id([creatorId, subscriberId])
+  creatorId   Int    @id @default(autoincrement())
+  creator     String
+  displayName String
+  videos      Int    @default(autoincrement())
+  subscribers Int    @default(0)
+  views       Int    @default(0)
+  stars       Int    @default(0)
+  comments    Int    @default(0)
+  userId      Int    @unique
+  userEmail   String @unique
+  user        User   @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Subscriptions {
-  userid      Int    @unique
-  userName    String
-  creatorId   Int    @unique
-  creatorName String
-  user        User   @relation(references: [id], fields: [userid], onDelete: Cascade)
-
-  @@id([creatorId, userid])
+  id            Int    @id @default(autoincrement())
+  userId        Int
+  userName      String
+  creatorUserId Int
+  creatorName   String
+  user          User   @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
