@@ -4,12 +4,18 @@ import { FaRegStar } from "react-icons/fa";
 import { BiDislike } from "react-icons/bi";
 import { BsThreeDots } from "react-icons/bs";
 import { RxAvatar } from "react-icons/rx";
+import { useAppSelector } from "../redux/hooks/hook";
 
-const CreatorInfo = ({ userId, creatorId, isSubscribed } : {
-  userId: number,
-  creatorId: number,
-  isSubscribed: boolean
+const CreatorInfo = ({
+  userId,
+  creatorId,
+  isSubscribed,
+}: {
+  userId: number;
+  creatorId: number;
+  isSubscribed: boolean;
 }) => {
+  const { currentUser } = useAppSelector((state) => state.user);
   // const urlParams = new URLSearchParams(window.location.search);
   const [, setCreatorEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,7 +31,6 @@ const CreatorInfo = ({ userId, creatorId, isSubscribed } : {
       );
       setCreatorName(String(creator.data.creatorName));
       setCreatorEmail(creator.data.creatorEmail);
-
     } catch (error) {
       console.error("Error getting creator information: ", error);
     }
@@ -38,9 +43,13 @@ const CreatorInfo = ({ userId, creatorId, isSubscribed } : {
   const handleSubscribe = async () => {
     try {
       setLoading(true);
-      const subscriber = await axios.post(`http://localhost:7070/subscribe?creator=${creatorId}&user=${userId}`, null, {
-        withCredentials: true
-      });
+      const subscriber = await axios.post(
+        `http://localhost:7070/subscribe?creator=${creatorId}&user=${userId}`,
+        null,
+        {
+          withCredentials: true,
+        }
+      );
       console.log(subscriber.data);
       setLoading(false);
       setSubscribed(true);
@@ -61,14 +70,22 @@ const CreatorInfo = ({ userId, creatorId, isSubscribed } : {
             <p className="">10 subscribers</p>
           </div>
           <div className="w-[40%] flex items-center pl-2">
-            <button
-              type="button"
-              className={`px-4 py-2 font-bold font-Code ${subscribed ? "bg-black text-white" : "bg-white text-black"}`}
-              onClick={handleSubscribe}
-              disabled={loading || subscribed}
-            >
-              {subscribed ? "Subscribed" : "Subscribe"}
-            </button>
+            {creatorName !== currentUser?.name && (
+              <button
+                type="button"
+                className={`px-4 py-2 font-bold font-Code ${
+                  subscribed ? "bg-black text-white" : "bg-white text-black"
+                }`}
+                onClick={() => {
+                  if(!subscribed){
+                    handleSubscribe();
+                  }
+                }}
+                disabled={loading || subscribed}
+              >
+                {subscribed ? "Subscribed" : "Subscribe"}
+              </button>
+            )}
           </div>
         </div>
         <div className="w-1/2 flex justify-end">
