@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import { PrismaClient, Role } from "@prisma/client";
 const prisma = new PrismaClient();
 
+interface User {
+    email: string;
+}
+
 export const handleGetUser = async (req: Request, res: Response) => {
     const user = await prisma.user.findUnique({
         where: {
@@ -197,6 +201,35 @@ export const handleGetFriends = async (req: Request, res: Response) => {
         return res.status(500).json({
             success: false,
             msg: "Something is wrong in the backend code"
+        });
+    };
+};
+
+export const handleGetFriend = async (req: Request, res: Response) => {
+    const username = String(req.query.name);
+    const userId = Number(req.query.id);
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                msg: "User not found"
+            })
+        };
+        return res.status(200).json({
+            success: true,
+            msg: "user found",
+            user
+        });
+    } catch (error) {
+        console.error("Error while fetching friend: ", error);
+        return res.status(404).json({
+            success: false,
+            msg: "Something went wrong"
         });
     };
 };

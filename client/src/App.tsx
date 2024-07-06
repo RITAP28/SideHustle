@@ -13,6 +13,7 @@ import Landing from "./pages/common/Landing";
 import { useAppSelector } from "./redux/hooks/hook";
 import Rooms from "./pages/common/Rooms";
 import Community from "./pages/common/Community";
+import Friend from "./pages/common/Friend";
 
 function App() {
   const location = useLocation();
@@ -77,6 +78,11 @@ function App() {
             </ProtectedRoutes>
           }
         />
+        <Route path="/friend" element={
+          <ProtectedRoutes>
+            <Friend />
+          </ProtectedRoutes>
+        } />
       </Routes>
     </>
   );
