@@ -168,3 +168,35 @@ export const handleIsSubscribed = async (req: Request, res: Response) => {
         })
     };
 };
+
+export const handleGetFriends = async (req: Request, res: Response) => {
+    const userId = Number(req.query.id);
+    try {
+        const users = await prisma.user.findMany({
+            where: {
+                id: {
+                    not: userId
+                }
+            }
+        });
+
+        if(!users){
+            return res.status(404).json({
+                success: false,
+                msg: "Users not found"
+            });
+        };
+
+        return res.status(200).json({
+            success: true,
+            msg: "All users found",
+            users
+        });
+    } catch (error) {
+        console.error("Error while fetching all your friends: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Something is wrong in the backend code"
+        });
+    };
+};

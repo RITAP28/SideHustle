@@ -81,7 +81,7 @@ const Sidebar = () => {
           type="button"
           className="w-[80%] py-2 font-bold hover:cursor-pointer rounded-lg hover:bg-slate-500"
           onClick={() => {
-            navigate("/community");
+            navigate(`/community?id=${currentUser?.id}&name=${currentUser?.name}`);
           }}
         >
           Your Community

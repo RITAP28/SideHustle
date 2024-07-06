@@ -34,6 +34,8 @@ model User {
   OTP             OTP[]
   Creator         Creator[]
   Subscriptions   Subscriptions[]
+  followed        Follow[]        @relation("Followed")
+  following       Follow[]         @relation("Following")
 }
 
 model Session {
@@ -78,10 +80,25 @@ model Creator {
 }
 
 model Subscriptions {
-  id            Int    @id @default(autoincrement())
+  id            Int   @default(autoincrement())
   userId        Int
   userName      String
   creatorUserId Int
   creatorName   String
   user          User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@id([userId, creatorUserId])
+}
+
+model Follow {
+  id            Int      @default(autoincrement())
+  followedId    Int
+  followedName  String
+  followingId   Int     @unique
+  followingName String
+  createdAt     DateTime @default(now())
+  followed      User     @relation("Followed", references: [id], fields: [followedId])
+  following     User    @relation("Following", references: [id], fields: [followingId])
+
+  @@id([followedId, followingId]) // to make sure that each following-followed relationship is unique
 }
