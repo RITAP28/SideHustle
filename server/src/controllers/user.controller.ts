@@ -233,3 +233,80 @@ export const handleGetFriend = async (req: Request, res: Response) => {
         });
     };
 };
+
+export const handleFollow = async (req: Request, res: Response) => {
+    const friendId = Number(req.query.id);
+    const userId = Number(req.body.id);
+    try {
+        const friend = await prisma.user.findUnique({
+            where: {
+                id: friendId
+            }
+        });
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+        if(!user || !friend){
+            return res.status(404).json({
+                success: false,
+                msg: "User or friend not found"
+            })
+        };
+
+        // adding both friend and user to the follower database
+        const followerAdded = await prisma.follow.create({
+            data: {
+                followedId: friend.id,
+                followedName: friend.name,
+                followingId: user.id,
+                followingName: user.name
+            }
+        });
+        console.log(`You, ${user.name} are following ${friend.name}`);
+        return res.status(200).json({
+            success: true,
+            msg: `User ${user.name} is following ${friend.name}`,
+            followerAdded,
+            friend: friend,
+            user: user
+        });
+    } catch (error) {
+        console.error("Error while following friend: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Something went wrong while following"
+        })
+    };
+};
+
+export const handleIsFollowed = async (req: Request, res: Response) => {
+    const followedId = Number(req.query.id);
+    const followingId = Number(req.body.id);
+    try {
+        const existingFollowing = await prisma.follow.findUnique({
+            where: {
+                followedId_followingId: {
+                    followedId: followedId,
+                    followingId: followingId
+                }
+            }
+        });
+        if(!existingFollowing){
+            console.log("No existing following");
+            return false;
+        }
+        console.log("true");
+        return res.status(200).json({
+            success: true,
+            msg: "User is already following this friend"
+        });
+    } catch (error) {
+        console.error("Error while checking is-followed: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Something went wrong"
+        });
+    };
+};

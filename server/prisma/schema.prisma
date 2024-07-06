@@ -35,7 +35,7 @@ model User {
   Creator         Creator[]
   Subscriptions   Subscriptions[]
   followed        Follow[]        @relation("Followed")
-  following       Follow[]         @relation("Following")
+  following       Follow[]        @relation("Following")
 }
 
 model Session {
@@ -80,7 +80,7 @@ model Creator {
 }
 
 model Subscriptions {
-  id            Int   @default(autoincrement())
+  id            Int    @default(autoincrement())
   userId        Int
   userName      String
   creatorUserId Int
@@ -94,11 +94,11 @@ model Follow {
   id            Int      @default(autoincrement())
   followedId    Int
   followedName  String
-  followingId   Int     @unique
+  followingId   Int
   followingName String
   createdAt     DateTime @default(now())
   followed      User     @relation("Followed", references: [id], fields: [followedId])
-  following     User    @relation("Following", references: [id], fields: [followingId])
+  following     User     @relation("Following", references: [id], fields: [followingId])
 
   @@id([followedId, followingId]) // to make sure that each following-followed relationship is unique
 }

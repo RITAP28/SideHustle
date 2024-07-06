@@ -26,9 +26,19 @@ const Profile = () => {
                     Username:
                     <span className="font-semibold">{currentUser?.name}</span>
                   </div>
-                  <div className="flex justify-center pb-[2rem]">
+                  <div className="flex justify-center">
                     Email:
                     <span className="font-semibold">{currentUser?.email}</span>
+                  </div>
+                  <div className="flex justify-center">
+                    <span className="font-semibold">
+                      Followers: 0
+                    </span>
+                  </div>
+                  <div className="flex justify-center pb-[2rem]">
+                    <span className="font-semibold">
+                      Following: 0
+                    </span>
                   </div>
                 </>
               ) : (
