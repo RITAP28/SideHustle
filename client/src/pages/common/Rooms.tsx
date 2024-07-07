@@ -22,7 +22,7 @@ const Rooms = () => {
     roomName: "",
     maxMembers: 0,
     leader: `${currentUser?.name}`,
-    leaderId: Number(`${currentUser?.id}`)
+    leaderId: Number(`${currentUser?.id}`),
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,17 +36,18 @@ const Rooms = () => {
     try {
       e.preventDefault();
 
-      if(formData.roomName === "" || formData.maxMembers === 0){
+      if (formData.roomName === "" || formData.maxMembers === 0) {
         toast({
           title: "Please fill all the fields",
-          description: "In order to generate a room link, you must fill all the fields in the form",
+          description:
+            "In order to generate a room link, you must fill all the fields in the form",
           status: "error",
           duration: 4000,
           isClosable: true,
         });
       }
       const res = await axios.post(`http://localhost:7070/makeRoom`, formData, {
-        withCredentials: true
+        withCredentials: true,
       });
       console.log(res.data);
       console.log(formData);
@@ -149,25 +150,33 @@ const Rooms = () => {
         <div className="basis-1/6">
           <Sidebar />
         </div>
-        <div className="basis-5/6 flex justify-center">
-          <div className="flex flex-col font-Code font-bold">
-            <div className="">
-              <button
-                type="button"
-                className="w-[10rem] py-2 bg-black text-white border-2 border-white hover:bg-white hover:text-black"
-                onClick={onOpen}
-              >
-                Create a Room
-              </button>
+        <div className="basis-5/6">
+          <div className="flex justify-center">
+            <div className="flex flex-col font-Code font-bold">
+              <div className="">
+                <button
+                  type="button"
+                  className="w-[10rem] py-2 bg-black text-white border-2 border-white hover:bg-white hover:text-black"
+                  onClick={onOpen}
+                >
+                  Create a Room
+                </button>
+              </div>
+              <div className="pt-4">
+                <button
+                  type="button"
+                  className="w-[10rem] py-2 bg-black text-white border-2 border-white hover:bg-white hover:text-black"
+                >
+                  Join a Room
+                </button>
+              </div>
             </div>
-            <div className="pt-4">
-              <button
-                type="button"
-                className="w-[10rem] py-2 bg-black text-white border-2 border-white hover:bg-white hover:text-black"
-              >
-                Join a Room
-              </button>
+          </div>
+          <div className="text-white font-Code w-full pt-[3rem]">
+            <div className="flex justify-center">
+              <p className="underline">Rooms in progress</p>
             </div>
+            <div className=""></div>
           </div>
         </div>
       </div>

@@ -18,6 +18,11 @@ enum Plan {
   Premium
 }
 
+enum Status {
+  INPROGRESS
+  ENDED
+}
+
 model User {
   id              Int             @id @default(autoincrement())
   name            String
@@ -105,11 +110,14 @@ model Follow {
 
 model Room {
   id             Int      @id @default(autoincrement())
-  roomName String
+  roomName       String
   roomlink       String
   leader         String
   leaderId       Int
   invitedMembers Int
   createdAt      DateTime @default(now())
+  status         Status   @default(INPROGRESS)
   isOneTime      Boolean  @default(false)
+
+  @@unique([id, leaderId])
 }

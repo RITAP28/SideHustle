@@ -5,7 +5,6 @@ import { isAuthenticated } from '../utils/auth.status';
 import { getAllVideos, handleGetCreatorInfo, handleGetOneVideo } from '../controllers/video.controller';
 import { handleUploadVideo } from '../controllers/upload.service';
 import { handleBecomeCreator, handleCountFollowers, handleFollow, handleGetFriend, handleGetFriends, handleGetUser, handleIsFollowed, handleIsSubscribed, handleSubscribe } from '../controllers/user.controller';
-import { handleMakeRoom } from '../controllers/room.controller';
 
 const upload = multer({ storage: storage });
 
@@ -31,5 +30,4 @@ export default (router: express.Router) => {
     router.post('/follow', isAuthenticated, handleFollow);
     router.post('/isFollowed', isAuthenticated, handleIsFollowed);
     router.get('/followCount', isAuthenticated, handleCountFollowers);
-    router.post('/makeRoom', isAuthenticated, handleMakeRoom);
 };
