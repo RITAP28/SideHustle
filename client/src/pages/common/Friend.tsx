@@ -14,10 +14,14 @@ interface Friend {
 const Friend = () => {
   const { currentUser } = useAppSelector((state) => state.user);
   const toast = useToast();
+
   const [friend, setFriend] = useState<Friend>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isFollowing, setIsFollowing] = useState<boolean>();
   const [follow, setFollow] = useState<boolean>(false);
+  const [followers, setFollowers] = useState<number>(0);
+  const [following, setFollowing] = useState<number>(0);
+
   const urlParams = new URLSearchParams(window.location.search);
   const name = urlParams.get("name");
   const id = urlParams.get("id");
@@ -97,6 +101,23 @@ const Friend = () => {
     }
   };
 
+  const handleCountFollow = useCallback(async () => {
+    try {
+      const res = await axios.get(`http://localhost:7070/followCount?id=${friend?.id}`, {
+        withCredentials: true
+      });
+      console.log(res.data);
+      setFollowers(res.data.followers);
+      setFollowing(res.data.following);
+    } catch (error) {
+      console.error("Error while fetching follow count: ", error);
+    }
+  }, [friend?.id]);
+
+  useEffect(() => {
+    handleCountFollow();
+  }, [handleCountFollow]);
+
   return (
     <div className="pt-[5rem] w-full bg-black min-h-screen flex flex-row">
       <div className="basis-1/6">
@@ -119,10 +140,10 @@ const Friend = () => {
                   <div className="font-Code pt-2">{friend?.email}</div>
                   <div className="flex flex-row font-Code">
                     <div className="basis-1/2 flex justify-start">
-                      Followers: 0
+                      Followers: {followers}
                     </div>
                     <div className="basis-1/2 flex justify-start">
-                      Following: 0
+                      Following: {following}
                     </div>
                   </div>
                   <div className="flex justify-center mt-4">

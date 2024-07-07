@@ -34,7 +34,7 @@ model User {
   OTP             OTP[]
   Creator         Creator[]
   Subscriptions   Subscriptions[]
-  followed        Follow[]        @relation("Followed")
+  followers        Follow[]        @relation("Followed")
   following       Follow[]        @relation("Following")
 }
 

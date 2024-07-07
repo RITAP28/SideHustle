@@ -310,3 +310,40 @@ export const handleIsFollowed = async (req: Request, res: Response) => {
         });
     };
 };
+
+export const handleCountFollowers = async (req: Request, res: Response) => {
+    const userId = Number(req.query.id);
+    try {
+        const currentUser = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+        if(!currentUser) return res.status(404).json({
+            success: false,
+            msg: "User not found"
+        });
+        const followingCount = await prisma.follow.count({
+            where: {
+                followingId: currentUser.id
+            }
+        });
+        const followersCount = await prisma.follow.count({
+            where: {
+                followedId: currentUser.id
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            msg: `${currentUser.name}'s following and followers counted`,
+            followers: followersCount,
+            following: followingCount
+        });
+    } catch (error) {
+        console.error("Error while counting followers: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Something went wrong"
+        });
+    };
+};

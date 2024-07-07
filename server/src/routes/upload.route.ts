@@ -4,7 +4,7 @@ import { storage } from '../middlewares/multer.upload';
 import { isAuthenticated } from '../utils/auth.status';
 import { getAllVideos, handleGetCreatorInfo, handleGetOneVideo } from '../controllers/video.controller';
 import { handleUploadVideo } from '../controllers/upload.service';
-import { handleBecomeCreator, handleFollow, handleGetFriend, handleGetFriends, handleGetUser, handleIsFollowed, handleIsSubscribed, handleSubscribe } from '../controllers/user.controller';
+import { handleBecomeCreator, handleCountFollowers, handleFollow, handleGetFriend, handleGetFriends, handleGetUser, handleIsFollowed, handleIsSubscribed, handleSubscribe } from '../controllers/user.controller';
 
 const upload = multer({ storage: storage });
 
@@ -29,4 +29,5 @@ export default (router: express.Router) => {
     router.get('/getfriend', isAuthenticated, handleGetFriend);
     router.post('/follow', isAuthenticated, handleFollow);
     router.post('/isFollowed', isAuthenticated, handleIsFollowed);
+    router.get('/followCount', isAuthenticated, handleCountFollowers);
 };

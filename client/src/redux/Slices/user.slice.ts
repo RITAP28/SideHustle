@@ -9,7 +9,9 @@ const initialState: userReducerInitialState = {
     isVerified: false,
     isCreator: false,
     normal: false,
-    google: false
+    google: false,
+    followers: 0,
+    following: 0
 };
 
 export const userSlice = createSlice({

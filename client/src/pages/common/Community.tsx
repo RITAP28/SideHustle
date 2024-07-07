@@ -82,14 +82,6 @@ const Community = () => {
                     {`Visit ${friend.name}`}
                   </button>
                 </div>
-                <div className="flex justify-center mt-2">
-                  <button
-                    type="button"
-                    className="w-[80%] px-4 py-2 bg-black text-white border-2 border-slate-700 rounded-md hover:bg-white hover:text-black font-bold"
-                  >
-                    Follow
-                  </button>
-                </div>
               </div>
             ))}
           </div>

@@ -9,6 +9,8 @@ export interface userReducerInitialState {
     isCreator: boolean;
     normal: boolean;
     google: boolean;
+    followers: number;
+    following: number;
 }
 
 export interface videoReducerInitialState {
