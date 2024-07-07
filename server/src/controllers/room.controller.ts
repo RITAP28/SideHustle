@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Status } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const generateUniqueRoomId = (roomlink: string) => {
@@ -32,7 +32,7 @@ export const handleMakeRoom = async (req: Request, res: Response) => {
         roomName: roomName,
         leader: leader,
         leaderId: leaderId,
-        invitedMembers: maxMembers,
+        invitedMembers: Number(maxMembers),
       },
     });
 
@@ -52,7 +52,12 @@ export const handleMakeRoom = async (req: Request, res: Response) => {
 
 export const handleGetRandomRooms = async (req: Request, res: Response) => {
   try {
-    const randomRooms = await prisma.room.findMany();
+    const randomRooms = await prisma.room.findMany({
+        take: 6,
+        where: {
+            status: Status.INPROGRESS
+        }
+    });
     if (!randomRooms) {
       return res.status(404).json({
         success: false,
@@ -100,7 +105,7 @@ export const handleGetIndividualRoom = async (req: Request, res: Response) => {
         msg: `Individual room with room Id ${roomId}, ${roomName} and leader's Id ${leaderId} found`,
         individualRoom
     });
-    
+
   } catch (error) {
     console.error("Error while searching this specific room: ", error);
     return res.status(500).json({

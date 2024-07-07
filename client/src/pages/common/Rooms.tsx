@@ -1,6 +1,6 @@
 import { useDisclosure, useToast } from "@chakra-ui/react";
 import Sidebar from "../../components/Sidebar";
-// import Modal from "../../components/Modal";
+import { RiRadioButtonLine } from "react-icons/ri";
 import {
   ModalBody,
   ModalCloseButton,
@@ -9,12 +9,29 @@ import {
   ModalOverlay,
   Modal,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks/hook";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+interface RandomRooms {
+  id: number;
+  roomName: string;
+  roomLink: string;
+  leader: string;
+  invitedMembers: number;
+  leaderId: number;
+  createdAt: Date;
+  status: string;
+}
 
 const Rooms = () => {
   const { currentUser } = useAppSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  const [randomRooms, setRandomRooms] = useState<RandomRooms[]>([]);
+  const [randomRoomsLoading, setRandomRoomsLoading] = useState<boolean>(false);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
@@ -51,10 +68,43 @@ const Rooms = () => {
       });
       console.log(res.data);
       console.log(formData);
+      toast({
+        title: "Room created successfully",
+        description:
+          "You have created a room to which you can invite people or your friends from your community",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
     } catch (error) {
       console.error("Error while creating room: ", error);
     }
   };
+
+  const handleGetInProgressRooms = async () => {
+    try {
+      const res = await axios.get(`http://localhost:7070/getRandomRooms`, {
+        withCredentials: true,
+      });
+      if (!res.data) {
+        console.error("Error: no rooms found currently: ");
+      }
+      console.log(res.data.randomRooms);
+      setRandomRooms(res.data.randomRooms);
+    } catch (error) {
+      console.error("Error while creating rooms: ", error);
+    }
+    setRandomRoomsLoading(false);
+  };
+
+  useEffect(() => {
+    setRandomRoomsLoading(true);
+    const timer = setTimeout(() => {
+      handleGetInProgressRooms();
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
@@ -176,7 +226,84 @@ const Rooms = () => {
             <div className="flex justify-center">
               <p className="underline">Rooms in progress</p>
             </div>
-            <div className=""></div>
+            <div className="flex justify-center">
+              <div className="w-[90%] grid grid-cols-3 gap-2 pt-[3rem]">
+                {randomRoomsLoading ? (
+                  <div className="">
+                    <p>fetching rooms for you, please wait...</p>
+                  </div>
+                ) : (
+                  randomRooms.map((room, index) => (
+                    <div className="border-2 border-white" key={index}>
+                      <div className="w-full flex justify-center font-Code py-2 font-bold text-xl">
+                        {room.roomName}
+                      </div>
+                      <div className="w-full">
+                        <p className="pl-2">
+                          Leader of the room:{" "}
+                          <span className="underline">{room.leader}</span>
+                        </p>
+                      </div>
+                      <div className="w-full">
+                        <p className="pl-2">
+                          Maximum members:{" "}
+                          <span className="font-bold">
+                            {room.invitedMembers}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="w-full pt-2">
+                        <div className="pl-2 flex flex-row">
+                          <div className="flex items-center px-2">
+                            <RiRadioButtonLine className="text-green-400" />
+                          </div>
+                          <div className="flex items-center">
+                            <span>
+                              {room.status === "INPROGRESS"
+                                ? "IN PROGRESS"
+                                : "ENDED"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex justify-center w-full pb-6 pt-[3rem]">
+                        {currentUser?.name === room.leader ? (
+                          
+                          <div className="flex flex-row w-full">
+                          <div className="basis-1/2 flex justify-center">
+                            <button
+                              type="button"
+                              className="font-Code font-bold border-2 border-white px-3 py-1 hover:bg-white hover:text-black"
+                              onClick={() => {
+                                navigate(`${room.roomLink}`);
+                              }}
+                            >
+                              Go to Room
+                            </button>
+                          </div>
+                          <div className="basis-1/2 flex justify-center">
+                            <button
+                              type="button"
+                              className="font-Code font-bold border-2 border-white px-3 py-1 hover:bg-white hover:text-black"
+                            >
+                              Invite
+                            </button>
+                          </div>
+                        </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="font-Code font-bold border-2 border-white px-3 py-1 hover:bg-white hover:text-black"
+                          >
+                            Join
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
