@@ -34,7 +34,7 @@ model User {
   OTP             OTP[]
   Creator         Creator[]
   Subscriptions   Subscriptions[]
-  followers        Follow[]        @relation("Followed")
+  followers       Follow[]        @relation("Followed")
   following       Follow[]        @relation("Following")
 }
 
@@ -101,4 +101,15 @@ model Follow {
   following     User     @relation("Following", references: [id], fields: [followingId])
 
   @@id([followedId, followingId]) // to make sure that each following-followed relationship is unique
+}
+
+model Room {
+  id             Int      @id @default(autoincrement())
+  roomName String
+  roomlink       String
+  leader         String
+  leaderId       Int
+  invitedMembers Int
+  createdAt      DateTime @default(now())
+  isOneTime      Boolean  @default(false)
 }

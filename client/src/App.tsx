@@ -14,6 +14,7 @@ import { useAppSelector } from "./redux/hooks/hook";
 import Rooms from "./pages/common/Rooms";
 import Community from "./pages/common/Community";
 import Friend from "./pages/common/Friend";
+import IndividualRoom from "./pages/common/IndividualRoom";
 
 function App() {
   const location = useLocation();
@@ -70,6 +71,13 @@ function App() {
             </ProtectedRoutes>
           }
         />
+        <Route
+          path="/room"
+          element={
+            <ProtectedRoutes>
+              <IndividualRoom />
+            </ProtectedRoutes>
+          } />
         <Route
           path="/community"
           element={

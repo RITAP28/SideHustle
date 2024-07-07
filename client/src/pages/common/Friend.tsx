@@ -16,6 +16,7 @@ const Friend = () => {
   const toast = useToast();
 
   const [friend, setFriend] = useState<Friend>();
+  const [friendLoaded, setFriendLoaded] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [isFollowing, setIsFollowing] = useState<boolean>();
   const [follow, setFollow] = useState<boolean>(false);
@@ -37,6 +38,7 @@ const Friend = () => {
       );
       console.log(res.data);
       setFriend(res.data.user);
+      setFriendLoaded(true);
     } catch (error) {
       console.error(`Error while fetching ${name} with id ${id}: `, error);
     }
@@ -115,8 +117,10 @@ const Friend = () => {
   }, [friend?.id]);
 
   useEffect(() => {
-    handleCountFollow();
-  }, [handleCountFollow]);
+    if(friendLoaded && friend?.id){
+      handleCountFollow();
+    }
+  }, [friend?.id, friendLoaded, handleCountFollow]);
 
   return (
     <div className="pt-[5rem] w-full bg-black min-h-screen flex flex-row">
