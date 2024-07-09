@@ -1,7 +1,8 @@
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks/hook";
 import { useToast } from "@chakra-ui/react";
+import { User } from "../../types/types";
 
 interface Room {
   id: number;
@@ -28,19 +29,43 @@ const IndividualRoom = () => {
   const roomId = Number(urlParams.get("roomId"));
   const roomName = String(urlParams.get("name"));
   const leaderId = Number(urlParams.get("leaderId"));
+  const userId = Number(urlParams.get("userId"));
 
   const [, setRoom] = useState<Room>();
   const [loading, setLoading] = useState<boolean>(false);
   const [socket, setSocket] = useState<null | WebSocket>(null);
   const [latestMessage, setLatestMessage] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+  const [sender, setSender] = useState<string>();
 
-  const chatsArray = [];
-  const chat: ChatEventProps = {
-    text: "",
-    sender: currentUser?.name as string,
-    senderId: currentUser?.id as number,
-    sentAt: new Date(),
+  const handleGetUser = async (id: number) => {
+    try {
+      const user = await axios.get(`http://localhost:7070/getUser?id=${id}`, {
+        withCredentials: true,
+      });
+      console.log(user.data);
+      // setSender(user);
+    } catch (error) {
+      console.error("Error while getting the user: ", error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetUser(userId);
+  }, [userId]);
+
+  const sendMessage = async (
+    socket: WebSocket,
+    message: string,
+    currentUser: User
+  ) => {
+    const messagePayload: ChatEventProps = {
+      text: message,
+      sender: currentUser.name,
+      senderId: currentUser.id,
+      sentAt: new Date(),
+    };
+    socket.send(JSON.stringify(messagePayload));
   };
 
   const handleGetIndividualRoom = useCallback(async () => {
@@ -77,15 +102,17 @@ const IndividualRoom = () => {
       });
     };
     socket.onmessage = (message) => {
-      console.log("Received message: ", message);
-      chat.sender = currentUser?.name as string;
-      chatsArray.push(chat);
-      setLatestMessage(message.data);
+      const parsedMessage: ChatEventProps = JSON.parse(message.data);
+      console.log("Received message: ", parsedMessage.text);
+      setLatestMessage(parsedMessage.text);
+      console.log("Message sent by: ", parsedMessage.sender);
+      setSender(parsedMessage.sender);
     };
 
     return () => {
       socket.close();
     };
+
   }, []);
 
   return (
@@ -104,12 +131,8 @@ const IndividualRoom = () => {
             <div className="basis-1/3 border-2 border-white flex flex-col">
               <div className="h-[85%] overflow-y-scroll">
                 <div className="h-[3rem] w-full">
-                  {chatsArray.map((chat, index) => (
-                    <div className="" key={index}>
-                      <div className="w-full h-[1rem]">{chat}</div>
-                      <div className="w-full h-[2rem]">{latestMessage}</div>
-                    </div>
-                  ))}
+                  <div className="">{sender}</div>
+                  <div className="">{latestMessage}</div>
                 </div>
               </div>
               <div className="h-[15%] w-full border-t-2 border-slate-700 flex flex-row items-center">
@@ -129,14 +152,16 @@ const IndividualRoom = () => {
                     type="button"
                     className="hover:bg-white hover:text-black font-Code border-2 border-slate-800 px-4 py-2 font-bold rounded-lg bg-slate-800 text-white"
                     onClick={() => {
-                      socket?.send(message);
-                      setMessage("");
-                      toast({
-                        title: "message sent by fardin",
-                        status: "success",
-                        duration: 4000,
-                        isClosable: true,
-                      });
+                      if(socket && currentUser){
+                        sendMessage(socket, message, currentUser);
+                        setMessage("");
+                        toast({
+                          title: `message sent by ${currentUser?.name}`,
+                          status: "success",
+                          duration: 4000,
+                          isClosable: true,
+                        });
+                      }
                     }}
                   >
                     Send
