@@ -275,7 +275,7 @@ const Rooms = () => {
                               type="button"
                               className="font-Code font-bold border-2 border-white px-3 py-1 hover:bg-white hover:text-black"
                               onClick={() => {
-                                navigate(`${room.roomLink}`);
+                                navigate(`/room?name=${room.roomName}&roomId=${room.id}&leaderId=${room.leaderId}`);
                               }}
                             >
                               Go to Room
@@ -294,6 +294,9 @@ const Rooms = () => {
                           <button
                             type="button"
                             className="font-Code font-bold border-2 border-white px-3 py-1 hover:bg-white hover:text-black"
+                            onClick={() => {
+                              navigate(`/room?name=${room.roomName}&roomId=${room.id}&leaderId=${room.leaderId}`);
+                            }}
                           >
                             Join
                           </button>
