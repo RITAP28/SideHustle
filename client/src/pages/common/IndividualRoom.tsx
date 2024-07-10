@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks/hook";
 import { useToast } from "@chakra-ui/react";
 import { User } from "../../types/types";
+import Sender from "../../components/webRTCcomponents/Sender";
+import Receiver from "../../components/webRTCcomponents/Receiver";
 
 interface Room {
   id: number;
@@ -23,6 +25,7 @@ interface ChatEventProps {
 }
 
 const IndividualRoom = () => {
+  // const videoRef = useRef<HTMLVideoElement>(null);
   const { currentUser } = useAppSelector((state) => state.user);
   const urlParams = new URLSearchParams(window.location.search);
   const toast = useToast();
@@ -31,7 +34,7 @@ const IndividualRoom = () => {
   const leaderId = Number(urlParams.get("leaderId"));
   const userId = Number(urlParams.get("userId"));
 
-  const [, setRoom] = useState<Room>();
+  const [room, setRoom] = useState<Room>();
   const [loading, setLoading] = useState<boolean>(false);
   const [socket, setSocket] = useState<null | WebSocket>(null);
   const [latestMessage, setLatestMessage] = useState<string>("");
@@ -112,7 +115,6 @@ const IndividualRoom = () => {
     return () => {
       socket.close();
     };
-
   }, []);
 
   return (
@@ -120,57 +122,62 @@ const IndividualRoom = () => {
       {loading ? (
         "Loading..."
       ) : (
-        <div className="flex justify-center">
-          <div className="flex flex-row w-[96%] gap-4">
-            <div className="basis-2/3">
-              <video
-                src=""
-                className="w-full h-full object-contain aspect-video bg-slate-700"
-              />
-            </div>
-            <div className="basis-1/3 border-2 border-white flex flex-col">
-              <div className="h-[85%] overflow-y-scroll">
-                <div className="h-[3rem] w-full">
-                  <div className="">{sender}</div>
-                  <div className="">{latestMessage}</div>
-                </div>
+        <>
+          <div className="flex justify-center">
+            <div className="flex flex-row w-[96%] gap-4">
+              <div className="basis-2/3">
+                {room?.leader === currentUser?.name ? (
+                    <Sender />
+                ) : (
+                  <div>
+                    <Receiver />
+                  </div>
+                )}
               </div>
-              <div className="h-[15%] w-full border-t-2 border-slate-700 flex flex-row items-center">
-                <div className="w-[80%] flex justify-center items-center">
-                  <input
-                    type="text"
-                    name=""
-                    className="w-[90%] px-2 py-1 bg-black text-white font-Code border-2 border-slate-600"
-                    placeholder="chat here"
-                    onChange={(e) => {
-                      setMessage(e.target.value);
-                    }}
-                  />
+              <div className="basis-1/3 border-2 border-white flex flex-col">
+                <div className="h-[85%] overflow-y-scroll">
+                  <div className="h-[3rem] w-full">
+                    <div className="">{sender}</div>
+                    <div className="">{latestMessage}</div>
+                  </div>
                 </div>
-                <div className="w-[20%] flex justify-center">
-                  <button
-                    type="button"
-                    className="hover:bg-white hover:text-black font-Code border-2 border-slate-800 px-4 py-2 font-bold rounded-lg bg-slate-800 text-white"
-                    onClick={() => {
-                      if(socket && currentUser){
-                        sendMessage(socket, message, currentUser);
-                        setMessage("");
-                        toast({
-                          title: `message sent by ${currentUser?.name}`,
-                          status: "success",
-                          duration: 4000,
-                          isClosable: true,
-                        });
-                      }
-                    }}
-                  >
-                    Send
-                  </button>
+                <div className="h-[15%] w-full border-t-2 border-slate-700 flex flex-row items-center">
+                  <div className="w-[80%] flex justify-center items-center">
+                    <input
+                      type="text"
+                      name=""
+                      className="w-[90%] px-2 py-1 bg-black text-white font-Code border-2 border-slate-600"
+                      placeholder="chat here"
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                      }}
+                    />
+                  </div>
+                  <div className="w-[20%] flex justify-center">
+                    <button
+                      type="button"
+                      className="hover:bg-white hover:text-black font-Code border-2 border-slate-800 px-4 py-2 font-bold rounded-lg bg-slate-800 text-white"
+                      onClick={() => {
+                        if (socket && currentUser) {
+                          sendMessage(socket, message, currentUser);
+                          setMessage("");
+                          toast({
+                            title: `message sent by ${currentUser?.name}`,
+                            status: "success",
+                            duration: 4000,
+                            isClosable: true,
+                          });
+                        }
+                      }}
+                    >
+                      Send
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

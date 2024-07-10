@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 const Sender = () => {
   const [socket, setSocket] = useState<null | WebSocket>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -12,7 +13,7 @@ const Sender = () => {
     setSocket(socket);
   }, []);
 
-  async function startPlayingVideo() {
+  async function liveStreamingVideo() {
     if(!socket) return;
     const pc = new RTCPeerConnection();
     // create an offer
@@ -49,7 +50,13 @@ const Sender = () => {
         }
     };
 
-    getVideoAndAudio(pc);
+    if(isPlaying){
+        stopStreaming();
+        setIsPlaying(false);
+    } else {
+        getVideoAndAudio(pc);
+        setIsPlaying(true);
+    }
   }
 
   const getVideoAndAudio = async (pc: RTCPeerConnection) => {
@@ -60,15 +67,21 @@ const Sender = () => {
     }
   };
 
+  const stopStreaming = async () => {
+    if(socket){
+        socket.onclose;
+    }
+  };
+
   return (
     <>
-      <div className="">
-        <button type="button" className="" onClick={startPlayingVideo}>
-          Play Video
-        </button>
+      <div className="w-full h-full bg-red-300">
+        <video ref={videoRef} className="w-full h-full object-contain aspect-video bg-slate-700" autoPlay playsInline />
       </div>
-      <div className="">
-        <video ref={videoRef} autoPlay playsInline />
+      <div className="flex justify-center pt-4">
+        <button type="button" className="px-4 py-1 font-Code font-bold bg-black text-white border-2 border-white hover:bg-white hover:text-black" onClick={liveStreamingVideo}>
+          {isPlaying ? "Stop Streaming" : "Go Live"}
+        </button>
       </div>
     </>
   );
