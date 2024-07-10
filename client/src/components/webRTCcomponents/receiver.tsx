@@ -1,51 +1,87 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from "react";
 
 const Receiver = () => {
-    useEffect(() => {
-        const socket = new WebSocket('ws://localhost:8081');
-        socket.onopen = () => {
-            socket.send(JSON.stringify({
-                type: 'receiver',
-            }));
-        };
+  // const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-        socket.onmessage = async (event) => {
-            const message = JSON.parse(event.data);
-            const pc2 = new RTCPeerConnection();
-            if(message.type === 'createOffer'){
-                // create an answer
-                pc2.setRemoteDescription(message.sdp);
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:8081");
+    socket.onopen = () => {
+        console.log('WebSocket connection established');
+      socket.send(
+        JSON.stringify({
+          type: "receiver",
+        })
+      );
+      VideoStreaming(socket);
+    };
 
-                pc2.onicecandidate = (event) => {
-                    console.log(event);
-                    if(event.candidate){
-                        socket?.send(JSON.stringify({
-                            type: 'iceCandidate',
-                            candidate: event.candidate
-                        }));
-                    }
-                };
+    socket.onerror = (event) => {
+      console.error(`Websocket error: ${event}`);
+    };
 
-                pc2.ontrack = (track) => {
-                    console.log(track);
-                };
+  }, []);
 
-                const answer = await pc2.createAnswer();
-                pc2.setLocalDescription(answer);
-                socket?.send(JSON.stringify({
-                    type: 'createAnswer',
-                    sdp: pc2.remoteDescription
-                }));
-            } else if(message.type === 'iceCandidate'){
-                 pc2.addIceCandidate(message.candidate);
+  const VideoStreaming = async (socket: WebSocket) => {
+    if (!socket) return;
+
+    socket.onmessage = async (event) => {
+      const pc = new RTCPeerConnection();
+      try {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        if (data.type === "createOffer") {
+          pc.setRemoteDescription(data.sdp);
+
+          pc.onicecandidate = (event) => {
+            console.log("on ice candidate: ", event);
+            if (event.candidate) {
+              socket.send(
+                JSON.stringify({
+                  type: "iceCandidate",
+                  sdp: event.candidate,
+                })
+              );
             }
-        };
-    }, []);
+          };
 
+          pc.ontrack = (event) => {
+            if (videoRef.current) {
+              videoRef.current.srcObject = new MediaStream([event.track]);
+              videoRef.current?.play();
+            }
+          };
+
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          socket.send(
+            JSON.stringify({
+              type: "createAnswer",
+              sdp: pc.localDescription,
+            })
+          );
+        } else if (data.type === "iceCandidate") {
+            console.log(data.candidate);
+          pc.addIceCandidate(data.candidate);
+        }
+      } catch (error) {
+        console.log("error parsing message: ", error);
+      }
+    };
+  };
 
   return (
-    <div>receiver</div>
-  )
-}
+    <>
+      <div className="w-full h-full bg-red-300">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-contain aspect-video bg-slate-700"
+          autoPlay
+          playsInline
+        />
+      </div>
+    </>
+  );
+};
 
-export default Receiver
+export default Receiver;

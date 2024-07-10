@@ -50,26 +50,39 @@ const Sender = () => {
         }
     };
 
-    if(isPlaying){
-        stopStreaming();
-        setIsPlaying(false);
-    } else {
-        getVideoAndAudio(pc);
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+
+    if(!isPlaying){
+        getVideoAndAudio(pc, stream);
         setIsPlaying(true);
+    } else {
+        stopStreaming(pc, stream);
+        setIsPlaying(false);
     }
   }
 
-  const getVideoAndAudio = async (pc: RTCPeerConnection) => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+  const getVideoAndAudio = async (pc: RTCPeerConnection, stream: MediaStream) => {
     pc.addTrack(stream.getVideoTracks()[0]);
     if(videoRef.current){
         videoRef.current.srcObject = stream;
     }
   };
 
-  const stopStreaming = async () => {
-    if(socket){
-        socket.onclose;
+  // stopping each track in the stream
+  // closing the RTC Peer Connection
+  const stopStreaming = async (pc: RTCPeerConnection, stream: MediaStream) => {
+    try {
+        if(stream){
+            stream.getTracks().forEach((track) => track.stop());
+        }
+        if(pc){
+            pc.close();
+        }
+        if(videoRef.current){
+            videoRef.current.srcObject = null;
+        }
+    } catch (error) {
+        console.error("Error while stopping the stream: ", error);
     }
   };
 
