@@ -28,11 +28,17 @@ wss.on('connection', function connection(ws){
         } else if(message.type === 'receiver'){
             receiverSocket = ws;
         } else if(message.type === 'createOffer'){
+            if(ws !== senderSocket){
+                return;
+            };
             receiverSocket?.send(JSON.stringify({
                 type: 'createOffer',
                 sdp: message.sdp
             }));
         } else if(message.type === 'createAnswer'){
+            if(ws !== receiverSocket){
+                return;
+            };
             senderSocket?.send(JSON.stringify({
                 type: 'createAnswer',
                 sdp: message.sdp

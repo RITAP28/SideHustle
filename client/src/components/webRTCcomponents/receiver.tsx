@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 const Receiver = () => {
   // const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  let pc: RTCPeerConnection | null = null;
 
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:8081");
@@ -13,62 +14,52 @@ const Receiver = () => {
           type: "receiver",
         })
       );
-      VideoStreaming(socket);
     };
+    // VideoStreaming(socket);
+
+    socket.onmessage = async (event) => {
+      const message = JSON.parse(event.data);
+      if(message.type === 'createOffer'){
+        pc = new RTCPeerConnection();
+        pc.setRemoteDescription(new RTCSessionDescription(message.sdp));
+
+        pc.onicecandidate = (event) => {
+          console.log(event);
+          if(event.candidate){
+            socket.send(JSON.stringify({
+              type: 'iceCandidate',
+              candidate: event.candidate
+            }));
+          }
+        };
+
+        pc.ontrack = (track) => {
+          console.log(track);
+          if(videoRef.current){
+            videoRef.current.srcObject = new MediaStream([event.data]);
+            videoRef.current.play();
+          }
+        };
+
+
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.send(JSON.stringify({
+          type: 'createAnswer',
+          sdp: pc.localDescription
+        }));
+      } else if(message.type === 'iceCandidate'){
+        if(pc !== null){
+          pc.addIceCandidate(new RTCIceCandidate(message.candidate));
+        }
+      }
+    }
 
     socket.onerror = (event) => {
       console.error(`Websocket error: ${event}`);
     };
 
   }, []);
-
-  const VideoStreaming = async (socket: WebSocket) => {
-    if (!socket) return;
-
-    socket.onmessage = async (event) => {
-      const pc = new RTCPeerConnection();
-      try {
-        const data = JSON.parse(event.data);
-        console.log(data);
-        if (data.type === "createOffer") {
-          pc.setRemoteDescription(data.sdp);
-
-          pc.onicecandidate = (event) => {
-            console.log("on ice candidate: ", event);
-            if (event.candidate) {
-              socket.send(
-                JSON.stringify({
-                  type: "iceCandidate",
-                  sdp: event.candidate,
-                })
-              );
-            }
-          };
-
-          pc.ontrack = (event) => {
-            if (videoRef.current) {
-              videoRef.current.srcObject = new MediaStream([event.track]);
-              videoRef.current?.play();
-            }
-          };
-
-          const answer = await pc.createAnswer();
-          await pc.setLocalDescription(answer);
-          socket.send(
-            JSON.stringify({
-              type: "createAnswer",
-              sdp: pc.localDescription,
-            })
-          );
-        } else if (data.type === "iceCandidate") {
-            console.log(data.candidate);
-          pc.addIceCandidate(data.candidate);
-        }
-      } catch (error) {
-        console.log("error parsing message: ", error);
-      }
-    };
-  };
 
   return (
     <>

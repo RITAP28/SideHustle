@@ -18,7 +18,7 @@ const Sender = () => {
     const pc = new RTCPeerConnection();
     // create an offer
     pc.onnegotiationneeded = async () => {
-        const offer = await pc.createOffer();
+        const offer = await pc.createOffer(); // sdp
         await pc.setLocalDescription(offer);
         socket?.send(JSON.stringify({
             type: 'createOffer',
@@ -44,9 +44,9 @@ const Sender = () => {
     socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if(data.type === 'createAnswer'){
-            pc.setRemoteDescription(data.sdp);
+            pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
         } else if(data.type === 'iceCandidate'){
-            pc.addIceCandidate(data.candidate);
+            pc.addIceCandidate(new RTCIceCandidate(data.candidate));
         }
     };
 
