@@ -20,6 +20,7 @@ import {
   MenuList,
 } from "@chakra-ui/react";
 import CreatorInfo from "../../components/CreatorInfo";
+import Comments from "../../components/VideoComponents/Comments";
 // import { MdFullscreenExit } from "react-icons/md";
 
 function Videos() {
@@ -115,13 +116,19 @@ function Videos() {
 
   const handleIsSubscribed = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:7070/isSubscribed?creator=${creatorId}&user=${userId}`, {
-        withCredentials: true
-      });
+      const res = await axios.get(
+        `http://localhost:7070/isSubscribed?creator=${creatorId}&user=${userId}`,
+        {
+          withCredentials: true,
+        }
+      );
       console.log(res.data);
       setIsSubscribed(res.data.success);
     } catch (error) {
-      console.error("Error while checking whether the user is subscribed or not: ", error);
+      console.error(
+        "Error while checking whether the user is subscribed or not: ",
+        error
+      );
     }
   }, [creatorId, userId]);
 
@@ -150,11 +157,11 @@ function Videos() {
                     id="fullScreen"
                     controls={false}
                     className="w-full h-full object-contain aspect-video bg-slate-700 rounded-xl"
-                    ref={videoRef}
+                    // ref={videoRef}
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetaData}
                   >
-                    <source src={video?.link} type="application/x-mpegURL" />
+                    {/* <source src={video?.link} type="application/x-mpegURL" /> */}
                     Your browser does not support the video tag.
                   </video>
                 </div>
@@ -172,19 +179,19 @@ function Videos() {
                     </div>
                     <div className="basis-1/3 mx-2">
                       {duration === 0 ? (
-                          <Box
-                            bg={"black"}
-                            as={Button}
-                            _hover={{ background: "none" }}
-                            onClick={() => {
-                              if (videoRef.current !== null) {
-                                videoRef.current.play();
-                                setIsPlaying(true);
-                              }
-                            }}
-                          >
-                            <FaPause className="text-white text-xl" />
-                          </Box>
+                        <Box
+                          bg={"black"}
+                          as={Button}
+                          _hover={{ background: "none" }}
+                          onClick={() => {
+                            if (videoRef.current !== null) {
+                              videoRef.current.play();
+                              setIsPlaying(true);
+                            }
+                          }}
+                        >
+                          <FaPause className="text-white text-xl" />
+                        </Box>
                       ) : (
                         <div>
                           {isPlaying ? (
@@ -281,7 +288,6 @@ function Videos() {
                 </div>
 
                 {/* metadata of the video */}
-
                 <div className="w-full pt-[2rem]">
                   <div className="w-full bg-slate-600 pb-4 px-2 rounded-lg">
                     <div className="w-full font-Code font-semibold">
@@ -296,7 +302,11 @@ function Videos() {
                       </p>
                     </div>
                     <div className="w-full text-white py-4">
-                      <CreatorInfo userId={userId} creatorId={creatorId} isSubscribed={isSubscribed} />
+                      <CreatorInfo
+                        userId={userId}
+                        creatorId={creatorId}
+                        isSubscribed={isSubscribed}
+                      />
                     </div>
                     <div className="w-full pt-2">
                       <p className="font-Code text-white font-semibold">
@@ -305,10 +315,15 @@ function Videos() {
                     </div>
                   </div>
                 </div>
+
+                {/* comment section */}
+                <div className="w-full pt-[2rem]">
+                  <Comments />
+                </div>
               </div>
 
               {/* the editor should be unscrollable */}
-              <div className="w-[40%] h-full">
+              <div className="w-[40%] h-full overflow-y-clip">
                 <MonacoEditor />
               </div>
             </div>

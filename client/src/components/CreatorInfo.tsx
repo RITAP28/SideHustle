@@ -5,6 +5,7 @@ import { BiDislike } from "react-icons/bi";
 import { BsThreeDots } from "react-icons/bs";
 import { RxAvatar } from "react-icons/rx";
 import { useAppSelector } from "../redux/hooks/hook";
+import { FaNoteSticky } from "react-icons/fa6";
 
 const CreatorInfo = ({
   userId,
@@ -18,7 +19,7 @@ const CreatorInfo = ({
   const { currentUser } = useAppSelector((state) => state.user);
   // const urlParams = new URLSearchParams(window.location.search);
   const [, setCreatorEmail] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [, setLoading] = useState<boolean>(false);
   const [creatorName, setCreatorName] = useState<string>("");
   const [subscribed, setSubscribed] = useState<boolean>(isSubscribed);
   const getCreatorInfo = async (id: number) => {
@@ -81,7 +82,7 @@ const CreatorInfo = ({
                     handleSubscribe();
                   }
                 }}
-                disabled={loading || subscribed}
+                disabled={subscribed}
               >
                 {subscribed ? "Subscribed" : "Subscribe"}
               </button>
@@ -97,8 +98,13 @@ const CreatorInfo = ({
                 </button>
               </div>
               <div className="w-1/2 pr-3">
-                <button type="button" className="p-3 text-white text-[1.4rem]">
+                <button type="button" className="p-3 border-r-[1px] border-slate-600 text-white text-[1.4rem]">
                   <BiDislike className="text-[1.4rem]" />
+                </button>
+              </div>
+              <div className="w-1/2 pr-3">
+                <button type="button" className="p-3 pl-0 text-white text-[1.4rem]">
+                  <FaNoteSticky className="text-[1.4rem]" />
                 </button>
               </div>
             </div>
