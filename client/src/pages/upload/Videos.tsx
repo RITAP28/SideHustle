@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import CreatorInfo from "../../components/CreatorInfo";
 import Comments from "../../components/VideoComponents/Comments";
+import AllComments from "../../components/VideoComponents/AllComments";
 // import { MdFullscreenExit } from "react-icons/md";
 
 function Videos() {
@@ -320,6 +321,9 @@ function Videos() {
                 <div className="w-full pt-[2rem]">
                   <Comments />
                 </div>
+
+                {/* all comments */}
+                <AllComments />
               </div>
 
               {/* the editor should be unscrollable */}

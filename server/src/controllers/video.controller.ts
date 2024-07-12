@@ -144,3 +144,29 @@ export const handleReviewVideo = async (req: Request, res: Response) => {
         });
     };
 };
+
+export const handleGetAllReviewsByVideosId = async (req: Request, res: Response) => {
+    try {
+        const videoId = Number(req.query.videoId);
+
+        const reviewsByVideoId = await prisma.review.findMany({
+            where: {
+                videoId: videoId
+            }
+        });
+        console.log(reviewsByVideoId);
+        
+        return res.status(200).json({
+            success: true,
+            msg: `Reviews found of video with id ${videoId}`,
+            reviewsByVideoId
+        });
+
+    } catch (error) {
+        console.error("Error while getting video's review: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
