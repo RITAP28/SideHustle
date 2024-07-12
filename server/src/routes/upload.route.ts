@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { storage } from '../middlewares/multer.upload';
 import { isAuthenticated } from '../utils/auth.status';
-import { getAllVideos, handleGetCreatorInfo, handleGetOneVideo } from '../controllers/video.controller';
+import { getAllVideos, handleGetCreatorInfo, handleGetOneVideo, handleReviewVideo } from '../controllers/video.controller';
 import { handleUploadVideo } from '../controllers/upload.service';
 import { handleBecomeCreator, handleCountFollowers, handleFollow, handleGetFriend, handleGetFriends, handleGetUser, handleIsFollowed, handleIsSubscribed, handleSubscribe } from '../controllers/user.controller';
 
@@ -30,4 +30,5 @@ export default (router: express.Router) => {
     router.post('/follow', isAuthenticated, handleFollow);
     router.post('/isFollowed', isAuthenticated, handleIsFollowed);
     router.get('/followCount', isAuthenticated, handleCountFollowers);
+    router.post('/submitReview', isAuthenticated, handleReviewVideo);
 };
