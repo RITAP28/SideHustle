@@ -7,16 +7,30 @@ interface User {
 }
 
 export const handleGetUser = async (req: Request, res: Response) => {
-    const user = await prisma.user.findUnique({
-        where: {
-            id: Number(req.query.id)
-        }
-    });
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: Number(req.query.id)
+            }
+        });
+    
+        if(!user) return res.status(404).json({
+            success: false,
+            msg: "Creator not found"
+        });
 
-    if(!user) return res.status(404).json({
-        success: false,
-        msg: "Creator not found"
-    });
+        return res.status(200).json({
+            success: true,
+            msg: "User found",
+            user
+        });
+    } catch (error) {
+        console.error("Error while getting the user information: ", error);
+        return res.status(404).json({
+            success: false,
+            msg: "User not found"
+        })
+    }
 };
 
 // function which gets called when a user uploads a video for the first time

@@ -15,6 +15,8 @@ export type Video = {
     thumbnail: string;
     description: string;
     publisherId: number;
+    refreshingComments: boolean;
+    comments: number;
 }
 
 export type EditorRef = React.RefObject<monaco.editor.IStandaloneCodeEditor | null>

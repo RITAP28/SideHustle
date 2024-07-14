@@ -19,8 +19,9 @@ const Comments = () => {
     setReviewText(e.target.value);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     setLoading(true);
+    e.preventDefault();
     try {
       const review = await axios.post(
         `http://localhost:7070/submitReview?creator=${creator}&user=${user}&videoId=${videoId}`,
