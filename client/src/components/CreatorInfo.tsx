@@ -8,6 +8,7 @@ import { useAppSelector } from "../redux/hooks/hook";
 import { FaNoteSticky } from "react-icons/fa6";
 import { FaStar } from "react-icons/fa";
 import { useToast } from "@chakra-ui/react";
+import { BiSolidDislike } from "react-icons/bi";
 
 const CreatorInfo = ({
   userId,
@@ -30,6 +31,7 @@ const CreatorInfo = ({
   const [totalSubscribers, setTotalSubscribers] = useState([]);
   const [isStarred, setIsStarred] = useState<boolean>(false);
   const [, setAllStars] = useState([]);
+  const [dislike, setDislike] = useState<boolean | null>(null);
 
   const getCreatorInfo = async (id: number) => {
     try {
@@ -94,7 +96,7 @@ const CreatorInfo = ({
       );
       console.log(res.data);
       console.log("STarred already");
-      setIsStarred(res.data.success);
+      setIsStarred(res.data.isStar);
     } catch (error) {
       console.error("Error while checking if starred: ", error);
     }
@@ -138,6 +140,58 @@ const CreatorInfo = ({
   useEffect(() => {
     handleGetAllSubscribers();
   }, [handleGetAllSubscribers]);
+
+  const handleCheckDislike = useCallback(async () => {
+    try {
+      const res = await axios.get(`http://localhost:7070/isDisliked?user=${userId}&videoId=${videoId}`, {
+        withCredentials: true
+      });
+      console.log(res.data);
+      setDislike(res.data.disliked);
+    } catch (error) {
+      console.error("Error while checking isDisliked: ", error);
+    }
+  }, [userId, videoId]);
+
+  useEffect(() => {
+    handleCheckDislike();
+  }, [handleCheckDislike]);
+
+  const handleDislikeVideo = async () => {
+    try {
+      const res = await axios.post(`http://localhost:7070/dislike?user=${userId}&videoId=${videoId}&creator=${creatorId}`, null, {
+        withCredentials: true
+      });
+      console.log("Disliked video: ", res.data);
+      setDislike(true);
+    } catch (error) {
+      console.error("Error while disliking video: ", error);
+    }
+  };
+
+  const handleRemoveDislike = async () => {
+    try {
+      const req = await axios.delete(`http://localhost:7070/removeDislike?user=${userId}&videoId=${videoId}`, {
+        withCredentials: true
+      });
+      console.log(req.data);
+      setDislike(false);
+    } catch (error) {
+      console.error("Error while removing dislike: ", error);
+    }
+  }
+
+  const handleRemoveStar = async () => {
+    try {
+      const res = await axios.delete(`http://localhost:7070/removeStar?user=${userId}&videoId=${videoId}`, {
+        withCredentials: true
+      });
+      console.log(res.data);
+      setIsStarred(false);
+    } catch (error) {
+      console.error("Error while removing star: ", error);
+    }
+  };
 
   return (
     <>
@@ -184,7 +238,7 @@ const CreatorInfo = ({
                   type="button"
                   className="p-3 text-white text-[1.4rem]"
                   onClick={() => {
-                    if(!isStarred){
+                    if((!isStarred && !dislike) || (!isStarred && dislike)){
                       handleStarVideo();
                       toast({
                         title: "Successfully starred!",
@@ -193,9 +247,18 @@ const CreatorInfo = ({
                         duration: 4000,
                         isClosable: true,
                       });
+                      setDislike(false);
+                    } else if(isStarred && !dislike){
+                      handleRemoveStar();
+                      toast({
+                        title: "Successfully removed star!",
+                        description: `This video with id ${videoId} has been removed from your stars`,
+                        status: "info",
+                        duration: 4000,
+                        isClosable: true,
+                      });
                     }
                   }}
-                  disabled={isStarred}
                 >
                   {isStarred ? (
                     <FaStar className="text-[1.4rem]" />
@@ -208,8 +271,34 @@ const CreatorInfo = ({
                 <button
                   type="button"
                   className="p-3 border-r-[1px] border-slate-600 text-white text-[1.4rem]"
+                  onClick={() => {
+                    if((!dislike && !isStarred) || (!dislike && isStarred)){
+                      handleDislikeVideo();
+                      toast({
+                        title: "Successfully disliked!",
+                        description: `This video has been added to your dislikes`,
+                        status: "info",
+                        duration: 4000,
+                        isClosable: true,
+                      });
+                      setIsStarred(false);
+                    } else if(dislike && !isStarred){
+                      handleRemoveDislike();
+                      toast({
+                        title: "Successfully removed dislike!",
+                        description: `This video with id ${videoId} has been removed from your dislikes`,
+                        status: "success",
+                        duration: 4000,
+                        isClosable: true,
+                      });
+                    }
+                  }}
                 >
-                  <BiDislike className="text-[1.4rem]" />
+                  {dislike ? (
+                    <BiSolidDislike className="text-[1.4rem]" />
+                  ) : (
+                    <BiDislike className="text-[1.4rem]" />
+                  )}
                 </button>
               </div>
               <div className="w-1/2 pr-3">

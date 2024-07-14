@@ -218,6 +218,26 @@ export const handleStarVideo = async (req: Request, res: Response) => {
             });
         };
 
+        const isDisliked = await prisma.dislikeVideo.findUnique({
+            where: {
+                userId_videoId: {
+                    userId,
+                    videoId
+                }
+            }
+        });
+
+        if(isDisliked){
+            await prisma.dislikeVideo.delete({
+                where: {
+                    userId_videoId: {
+                        userId,
+                        videoId
+                    }
+                }
+            });
+        };
+
         await prisma.starVideo.create({
             data: {
                 userId: userId,
@@ -309,18 +329,60 @@ export const handleIsStarred = async (req: Request, res: Response) => {
         });
 
         if(!isStarred){
-            return res.status(404).json({
-                success: false,
+            return res.json({
+                success: true,
+                isStar: false,
                 msg: "You have not starred this video"
             });
         };
 
         return res.status(200).json({
             success: true,
+            isStar: true,
             msg: "You have already starred this video"
         });
     } catch (error) {
         console.error("Error while checking whether this video is starred or not: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
+
+export const handleRemoveStar = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.query.user);
+        const videoId = Number(req.query.videoId);
+
+        const star = await prisma.starVideo.findUnique({
+            where: {
+                userId_videoId: {
+                    userId,
+                    videoId
+                }
+            }
+        });
+        if(!star){
+            return res.status(404).json({
+                success: false,
+                msg: "Star not found"
+            })
+        };
+        await prisma.starVideo.delete({
+            where: {
+                userId_videoId: {
+                    userId,
+                    videoId
+                }
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            msg: `user with id ${userId} removed star from video ${videoId}`
+        });
+    } catch (error) {
+        console.error("Error while removing star: ", error);
         return res.status(500).json({
             success: false,
             msg: "Internal Server Error"
@@ -364,5 +426,115 @@ export const handleGetAllSubscribers = async (req: Request, res: Response) => {
             success: false,
             msg: "Internal Server Error"
         });
+    };
+};
+
+export const handleDislikeVideo = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.query.user);
+        const videoId = Number(req.query.videoId);
+        const creatorId = Number(req.query.creator);
+
+        const starredVideo = await prisma.starVideo.findUnique({
+            where: {
+                userId_videoId: {
+                    userId,
+                    videoId
+                }
+            }
+        });
+
+        if(starredVideo){
+            await prisma.starVideo.delete({
+                where: {
+                    userId_videoId: {
+                        userId,
+                        videoId
+                    }
+                }
+            });
+        }
+
+        await prisma.dislikeVideo.create({
+            data: {
+                userId: userId,
+                videoId: videoId,
+                creatorId: creatorId
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            msg: "Disliked video successfully"
+        });
+    } catch (error) {
+        console.error("Error while disliking video: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
+
+export const handleIsDisliked = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.query.user);
+        const videoId = Number(req.query.videoId);
+
+        const isDisliked = await prisma.dislikeVideo.findUnique({
+            where: {
+                userId_videoId: {
+                    userId,
+                    videoId
+                }
+            }
+        });
+
+        if(isDisliked){
+            return res.json({
+                success: true,
+                disliked: true,
+                msg: "This video is already disliked by you"
+            })
+        } else {
+            return res.json({
+                success: true,
+                disliked: false,
+                msg: "This video is not disliked by you"
+            })
+        };
+    } catch (error) {
+        console.error("Error while checking isDisliked: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
+
+export const handleRemoveDislike = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.query.user);
+        const videoId = Number(req.query.videoId);
+
+        await prisma.dislikeVideo.delete({
+            where: {
+                userId_videoId: {
+                    userId,
+                    videoId
+                }
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            msg: "Dislike removed successfully"
+        });
+    } catch (error) {
+        console.error("Error while removing dislike: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        })
     };
 };

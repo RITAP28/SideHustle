@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { storage } from '../middlewares/multer.upload';
 import { isAuthenticated } from '../utils/auth.status';
-import { getAllVideos, handleGetAllReviewsByVideosId, handleGetAllStarsByVideoId, handleGetAllSubscribers, handleGetCreatorInfo, handleGetOneVideo, handleIsStarred, handleReviewVideo, handleStarVideo } from '../controllers/video.controller';
+import { getAllVideos, handleDislikeVideo, handleGetAllReviewsByVideosId, handleGetAllStarsByVideoId, handleGetAllSubscribers, handleGetCreatorInfo, handleGetOneVideo, handleIsDisliked, handleIsStarred, handleRemoveDislike, handleRemoveStar, handleReviewVideo, handleStarVideo } from '../controllers/video.controller';
 import { handleUploadVideo } from '../controllers/upload.service';
 import { handleBecomeCreator, handleCountFollowers, handleFollow, handleGetFriend, handleGetFriends, handleGetUser, handleIsFollowed, handleIsSubscribed, handleSubscribe } from '../controllers/user.controller';
 
@@ -36,4 +36,8 @@ export default (router: express.Router) => {
     router.post('/starAVideo', isAuthenticated, handleStarVideo);
     router.get('/getAllStars', isAuthenticated, handleGetAllStarsByVideoId);
     router.get('/isStarred', isAuthenticated, handleIsStarred);
+    router.delete('/removeStar', isAuthenticated, handleRemoveStar);
+    router.get('/isDisliked', isAuthenticated, handleIsDisliked);
+    router.post('/dislike', isAuthenticated, handleDislikeVideo);
+    router.delete('/removeDislike', isAuthenticated, handleRemoveDislike);
 };
