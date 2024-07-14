@@ -27,8 +27,9 @@ const CreatorInfo = ({
   const [, setLoading] = useState<boolean>(false);
   const [creatorName, setCreatorName] = useState<string>("");
   const [subscribed, setSubscribed] = useState<boolean>(isSubscribed);
+  const [totalSubscribers, setTotalSubscribers] = useState([]);
   const [isStarred, setIsStarred] = useState<boolean>(false);
-  const [allStars, setAllStars] = useState([]);
+  const [, setAllStars] = useState([]);
 
   const getCreatorInfo = async (id: number) => {
     try {
@@ -122,6 +123,22 @@ const CreatorInfo = ({
     handleGetAllStars();
   }, [handleGetAllStars]);
 
+  const handleGetAllSubscribers = useCallback(async () => {
+    try {
+      const subscribers = await axios.get(`http://localhost:7070/getAllSubscribers?creator=${creatorId}`, {
+        withCredentials: true
+      });
+      console.log("Subscribers are: ", subscribers);
+      setTotalSubscribers(subscribers.data.subscribers);
+    } catch (error) {
+      console.error("Error getting all subscribers: ", error);
+    }
+  }, [creatorId]);
+
+  useEffect(() => {
+    handleGetAllSubscribers();
+  }, [handleGetAllSubscribers]);
+
   return (
     <>
       <div className="w-full flex flex-row">
@@ -131,7 +148,7 @@ const CreatorInfo = ({
           </div>
           <div className="w-[40%]">
             <p className="font-Philosopher text-xl">{creatorName}</p>
-            <p className="">{allStars.length} subscribers</p>
+            <p className="">{totalSubscribers.length} subscribers</p>
           </div>
           <div className="w-[40%] flex items-center pl-2">
             {creatorName !== currentUser?.name && (
@@ -143,6 +160,13 @@ const CreatorInfo = ({
                 onClick={() => {
                   if (!subscribed) {
                     handleSubscribe();
+                    toast({
+                      title: "Successfully subscribed!",
+                      description: `You are now following ${creatorName}`,
+                      status: "success",
+                      duration: 4000,
+                      isClosable: true,
+                    })
                   }
                 }}
                 disabled={subscribed}

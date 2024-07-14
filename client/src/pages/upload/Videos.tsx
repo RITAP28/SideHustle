@@ -324,7 +324,7 @@ function Videos() {
                 </div>
 
                 {/* all comments */}
-                <AllComments creatorId={creatorId} userId={userId} />
+                <AllComments creatorId={creatorId} />
               </div>
 
               {/* the editor should be unscrollable */}

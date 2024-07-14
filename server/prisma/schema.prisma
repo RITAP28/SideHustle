@@ -132,6 +132,7 @@ model Review {
   id         Int      @id @default(autoincrement())
   videoId    Int
   reviewerId Int
+  reviewerName String
   creatorId  Int
   reviewText String
   createdAt  DateTime @default(now())

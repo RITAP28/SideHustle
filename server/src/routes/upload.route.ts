@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { storage } from '../middlewares/multer.upload';
 import { isAuthenticated } from '../utils/auth.status';
-import { getAllVideos, handleGetAllReviewsByVideosId, handleGetAllStarsByVideoId, handleGetCreatorInfo, handleGetOneVideo, handleIsStarred, handleReviewVideo, handleStarVideo } from '../controllers/video.controller';
+import { getAllVideos, handleGetAllReviewsByVideosId, handleGetAllStarsByVideoId, handleGetAllSubscribers, handleGetCreatorInfo, handleGetOneVideo, handleIsStarred, handleReviewVideo, handleStarVideo } from '../controllers/video.controller';
 import { handleUploadVideo } from '../controllers/upload.service';
 import { handleBecomeCreator, handleCountFollowers, handleFollow, handleGetFriend, handleGetFriends, handleGetUser, handleIsFollowed, handleIsSubscribed, handleSubscribe } from '../controllers/user.controller';
 
@@ -25,6 +25,7 @@ export default (router: express.Router) => {
     router.post('/rolecreator', isAuthenticated, handleBecomeCreator);
     router.post('/subscribe', isAuthenticated, handleSubscribe);
     router.get('/isSubscribed', isAuthenticated, handleIsSubscribed);
+    router.get('/getAllSubscribers', isAuthenticated, handleGetAllSubscribers);
     router.get('/getallfriends', isAuthenticated, handleGetFriends);
     router.get('/getfriend', isAuthenticated, handleGetFriend);
     router.post('/follow', isAuthenticated, handleFollow);

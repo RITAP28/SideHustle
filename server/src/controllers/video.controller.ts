@@ -125,6 +125,7 @@ export const handleReviewVideo = async (req: Request, res: Response) => {
             data: {
                 videoId: videoId,
                 reviewerId: userId,
+                reviewerName: user.name,
                 creatorId: creatorId,
                 reviewText: reviewText as string,
             }
@@ -327,3 +328,41 @@ export const handleIsStarred = async (req: Request, res: Response) => {
     };
 };
 
+export const handleGetAllSubscribers = async (req: Request, res: Response) => {
+    try {
+        const creatorId = Number(req.query.creator);
+        const creator = await prisma.creator.findUnique({
+            where: {
+                userId: creatorId
+            }
+        });
+        if(!creator){
+            return res.status(404).json({
+                success: false,
+                msg: "Creator/Channel not found"
+            })
+        };
+        const subscribers = await prisma.subscriptions.findMany({
+            where: {
+                creatorUserId: creatorId
+            }
+        });
+        if(!subscribers){
+            return res.status(404).json({
+                success: false,
+                msg: "subscribers not found"
+            });
+        };
+        return res.status(200).json({
+            success: true,
+            msg: "Subscribers found successfully",
+            subscribers
+        });
+    } catch (error) {
+        console.error("Error while getting all subscribers: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
