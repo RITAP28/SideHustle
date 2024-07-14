@@ -42,6 +42,7 @@ model User {
   followers       Follow[]        @relation("Followed")
   following       Follow[]        @relation("Following")
   Review          Review[]
+  StarVideo       StarVideo[]
 }
 
 model Session {
@@ -52,15 +53,16 @@ model Session {
 }
 
 model Videos {
-  videoId          Int      @id @unique @default(autoincrement())
+  videoId          Int         @id @unique @default(autoincrement())
   title            String
   description      String
   dateOfPublishing DateTime
   thumbnail        String
-  publisher        User     @relation(references: [id], fields: [publisherId], onDelete: Cascade)
+  publisher        User        @relation(references: [id], fields: [publisherId], onDelete: Cascade)
   publisherId      Int
-  link             String   @unique
+  link             String      @unique
   Review           Review[]
+  StarVideo        StarVideo[]
 }
 
 model OTP {
@@ -73,18 +75,19 @@ model OTP {
 }
 
 model Creator {
-  creatorId   Int      @id @default(autoincrement())
+  creatorId   Int         @id @default(autoincrement())
   creator     String
   displayName String
-  videos      Int      @default(autoincrement())
-  subscribers Int      @default(0)
-  views       Int      @default(0)
-  stars       Int      @default(0)
-  comments    Int      @default(0)
-  userId      Int      @unique
-  userEmail   String   @unique
-  user        User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  videos      Int         @default(autoincrement())
+  subscribers Int         @default(0)
+  views       Int         @default(0)
+  stars       Int         @default(0)
+  comments    Int         @default(0)
+  userId      Int         @unique
+  userEmail   String      @unique
+  user        User        @relation(references: [id], fields: [userId], onDelete: Cascade)
   Review      Review[]
+  StarVideo   StarVideo[]
 }
 
 model Subscriptions {
@@ -135,4 +138,17 @@ model Review {
   user       User     @relation(references: [id], fields: [reviewerId], onDelete: Cascade)
   creator    Creator  @relation(references: [userId], fields: [creatorId], onDelete: Cascade)
   video      Videos   @relation(references: [videoId], fields: [videoId], onDelete: Cascade)
+}
+
+model StarVideo {
+  id        Int      @id @default(autoincrement())
+  videoId   Int
+  userId    Int
+  creatorId Int
+  likedAt   DateTime @default(now())
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  creator   Creator  @relation(references: [userId], fields: [creatorId], onDelete: Cascade)
+  video     Videos   @relation(references: [videoId], fields: [videoId], onDelete: Cascade)
+
+  @@unique([userId, videoId])
 }

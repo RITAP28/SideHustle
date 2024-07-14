@@ -170,3 +170,160 @@ export const handleGetAllReviewsByVideosId = async (req: Request, res: Response)
         });
     };
 };
+
+export const handleStarVideo = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.query.user);
+        const videoId = Number(req.query.videoId);
+        const creatorId = Number(req.query.creator);
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        const video = await prisma.videos.findUnique({
+            where: {
+                videoId: videoId
+            }
+        });
+
+        const creator = await prisma.creator.findUnique({
+            where: {
+                userId: creatorId
+            }
+        });
+
+        if(!user || !video || !creator){
+            return res.status(404).json({
+                success: false,
+                msg: "User/Video/Creator not found"
+            })
+        };
+
+        const isStarred = await prisma.starVideo.findUnique({
+            where: {
+                userId_videoId: {
+                    userId,
+                    videoId
+                }
+            }
+        });
+        if(isStarred){
+            return res.status(400).json({
+                success: false,
+                msg: "You have already starred this video"
+            });
+        };
+
+        await prisma.starVideo.create({
+            data: {
+                userId: userId,
+                videoId: videoId,
+                creatorId: creatorId
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            msg: `user with id ${userId} starred video ${videoId} of creator with id ${creatorId}`
+        });
+    } catch (error) {
+        console.error("Error while liking video: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
+
+export const handleGetAllStarsByVideoId = async (req: Request, res: Response) => {
+    try {
+        const videoId = Number(req.query.videoId);
+        const video = await prisma.videos.findUnique({
+            where: {
+                videoId: videoId
+            }
+        });
+
+        if(!video){
+            return res.status(404).json({
+                success: false,
+                msg: "Video not found"
+            });
+        };
+
+        const starsbyVideoId = await prisma.starVideo.findMany({
+            where: {
+                videoId: videoId
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            msg: "Stars found successfully",
+            starsbyVideoId
+        });
+    } catch (error) {
+        console.error("Error while fetching stars for this video: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
+
+export const handleIsStarred = async (req: Request, res: Response) => {
+    try {
+        const userId = Number(req.query.user);
+        const videoId = Number(req.query.videoId);
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        const video = await prisma.videos.findUnique({
+            where: {
+                videoId: videoId
+            }
+        });
+
+        if(!user || !video){
+            return res.status(404).json({
+                success: false,
+                msg: "User/Video not found"
+            });
+        };
+
+        const isStarred = await prisma.starVideo.findUnique({
+            where: {
+                userId_videoId: {
+                    userId,
+                    videoId
+                }
+            }
+        });
+
+        if(!isStarred){
+            return res.status(404).json({
+                success: false,
+                msg: "You have not starred this video"
+            });
+        };
+
+        return res.status(200).json({
+            success: true,
+            msg: "You have already starred this video"
+        });
+    } catch (error) {
+        console.error("Error while checking whether this video is starred or not: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
+

@@ -35,7 +35,7 @@ function Videos() {
   const [loading, setLoading] = useState<boolean>(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const urlParams = new URLSearchParams(window.location.search);
-  const videoId = urlParams.get("videoId");
+  const videoId = Number(urlParams.get("videoId"));
   const creatorId = Number(urlParams.get("creator"));
   const userId = Number(urlParams.get("user"));
   const dispatch = useAppDispatch();
@@ -158,11 +158,11 @@ function Videos() {
                     id="fullScreen"
                     controls={false}
                     className="w-full h-full object-contain aspect-video bg-slate-700 rounded-xl"
-                    ref={videoRef}
+                    // ref={videoRef}
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetaData}
                   >
-                    <source src={video?.link} type="application/x-mpegURL" />
+                    {/* <source src={video?.link} type="application/x-mpegURL" /> */}
                     Your browser does not support the video tag.
                   </video>
                 </div>
@@ -307,6 +307,7 @@ function Videos() {
                         userId={userId}
                         creatorId={creatorId}
                         isSubscribed={isSubscribed}
+                        videoId={videoId}
                       />
                     </div>
                     <div className="w-full pt-2">
