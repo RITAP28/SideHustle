@@ -158,11 +158,11 @@ function Videos() {
                     id="fullScreen"
                     controls={false}
                     className="w-full h-full object-contain aspect-video bg-slate-700 rounded-xl"
-                    // ref={videoRef}
+                    ref={videoRef}
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetaData}
                   >
-                    {/* <source src={video?.link} type="application/x-mpegURL" /> */}
+                    <source src={video?.link} type="application/x-mpegURL" />
                     Your browser does not support the video tag.
                   </video>
                 </div>
