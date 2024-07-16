@@ -2,9 +2,7 @@ import { Editor } from "@monaco-editor/react";
 import { useRef, useState } from "react";
 import LanguageSelector from "./LanguageSelector";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS } from "../utils/constants";
-// import CodeOutput from "./code.output";
 import * as monaco from "monaco-editor";
-// import CodeOutput from "./code.output";
 import axios from "axios";
 
 const MonacoEditor = () => {
@@ -16,7 +14,7 @@ const MonacoEditor = () => {
   const [activeRunButton, setActiveRunButton] = useState<boolean>(true);
   const [activeOutputButton, setActiveOutputButton] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const  [output, setOutput] = useState<string>("");
+  const [output, setOutput] = useState<string>("");
   const [version, setVersion] = useState<string>("");
 
   const onMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
@@ -29,8 +27,10 @@ const MonacoEditor = () => {
   const onSelect = (language: string) => {
     setLanguage(language);
     setValue(CODE_SNIPPETS[language]);
-    const languageVersion = LANGUAGE_VERSIONS.find(lang => lang.language === language);
-    if(languageVersion){
+    const languageVersion = LANGUAGE_VERSIONS.find(
+      (lang) => lang.language === language
+    );
+    if (languageVersion) {
       setVersion(languageVersion.version);
     }
   };
@@ -68,89 +68,96 @@ const MonacoEditor = () => {
   };
 
   return (
-    <div className="font-Code w-full h-full">
-      <div className="flex flex-row mx-4 gap-2">
-        <div className="w-full">
-          <div className="flex justify-end w-full py-2 pr-4">
-            <LanguageSelector language={language} onSelect={onSelect} />
-          </div>
-          <div className="rounded-lg">
-            {activeTab === "code" && (
-              <Editor
-                language={language}
-                defaultValue={CODE_SNIPPETS[language]}
-                height="70vh"
-                theme="vs-dark"
-                value={value}
-                onMount={onMount}
-                onChange={() => {
-                  handleChange;
-                }}
-              />
-            )}
-            {activeTab === "output" && (
-              <div className="w-full h-[50vh]">
-                {/* <CodeOutput editorRef={editorRef} language={language} /> */}
-                <div className="w-full h-full border-2 text-white border-white rounded-xl pl-2 pt-2">
-                  {output ? (
-                    output
-                  ) : (
-                    <div>
-                      <p className="text-slate-700">
-                        Click on Run Code to see the output
-                      </p>
-                    </div>
-                  )}
+    <>
+      <div className="font-Code w-full h-full">
+        <div className="flex flex-row mx-4 gap-2">
+          <div className="w-full">
+            <div className="basis-1/2 flex justify-end w-full py-2 pr-4">
+              <LanguageSelector language={language} onSelect={onSelect} />
+            </div>
+            <div className="rounded-lg">
+              {activeTab === "code" && (
+                <Editor
+                  language={language}
+                  defaultValue={CODE_SNIPPETS[language]}
+                  height="70vh"
+                  theme="vs-dark"
+                  value={value}
+                  onMount={onMount}
+                  onChange={() => {
+                    handleChange;
+                  }}
+                />
+              )}
+              {activeTab === "output" && (
+                <div className="w-full h-[50vh]">
+                  {/* <CodeOutput editorRef={editorRef} language={language} /> */}
+                  <div className="w-full h-full border-2 text-white border-white rounded-xl pl-2 pt-2">
+                    {output ? (
+                      output
+                    ) : (
+                      <div>
+                        <p className="text-slate-700">
+                          Click on Run Code to see the output
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="w-1/2 flex flex-row ml-4">
+          <div className="">
+            <button
+              type="button"
+              className={`px-6 py-2 font-bold ${
+                activeRunButton === true
+                  ? "bg-white text-black"
+                  : "bg-black text-white"
+              }`}
+              onClick={() => {
+                setActiveTab("code");
+                setInactivetab("output");
+                setActiveRunButton(true);
+                setActiveOutputButton(false);
+              }}
+            >
+              Code
+            </button>
+          </div>
+          <div className="">
+            <button
+              type="button"
+              className={`px-4 py-2 font-bold ${
+                activeOutputButton === true
+                  ? "bg-white text-black"
+                  : "bg-black text-white"
+              }`}
+              onClick={() => {
+                setActiveTab("output");
+                setInactivetab("code");
+                setActiveOutputButton(true);
+                setActiveRunButton(false);
+              }}
+            >
+              Output
+            </button>
+          </div>
+          <div className="">
+            <button
+              type="button"
+              className="px-4 py-2 font-bold bg-black text-white disabled:cursor-not-allowed"
+              disabled={activeOutputButton}
+              onClick={runCode}
+            >
+              {isLoading ? "Running..." : "Run"}
+            </button>
           </div>
         </div>
       </div>
-      <div className="w-1/2 flex flex-row ml-4">
-        <div className="">
-          <button
-            type="button"
-            className={`px-6 py-2 font-bold ${
-              activeRunButton === true
-                ? "bg-white text-black"
-                : "bg-black text-white"
-            }`}
-            onClick={() => {
-              setActiveTab("code");
-              setInactivetab("output");
-              setActiveRunButton(true);
-              setActiveOutputButton(false);
-            }}
-          >
-            Code
-          </button>
-        </div>
-        <div className="">
-          <button
-            type="button"
-            className={`px-4 py-2 font-bold ${
-              activeOutputButton === true
-                ? "bg-white text-black"
-                : "bg-black text-white"
-            }`}
-            onClick={() => {
-              setActiveTab("output");
-              setInactivetab("code");
-              setActiveOutputButton(true);
-              setActiveRunButton(false);
-            }}
-          >
-            Output
-          </button>
-        </div>
-        <div className="">
-          <button type="button" className="px-4 py-2 font-bold bg-black text-white disabled:cursor-not-allowed" disabled={activeOutputButton} onClick={runCode}>
-            {isLoading ? "Running..." : "Run"}
-          </button>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
