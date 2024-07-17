@@ -44,6 +44,7 @@ model User {
   Review          Review[]
   StarVideo       StarVideo[]
   DislikeVideo    DislikeVideo[]
+  File            File[]
 }
 
 model Session {
@@ -168,4 +169,18 @@ model DislikeVideo {
   video      Videos   @relation(references: [videoId], fields: [videoId], onDelete: Cascade)
 
   @@unique([userId, videoId])
+}
+
+model File {
+  fileId    Int      @id @default(autoincrement())
+  filename  String
+  template  String
+  content   String
+  userId    Int
+  username  String
+  createdAt DateTime
+  updatedAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@unique([filename, userId])
 }

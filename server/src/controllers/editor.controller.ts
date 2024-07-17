@@ -23,7 +23,7 @@ export const handleCodeEditor = async (req: Request, res: Response) => {
 };
 
 export const handleCreateNewFile = async (req: Request, res: Response) => {
-  const { template, fileName } = req.body;
+  const { template, fullName } = req.body;
   const userId = Number(req.query.userId);
 
   try {
@@ -40,19 +40,21 @@ export const handleCreateNewFile = async (req: Request, res: Response) => {
       });
     }
 
-    if (!template || !fileName) {
+    if (!template || !fullName) {
       return res.status(404).json({
         success: false,
         msg: "Both fields are required",
       });
     };
 
+    let content: string = "null";
+
     const publicPath = path.resolve("public", "files");
     if(!fs.existsSync(publicPath)){
         fs.mkdirSync(publicPath, { recursive: true });
     };
-    const filePath = path.join(publicPath, fileName);
-    fs.writeFile(filePath, "null", (err) => {
+    const filePath = path.join(publicPath, fullName);
+    fs.writeFile(filePath, content, (err) => {
         if(err){
             console.error(err);
             return res.status(500).json({
@@ -61,9 +63,40 @@ export const handleCreateNewFile = async (req: Request, res: Response) => {
         };
         console.log("file created");
     });
+
+    const existingFile = await prisma.file.findUnique({
+        where: {
+            filename_userId: {
+                filename: fullName,
+                userId: userId
+            }
+        }
+    });
+
+    if(existingFile){
+        return res.status(409).json({
+            success: false,
+            msg: "File already exists",
+            error: "Conflict with existing file"
+        });
+    };
+
+    const fileCreated = await prisma.file.create({
+        data: {
+            filename: fullName,
+            template: template,
+            content: content,
+            userId: userId,
+            username: user.name,
+            createdAt: new Date(Date.now()),
+            updatedAt: new Date(Date.now())
+        }
+    });
+
     return res.status(200).json({
         success: true,
-        msg: "File created successfully"
+        msg: "File created successfully",
+        fileCreated
     });
   } catch (error) {
     console.error("Error creating a file: ", error);
@@ -72,4 +105,25 @@ export const handleCreateNewFile = async (req: Request, res: Response) => {
       msg: "Internal Server Error",
     });
   }
+};
+
+export const handleGetAllFiles = async (req: Request, res: Response) => {
+    try {
+        const files = await prisma.file.findMany({
+            where: {
+                userId: Number(req.query.userId)
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            msg: "Files found successfully",
+            files
+        });
+    } catch (error) {
+        console.error("Error while getting files: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
 };

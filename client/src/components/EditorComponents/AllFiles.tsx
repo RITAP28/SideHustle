@@ -8,33 +8,18 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { LANGUAGE_VERSIONS } from "../../utils/constants";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 const languages = LANGUAGE_VERSIONS;
 
-const fileExtensions = [
-  {
-    language: "javascript",
-    extension: ".js",
-  },
-  {
-    language: "typescript",
-    extension: ".ts",
-  },
-  {
-    language: "java",
-    extension: ".java",
-  },
-  {
-    language: "python",
-    extension: ".py",
-  },
-  {
-    language: "php",
-    extension: ".php",
-  },
-];
+interface fileProps {
+    filename: string;
+    template: string;
+    content: string;
+    userId: number;
+    username: string
+}
 
 const AllFiles = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -45,24 +30,36 @@ const AllFiles = () => {
   const [extension, setExtension] = useState<string>(".ext");
   const [loading, setLoading] = useState<boolean>(false);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
+  const [retrieving, setRetrieving] = useState<boolean>(false);
+  const [allFiles, setAllFiles] = useState<fileProps[]>([]);
 
   const urlParams = new URLSearchParams(window.location.search);
   const userId = Number(urlParams.get("userId"));
 
-  function handleSelectExtension(language: string) {
-    for (let i = 0; i < fileExtensions.length; i++) {
-      if (language === fileExtensions[i].language) {
-        setExtension(fileExtensions[i].extension);
-      }
+  function handleSelectExtension(template: string) {
+    setLoading(true);
+    if(template === "javascript"){
+        setExtension(".js");
+    } else if(template === "typescript"){
+        setExtension(".ts");
+    } else if(template === "python"){
+        setExtension(".py");
+    } else if(template === "java"){
+        setExtension(".java");
+    } else if(template === "php"){
+        setExtension(".php");
     }
+    setLoading(false);
   }
 
   const handleCreateNewFile = async () => {
     setFileLoading(true);
+    const fullName: string = fileName + extension;
+    console.log(fullName);
     try {
         const file = await axios.post(`http://localhost:7070/createnewfile?userId=${userId}`, {
             template,
-            fileName
+            fullName
         }, {
             withCredentials: true,
             headers: {
@@ -74,7 +71,26 @@ const AllFiles = () => {
         console.error("Error while creating a new file: ", error);
     }
     setFileLoading(false);
+    onClose();
   };
+
+  const handleRetrieveFiles = useCallback(async () => {
+    setRetrieving(true);
+    try {
+        const files = await axios.get(`http://localhost:7070/getallfiles?userId=${userId}`, {
+            withCredentials: true
+        });
+        console.log(files.data);
+        setAllFiles(files.data.files);
+    } catch (error) {
+        console.error("Error while retrieving files: ", error);
+    }
+    setRetrieving(false);
+  }, [userId]);
+
+  useEffect(() => {
+    handleRetrieveFiles();
+  }, [handleRetrieveFiles]);
 
   return (
     <>
@@ -115,11 +131,6 @@ const AllFiles = () => {
                         setMenuOpen(false);
                       }}
                       value={template}
-                      onChange={() => {
-                        setLoading(true);
-                        handleSelectExtension(template);
-                        setLoading(false);
-                      }}
                     />
                   </div>
                   <div className="w-[95%]">
@@ -135,6 +146,7 @@ const AllFiles = () => {
                                   setTemplate(lang.language);
                                   setTempSelected(true);
                                   console.log(lang.language);
+                                  handleSelectExtension(lang.language);
                                 }}
                                 onMouseUp={() => {
                                   setMenuOpen(false);
@@ -192,7 +204,7 @@ const AllFiles = () => {
                   }}
                   disabled={fileLoading}
                 >
-                  {fileLoading ? "Creating your file" : "Create File"}
+                  {fileLoading ? "Creating file..." : "Create File"}
                 </button>
               </div>
             </ModalFooter>
@@ -210,7 +222,23 @@ const AllFiles = () => {
       </div>
       <hr className="border-slate-700" />
       <div className="flex justify-center text-white font-Code pt-4">
-        No files right now
+        {retrieving ? "getting your files..." : (
+            allFiles.length > 0 ? (
+                <div>
+                    {allFiles.map((file, index) => (
+                        <div className="" key={index}>
+                            <div className="">
+                                {file.filename}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div>
+                    No files found
+                </div>
+            )
+        )}
       </div>
     </>
   );
