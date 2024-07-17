@@ -15,6 +15,7 @@ import Rooms from "./pages/common/Rooms";
 import Community from "./pages/common/Community";
 import Friend from "./pages/common/Friend";
 import IndividualRoom from "./pages/common/IndividualRoom";
+import Files from "./pages/common/Files";
 
 function App() {
   const location = useLocation();
@@ -63,6 +64,11 @@ function App() {
             </ProtectedRoutes>
           }
         />
+        <Route path="/files" element={
+          <ProtectedRoutes>
+            <Files />
+          </ProtectedRoutes>
+        } />
         <Route
           path="/rooms"
           element={

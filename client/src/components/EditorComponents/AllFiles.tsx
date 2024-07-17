@@ -10,19 +10,21 @@ import {
 import { LANGUAGE_VERSIONS } from "../../utils/constants";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const languages = LANGUAGE_VERSIONS;
 
 interface fileProps {
-    filename: string;
-    template: string;
-    content: string;
-    userId: number;
-    username: string
+  filename: string;
+  template: string;
+  content: string;
+  userId: number;
+  username: string;
 }
 
 const AllFiles = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [template, setTemplate] = useState<string>("");
   const [, setTempSelected] = useState<boolean>(false);
@@ -38,16 +40,16 @@ const AllFiles = () => {
 
   function handleSelectExtension(template: string) {
     setLoading(true);
-    if(template === "javascript"){
-        setExtension(".js");
-    } else if(template === "typescript"){
-        setExtension(".ts");
-    } else if(template === "python"){
-        setExtension(".py");
-    } else if(template === "java"){
-        setExtension(".java");
-    } else if(template === "php"){
-        setExtension(".php");
+    if (template === "javascript") {
+      setExtension(".js");
+    } else if (template === "typescript") {
+      setExtension(".ts");
+    } else if (template === "python") {
+      setExtension(".py");
+    } else if (template === "java") {
+      setExtension(".java");
+    } else if (template === "php") {
+      setExtension(".php");
     }
     setLoading(false);
   }
@@ -57,18 +59,22 @@ const AllFiles = () => {
     const fullName: string = fileName + extension;
     console.log(fullName);
     try {
-        const file = await axios.post(`http://localhost:7070/createnewfile?userId=${userId}`, {
-            template,
-            fullName
-        }, {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-        console.log(file.data);
+      const file = await axios.post(
+        `http://localhost:7070/createnewfile?userId=${userId}`,
+        {
+          template,
+          fullName,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(file.data);
     } catch (error) {
-        console.error("Error while creating a new file: ", error);
+      console.error("Error while creating a new file: ", error);
     }
     setFileLoading(false);
     onClose();
@@ -77,13 +83,16 @@ const AllFiles = () => {
   const handleRetrieveFiles = useCallback(async () => {
     setRetrieving(true);
     try {
-        const files = await axios.get(`http://localhost:7070/getallfiles?userId=${userId}`, {
-            withCredentials: true
-        });
-        console.log(files.data);
-        setAllFiles(files.data.files);
+      const files = await axios.get(
+        `http://localhost:7070/getallfiles?userId=${userId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(files.data);
+      setAllFiles(files.data.files);
     } catch (error) {
-        console.error("Error while retrieving files: ", error);
+      console.error("Error while retrieving files: ", error);
     }
     setRetrieving(false);
   }, [userId]);
@@ -91,6 +100,7 @@ const AllFiles = () => {
   useEffect(() => {
     handleRetrieveFiles();
   }, [handleRetrieveFiles]);
+
 
   return (
     <>
@@ -222,22 +232,26 @@ const AllFiles = () => {
       </div>
       <hr className="border-slate-700" />
       <div className="flex justify-center text-white font-Code pt-4">
-        {retrieving ? "getting your files..." : (
-            allFiles.length > 0 ? (
-                <div>
-                    {allFiles.map((file, index) => (
-                        <div className="" key={index}>
-                            <div className="">
-                                {file.filename}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div>
-                    No files found
-                </div>
-            )
+        {retrieving ? (
+          "getting your files..."
+        ) : allFiles.length > 0 ? (
+          <div>
+            {allFiles.map((file, index) => (
+              <div
+                className="hover:cursor-pointer hover:bg-slate-600 active:bg-slate-700"
+                key={index}
+                onClick={() => {
+                    navigate(`/editor?userId=${userId}&filename=${file.filename}`, {
+                        replace: true
+                    });
+                }}
+              >
+                <div className="">{file.filename}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div>No files found</div>
         )}
       </div>
     </>
