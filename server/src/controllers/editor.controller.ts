@@ -23,7 +23,7 @@ export const handleCodeEditor = async (req: Request, res: Response) => {
 };
 
 export const handleCreateNewFile = async (req: Request, res: Response) => {
-  const { template, fullName } = req.body;
+  const { template, fullName, version } = req.body;
   const userId = Number(req.query.userId);
 
   try {
@@ -85,6 +85,7 @@ export const handleCreateNewFile = async (req: Request, res: Response) => {
         data: {
             filename: fullName,
             template: template,
+            version: version,
             content: content,
             userId: userId,
             username: user.name,

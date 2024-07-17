@@ -175,6 +175,7 @@ model File {
   fileId    Int      @id @default(autoincrement())
   filename  String
   template  String
+  version   String
   content   String
   userId    Int
   username  String
