@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { LANGUAGE_VERSIONS } from "../../utils/constants";
 import { useState } from "react";
+import axios from "axios";
 
 const languages = LANGUAGE_VERSIONS;
 
@@ -43,6 +44,10 @@ const AllFiles = () => {
   const [fileName, setFileName] = useState<string>("");
   const [extension, setExtension] = useState<string>(".ext");
   const [loading, setLoading] = useState<boolean>(false);
+  const [fileLoading, setFileLoading] = useState<boolean>(false);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = Number(urlParams.get("userId"));
 
   function handleSelectExtension(language: string) {
     for (let i = 0; i < fileExtensions.length; i++) {
@@ -51,6 +56,25 @@ const AllFiles = () => {
       }
     }
   }
+
+  const handleCreateNewFile = async () => {
+    setFileLoading(true);
+    try {
+        const file = await axios.post(`http://localhost:7070/createnewfile?userId=${userId}`, {
+            template,
+            fileName
+        }, {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        console.log(file.data);
+    } catch (error) {
+        console.error("Error while creating a new file: ", error);
+    }
+    setFileLoading(false);
+  };
 
   return (
     <>
@@ -164,9 +188,11 @@ const AllFiles = () => {
                   onClick={() => {
                     console.log("Template is: ", template);
                     console.log("Name is: ", fileName);
+                    handleCreateNewFile();
                   }}
+                  disabled={fileLoading}
                 >
-                  Create File
+                  {fileLoading ? "Creating your file" : "Create File"}
                 </button>
               </div>
             </ModalFooter>
