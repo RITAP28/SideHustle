@@ -3,6 +3,7 @@ import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CODE_SNIPPETS } from "../../utils/constants";
 import * as monaco from "monaco-editor";
+import { useToast } from "@chakra-ui/react";
 
 interface fileProps {
   filename: string;
@@ -16,6 +17,7 @@ interface fileProps {
 const defaultCode = CODE_SNIPPETS;
 
 const CodeEditor = () => {
+    const toast = useToast();
   const urlParams = new URLSearchParams(window.location.search);
   const userId = Number(urlParams.get("userId"));
   const filename = String(urlParams.get("filename"));
@@ -24,8 +26,9 @@ const CodeEditor = () => {
 
   const [file, setFile] = useState<fileProps | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [, setChangedContent] = useState<string>("");
+  const [changedContent, setChangedContent] = useState<string>("");
   const [running, setRunning] = useState<boolean>(false);
+  const [output, setOutput] = useState<string>("Run Code to see output!");
 
   const handleGetFileByFilename = useCallback(async () => {
     setLoading(true);
@@ -58,6 +61,17 @@ const CodeEditor = () => {
     setChangedContent(value as string);
   };
 
+  const handleUpdateFile = async (content: string) => {
+    try {
+        const updatedFile = await axios.put(`http://localhost:7070/updatefile?userId=${userId}&filename=${filename}`, content, {
+            withCredentials: true
+        });
+        console.log(updatedFile);
+    } catch (error) {
+        console.error("Error updating file: ", error);
+    }
+  };
+
   const handleRunCode = async () => {
     setRunning(true);
     try {
@@ -78,6 +92,15 @@ const CodeEditor = () => {
           }
         );
         console.log(codeOutput.data);
+        toast({
+            title: "Code execution successfull",
+            description: "Your code has been executed successfully, you can see the output on the right side of the screen",
+            status: "success",
+            duration: 4000,
+            isClosable: true,
+          });
+        setOutput(codeOutput.data.run.output);
+        await handleUpdateFile(changedContent);
       }
     } catch (error) {
       console.error("Error running code: ", error);
@@ -87,6 +110,8 @@ const CodeEditor = () => {
 
   return (
     <>
+      <div className="w-full flex flex-row gap-1 min-h-screen">
+      <div className="w-[60%]">
       {loading ? (
         "loading..."
       ) : (
@@ -101,7 +126,7 @@ const CodeEditor = () => {
               {running ? "Running..." : "Run"}
             </button>
           </div>
-          <div className="w-full min-h-screen bg-red-300">
+          <div className="w-full pt-2">
             <Editor
               language={file ? `${file.template}` : "javascript"}
               defaultValue={
@@ -111,13 +136,18 @@ const CodeEditor = () => {
               }
               className="w-full h-full"
               theme="vs-dark"
-              height="90vh"
+              height="70vh"
               onMount={onMount}
               onChange={handleChangeContent}
             />
           </div>
         </>
       )}
+      </div>
+      <div className="w-[40%] bg-gray-800 border-2 border-white h-[70vh] mt-11 p-2 text-white font-Code">
+        {running ? "Running your code..." : output}
+      </div>
+      </div>
     </>
   );
 };

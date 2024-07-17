@@ -159,3 +159,45 @@ export const handleGetSpecificFile = async (req: Request, res: Response) => {
         });
     };
 };
+
+export const handleUpdateContent = async (req: Request, res: Response) => {
+    try {
+        const filename = String(req.query.filename);
+        const userId = Number(req.query.userId);
+        const { content } : {
+            content: string
+        } = req.body;
+
+        const updatedFile = await prisma.file.update({
+            where: {
+                filename_userId: {
+                    filename: filename,
+                    userId: userId
+                }
+            },
+            data: {
+                content: content,
+                updatedAt: new Date(Date.now())
+            }
+        });
+
+        if(!updatedFile){
+            return res.status(404).json({
+                success: false,
+                msg: "File not updated for some reasons"
+            });
+        };
+
+        return res.status(200).json({
+            success: true,
+            msg: "Content updated successfully",
+            updatedFile
+        });
+    } catch (error) {
+        console.error("Error while updating content: ", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};

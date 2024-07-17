@@ -1,6 +1,6 @@
 import AllFiles from "../../components/EditorComponents/AllFiles"
 import CodeEditor from "../../components/EditorComponents/CodeEditor"
-import Output from "../../components/EditorComponents/Output"
+// import Output from "../../components/EditorComponents/Output"
 
 const Editor = () => {
   return (
@@ -8,11 +8,8 @@ const Editor = () => {
         <div className="basis-1/6">
           <AllFiles />
         </div>
-        <div className="basis-3/6">
+        <div className="basis-5/6">
           <CodeEditor />
-        </div>
-        <div className="basis-2/6 flex justify-center">
-          <Output />
         </div>
     </div>
   )
