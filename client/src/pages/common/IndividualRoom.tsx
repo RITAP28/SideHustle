@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks/hook";
 import { useToast } from "@chakra-ui/react";
 import { User } from "../../types/types";
-import Sender from "../../components/webRTCcomponents/Sender";
-import Receiver from "../../components/webRTCcomponents/Receiver";
+// import Sender from "../../components/webRTCcomponents/Sender";
+// import Receiver from "../../components/webRTCcomponents/Receiver";
 
 interface Room {
   id: number;
@@ -34,7 +34,7 @@ const IndividualRoom = () => {
   const leaderId = Number(urlParams.get("leaderId"));
   const userId = Number(urlParams.get("userId"));
 
-  const [room, setRoom] = useState<Room>();
+  const [, setRoom] = useState<Room>();
   const [loading, setLoading] = useState<boolean>(false);
   const [socket, setSocket] = useState<null | WebSocket>(null);
   const [latestMessage, setLatestMessage] = useState<string>("");
@@ -126,13 +126,13 @@ const IndividualRoom = () => {
           <div className="flex justify-center">
             <div className="flex flex-row w-[96%] gap-4">
               <div className="basis-2/3">
-                {room?.leader === currentUser?.name ? (
+                {/* {room?.leader === currentUser?.name ? (
                     <Sender />
                 ) : (
                   <div>
                     <Receiver />
                   </div>
-                )}
+                )} */}
               </div>
               <div className="basis-1/3 border-2 border-white flex flex-col">
                 <div className="h-[85%] overflow-y-scroll">
