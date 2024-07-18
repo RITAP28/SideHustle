@@ -144,7 +144,7 @@ const CodeEditor = () => {
         </>
       )}
       </div>
-      <div className="w-[40%] bg-gray-800 border-2 border-white h-[70vh] mt-11 p-2 text-white font-Code">
+      <div className="w-[40%] bg-gray-800 border-2 border-white h-[70vh] mt-11 p-4 text-white font-Code overflow-y-scroll">
         {running ? "Running your code..." : output}
       </div>
       </div>

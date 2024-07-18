@@ -145,7 +145,7 @@ function Videos() {
         ) : (
           <>
             <div className="pt-2 ml-[2rem] flex flex-row gap-4">
-              <div className="w-[60%] h-[95%] pt-[2.5rem]">
+              <div className="w-[60%] h-[95%] pt-[2.5rem] overflow-y-auto">
                 {/* video part */}
                 {/* scrollable content in the page */}
                 <div className="w-full">
@@ -328,7 +328,7 @@ function Videos() {
               </div>
 
               {/* the editor should be unscrollable */}
-              <div className="w-[40%] h-full overflow-y-clip">
+              <div className="w-[40%] h-screen sticky top-0 overflow-hidden">
                 <MonacoEditor />
               </div>
             </div>
