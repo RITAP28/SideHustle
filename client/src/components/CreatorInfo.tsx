@@ -28,6 +28,7 @@ const CreatorInfo = ({
   const [, setLoading] = useState<boolean>(false);
   const [creatorName, setCreatorName] = useState<string>("");
   const [subscribed, setSubscribed] = useState<boolean>(isSubscribed);
+  const [, setUnsubscribeLoading] = useState<boolean>(false);
   const [totalSubscribers, setTotalSubscribers] = useState([]);
   const [isStarred, setIsStarred] = useState<boolean>(false);
   const [, setAllStars] = useState([]);
@@ -69,6 +70,20 @@ const CreatorInfo = ({
       console.error("Error subscribing to creator: ", error);
     }
   };
+
+  const handleUnsubscribe = async () => {
+    setUnsubscribeLoading(true);
+    try {
+      const res = await axios.delete(`http://localhost:7070/unsubscribe?user=${userId}&creator=${creatorId}`, {
+        withCredentials: true
+      });
+      console.log(res.data);
+      setSubscribed(false);
+    } catch (error) {
+      console.error("Error unsubscribing from creator: ", error);
+    }
+    setUnsubscribeLoading(false);
+  }
 
   const handleStarVideo = async () => {
     try {
@@ -221,9 +236,17 @@ const CreatorInfo = ({
                       duration: 4000,
                       isClosable: true,
                     })
+                  } else {
+                    handleUnsubscribe();
+                    toast({
+                      title: "Successfully unsubscribed",
+                      description: `You have unsubscribed from ${creatorName}`,
+                      status: "info",
+                      duration: 4000,
+                      isClosable: true,
+                    });
                   }
                 }}
-                disabled={subscribed}
               >
                 {subscribed ? "Subscribed" : "Subscribe"}
               </button>

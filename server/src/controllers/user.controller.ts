@@ -187,6 +187,33 @@ export const handleIsSubscribed = async (req: Request, res: Response) => {
     };
 };
 
+// function for user to unsubscribe
+export const handleUnSubscribe = async (req: Request, res: Response) => {
+    const userId = Number(req.query.user);
+    const creatorId = Number(req.query.creator);
+    try {
+        if(await handleIsSubscribed(req, res)){
+            await prisma.subscriptions.delete({
+                where: {
+                    userId_creatorUserId: {
+                        userId: userId,
+                        creatorUserId: creatorId
+                    }
+                }
+            });
+            return res.status(200).json({
+                success: true,
+                msg: `User with ${userId} has unsubscribed from the channel with creator ${creatorId}`
+            });
+        };
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            msg: 'Error unsubscribing...'
+        });
+    };
+};
+
 export const handleGetFriends = async (req: Request, res: Response) => {
     const userId = Number(req.query.id);
     try {
