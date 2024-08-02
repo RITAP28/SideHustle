@@ -16,6 +16,7 @@
     "@monaco-editor/react": "^4.6.0",
     "@reduxjs/toolkit": "^2.2.5",
     "axios": "^1.7.2",
+    "date-fns": "^3.6.0",
     "framer-motion": "^11.2.11",
     "hls.js": "^1.5.11",
     "monaco-editor": "^0.50.0",

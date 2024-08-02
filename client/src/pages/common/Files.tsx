@@ -5,15 +5,18 @@ import { LANGUAGE_VERSIONS } from "../../utils/constants";
 import { FaGithub, FaPlus } from "react-icons/fa";
 import { MdHomeFilled } from "react-icons/md";
 import { FaFolder } from "react-icons/fa";
+import { TfiWorld } from "react-icons/tfi";
+import { RiGitRepositoryPrivateFill } from "react-icons/ri";
+import { LuDot } from "react-icons/lu";
+import { formatDistanceToNow } from 'date-fns';
 import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-} from '@chakra-ui/react';
+  useDisclosure,
+} from "@chakra-ui/react";
 import { SiTypescript } from "react-icons/si";
 import { IoLogoJavascript } from "react-icons/io5";
 import { FaJava } from "react-icons/fa";
@@ -21,6 +24,7 @@ import { SiPhp } from "react-icons/si";
 import { FaPython } from "react-icons/fa";
 import { useToast } from "@chakra-ui/react";
 import { IoMdMore } from "react-icons/io";
+import { useAppSelector } from "../../redux/hooks/hook";
 
 interface filesProps {
   filename: string;
@@ -29,6 +33,7 @@ interface filesProps {
   content: string;
   userId: number;
   username: string;
+  updatedAt: Date;
 }
 
 const languages = LANGUAGE_VERSIONS;
@@ -37,6 +42,10 @@ const languages = LANGUAGE_VERSIONS;
 const Files = () => {
   const navigate = useNavigate();
   const toast = useToast();
+
+  const { currentUser } = useAppSelector((state) => state.user);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [allFiles, setAllFiles] = useState<filesProps[]>([]);
   const [filesLoading, setFilesLoading] = useState<boolean>(false);
@@ -48,10 +57,15 @@ const Files = () => {
   const [fileName, setFileName] = useState<string>("");
   const [extension, setExtension] = useState<string>(".ext");
   const [loading, setLoading] = useState<boolean>(false);
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [shortEmail, setShortEmail] = useState<string>("");
+  const [timeAgo, setTimeAgo] = useState<string | null>(null);
 
   const urlParams = new URLSearchParams(window.location.search);
   const userId = Number(urlParams.get("userId"));
+
+  const shortenedEmail = (email: string) => {
+    setShortEmail(email.split("@")[0]);
+  };
 
   function handleSelectExtension(template: string) {
     setLoading(true);
@@ -80,6 +94,9 @@ const Files = () => {
       );
       console.log(files.data);
       setAllFiles(files.data.files);
+      if(currentUser){
+        shortenedEmail(currentUser.email);
+      }
     } catch (error) {
       console.error("Error while fetching all files: ", error);
     }
@@ -140,165 +157,8 @@ const Files = () => {
 
   return (
     <>
-      <div className="">
-        {menuOpen && (
-          <>
-            <div className="w-[95%] z-20 absolute top-full left-0 mt-1">
-              {languages.map((lang, index) => (
-                <>
-                  <div
-                    className="flex flex-row w-full bg-slate-700 text-white py-1 hover:cursor-pointer hover:bg-black hover:text-white"
-                    key={index}
-                    onMouseDown={() => {
-                      setTemplate(lang.language);
-                      setVersion(lang.version);
-                      setTempSelected(true);
-                      console.log(lang.language);
-                      handleSelectExtension(lang.language);
-                    }}
-                    onMouseUp={() => {
-                      setMenuOpen(false);
-                      setTempSelected(false);
-                      console.log("Nothing selected!");
-                    }}
-                  >
-                    <div className="basis-1/2 flex justify-center">
-                      {lang.language}
-                    </div>
-                    <div className="basis-1/2 flex justify-center">
-                      {lang.version}
-                    </div>
-                  </div>
-                  <hr className="border-slate-600" />
-                </>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
       <div className="w-full min-h-screen bg-black flex">
         <div className="w-full flex bg-black pt-[5rem]">
-          {/* <div className="w-[70%] h-[15rem] flex flex-row overflow-hidden">
-            <div className="basis-1/2 border-r-2 border-slate-600 overflow-y-auto">
-              <div className="w-full flex justify-center">
-                <p className="font-Code text-white font-bold sticky top-0">
-                  open any file:
-                </p>
-              </div>
-              <div className="flex justify-center pt-2">
-                <div className="w-full">
-                  {allFiles
-                    .map((file, index) => (
-                      <div
-                        className="w-[90%] font-Code hover:bg-slate-700 text-white hover:cursor-pointer border-2 border-slate-700 px-2 py-2 my-1"
-                        key={index}
-                        onClick={() => {
-                          navigate(
-                            `/editor?userId=${userId}&filename=${file.filename}`
-                          );
-                        }}
-                      >
-                        <div className="flex flex-row">
-                          <div className="basis-1/2 flex justify-start pl-2 items-center">
-                            {file.filename}
-                          </div>
-                          <div className="basis-1/2 flex justify-end pr-2">
-                            {handleLanguageLogo(file.template)}
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                    .reverse()}
-                </div>
-              </div>
-            </div>
-            <div className="basis-1/2 w-full">
-              <div className="w-full flex justify-center pt-2 font-Code text-white font-bold">
-                Create a new file
-              </div>
-              <div className="flex justify-center items-center">
-                <div className="w-[95%] flex flex-row pt-2">
-                  <div className="basis-1/2 w-full relative">
-                    <input
-                      type="search"
-                      className="w-[95%] px-2 py-1 bg-black border-2 font-bold text-white border-slate-600 font-Code text-sm"
-                      placeholder="choose language"
-                      onClick={() => {
-                        setMenuOpen(true);
-                      }}
-                      readOnly
-                      autoFocus
-                      onBlur={() => {
-                        setMenuOpen(false);
-                      }}
-                      value={template}
-                    />
-                    <div className="">
-                      {menuOpen && (
-                        <>
-                          <div className="w-[95%] z-20 absolute top-full left-0 mt-1">
-                            {languages.map((lang, index) => (
-                              <>
-                                <div
-                                  className="flex flex-row w-full bg-slate-700 text-white py-1 hover:cursor-pointer hover:bg-black hover:text-white"
-                                  key={index}
-                                  onMouseDown={() => {
-                                    setTemplate(lang.language);
-                                    setVersion(lang.version);
-                                    setTempSelected(true);
-                                    console.log(lang.language);
-                                    handleSelectExtension(lang.language);
-                                  }}
-                                  onMouseUp={() => {
-                                    setMenuOpen(false);
-                                    setTempSelected(false);
-                                    console.log("Nothing selected!");
-                                  }}
-                                >
-                                  <div className="basis-1/2 flex justify-center">
-                                    {lang.language}
-                                  </div>
-                                  <div className="basis-1/2 flex justify-center">
-                                    {lang.version}
-                                  </div>
-                                </div>
-                                <hr className="border-slate-600" />
-                              </>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="basis-1/2 w-full flex">
-                    <input
-                      type="text"
-                      className="w-[90%] px-2 py-1 bg-black border-2 text-white border-slate-600 font-Code text-sm"
-                      placeholder="enter name"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setFileName(e.target.value);
-                      }}
-                    />
-                    <p className="font-Code font-bold pl-1 flex text-white items-end">
-                      {loading ? "..." : extension}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full flex justify-center pt-4">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-black font-Code text-white font-bold hover:bg-white hover:text-black border-2 border-white"
-                  onClick={() => {
-                    handleCreateNewFile();
-                  }}
-                >
-                  {fileLoading ? "creating..." : "Create"}
-                </button>
-              </div>
-            </div>
-          </div> */}
           {/* left column */}
           <div className="w-[15%] bg-black">
             <div className="w-full">
@@ -306,7 +166,7 @@ const Files = () => {
                 <button
                   type="button"
                   className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-white hover:text-black rounded-md"
-                  onClick={handleCreateNewFile}
+                  onClick={onOpen}
                 >
                   <span className="flex items-center gap-1">
                     <FaPlus />
@@ -363,7 +223,7 @@ const Files = () => {
               <button
                 type="button"
                 className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-blue-600 rounded-md ml-2 bg-blue-700"
-                onClick={handleCreateNewFile}
+                onClick={onOpen}
               >
                 <span className="flex items-center gap-1">
                   <FaPlus />
@@ -403,13 +263,20 @@ const Files = () => {
                       }}
                     >
                       <div className="flex">
-                        <div className="">
+                        <div className="w-[10%] flex items-center">
                           {handleLanguageLogo(file.template)}
                         </div>
-                        <div className="pl-2 flex items-center">
+                        <div className="flex flex-col w-[80%]">
+                        <div className="pl-2 flex items-center w-full">
                           {file.filename}
                         </div>
-                        <div className="w-full flex items-center justify-end">
+                        <div className="pl-2 text-sm font-Philosopher font-bold text-slate-500 w-full">
+                          <span className="flex items-center">
+                          @{shortEmail}<LuDot />{formatDistanceToNow(new Date(file.updatedAt), {addSuffix: true})}
+                          </span>
+                        </div>
+                        </div>
+                        <div className="w-[10%] flex items-center justify-end">
                           <button
                             type="button"
                             className="hover:bg-slate-600 p-1 rounded-md"
@@ -428,6 +295,134 @@ const Files = () => {
             </div>
           </div>
         </div>
+      </div>
+      {/* modal for creating a new file */}
+      <div className="flex items-center">
+        <Modal isOpen={isOpen} onClose={onClose} isCentered size={"xl"}>
+          <ModalOverlay />
+          <ModalContent>
+            <div className="bg-slate-800">
+              <div className="pt-2 pl-4">
+                <h2 className="font-Code text-white font-bold text-lg">Create Repl</h2>
+              </div>
+              <ModalCloseButton className="text-white" />
+              <ModalBody>
+                <div className="w-full flex flex-row">
+                  <div className="basis-1/2 w-full">
+                    <p className="font-Code text-white">Template</p>
+                    <div className="pt-2 w-full relative">
+                      <input
+                        type="search"
+                        className="w-[95%] px-2 py-1 bg-black border-2 font-bold text-white border-slate-600 font-Code text-sm"
+                        placeholder="choose language"
+                        onClick={() => {
+                          setMenuOpen(true);
+                        }}
+                        readOnly
+                        autoFocus
+                        onBlur={() => {
+                          setMenuOpen(false);
+                        }}
+                        value={template}
+                      />
+                      {menuOpen && (
+                        <>
+                          <div className="w-[95%] z-20 absolute top-full left-0 mt-1 rounded-md border-1">
+                            {languages.map((lang, index) => (
+                              <>
+                                <div
+                                  className="flex flex-row w-full bg-slate-700 text-white py-1 hover:cursor-pointer hover:bg-black hover:text-white"
+                                  key={index}
+                                  onMouseDown={() => {
+                                    setTemplate(lang.language);
+                                    setVersion(lang.version);
+                                    setTempSelected(true);
+                                    console.log(lang.language);
+                                    handleSelectExtension(lang.language);
+                                  }}
+                                  onMouseUp={() => {
+                                    setMenuOpen(false);
+                                    setTempSelected(false);
+                                    console.log("Nothing selected!");
+                                  }}
+                                >
+                                  <div className="basis-1/2 flex justify-center">
+                                    {lang.language}
+                                  </div>
+                                  <div className="basis-1/2 flex justify-center">
+                                    {lang.version}
+                                  </div>
+                                </div>
+                                <hr className="border-slate-600" />
+                              </>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="basis-1/2 w-full">
+                    <p className="font-Code text-white">Title</p>
+                    <div className="flex flex-row w-full pt-2">
+                      <div className="w-[85%]">
+                        <input
+                          type="text"
+                          className="w-[100%] px-2 py-1 bg-black border-2 text-white border-slate-600 font-bold font-Code text-sm"
+                          placeholder="enter name"
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setFileName(e.target.value);
+                          }}
+                        />
+                      </div>
+                      <div className="w-[15%]">
+                        <p className="font-Code font-bold pl-1 flex text-white items-end">
+                          {loading ? "..." : extension}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="w-full pt-2">
+                      <p className="font-Philosopher text-white">
+                        <span className="flex items-center gap-2">
+                          <TfiWorld />
+                          Public
+                        </span>
+                      </p>
+                    </div>
+                    <div className="w-full pt-2">
+                      <p className="text-sm text-slate-500 font-Philosopher">
+                        Your friends can view and fork this repl
+                      </p>
+                    </div>
+                    <div className="w-full flex justify-center pt-2">
+                      <button
+                        type="button"
+                        className="px-4 py-1 border-2 border-white rounded-md hover:bg-white hover:text-black text-white text-sm font-Philosopher"
+                      >
+                        <span className="flex items-center gap-2">
+                          <RiGitRepositoryPrivateFill />
+                          Upgrade to make private
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+
+              <div className="w-full flex justify-center pb-4 pt-20">
+                <button
+                  onClick={() => {
+                    handleCreateNewFile();
+                  }}
+                  className="text-white px-4 py-1 border-white border-2 font-Code rounded-md hover:bg-white hover:text-black"
+                >
+                  {fileLoading ? "Getting done..." : "Create"}
+                </button>
+              </div>
+            </div>
+          </ModalContent>
+        </Modal>
       </div>
     </>
   );
