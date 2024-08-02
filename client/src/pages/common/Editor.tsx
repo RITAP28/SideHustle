@@ -1,6 +1,5 @@
 import AllFiles from "../../components/EditorComponents/AllFiles"
 import CodeEditor from "../../components/EditorComponents/CodeEditor"
-// import Output from "../../components/EditorComponents/Output"
 
 const Editor = () => {
   return (

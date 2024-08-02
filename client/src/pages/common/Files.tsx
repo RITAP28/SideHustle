@@ -1,7 +1,10 @@
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LANGUAGE_VERSIONS } from "../../utils/constants";
+import { FaGithub, FaPlus } from "react-icons/fa";
+import { MdHomeFilled } from "react-icons/md";
+import { FaFolder } from "react-icons/fa";
 
 interface filesProps {
   filename: string;
@@ -17,6 +20,7 @@ import { FaJava } from "react-icons/fa";
 import { SiPhp } from "react-icons/si";
 import { FaPython } from "react-icons/fa";
 import { useToast } from "@chakra-ui/react";
+import { IoMdMore } from "react-icons/io";
 
 const languages = LANGUAGE_VERSIONS;
 // const defaultCode = CODE_SNIPPETS;
@@ -126,27 +130,9 @@ const Files = () => {
 
   return (
     <>
-      <div className="w-full min-h-screen">
-        <div className="w-full flex flex-row">
-          <div className="basis-1/2 flex justify-center">
-            <button
-              type="button"
-              className="px-4 py-1 border-2 border-white font-Code font-bold hover:cursor-pointer hover:bg-white hover:text-black text-white"
-            >
-              File
-            </button>
-          </div>
-          <div className="basis-1/2 flex justify-center">
-            <button
-              type="button"
-              className="px-4 py-1 border-2 border-white font-Code font-bold hover:cursor-pointer hover:bg-white hover:text-black text-white"
-            >
-              Folder
-            </button>
-          </div>
-        </div>
-        <div className="w-full flex justify-center items-center bg-black pt-[5rem]">
-          <div className="w-[70%] h-[15rem] flex flex-row overflow-hidden">
+      <div className="w-full min-h-screen bg-black flex">
+        <div className="w-full flex bg-black pt-[5rem]">
+          {/* <div className="w-[70%] h-[15rem] flex flex-row overflow-hidden">
             <div className="basis-1/2 border-r-2 border-slate-600 overflow-y-auto">
               <div className="w-full flex justify-center">
                 <p className="font-Code text-white font-bold sticky top-0">
@@ -187,7 +173,6 @@ const Files = () => {
               <div className="flex justify-center items-center">
                 <div className="w-[95%] flex flex-row pt-2">
                   <div className="basis-1/2 w-full relative">
-                    {/* <p className="font-Code text-white">Template</p> */}
                     <input
                       type="search"
                       className="w-[95%] px-2 py-1 bg-black border-2 font-bold text-white border-slate-600 font-Code text-sm"
@@ -241,7 +226,6 @@ const Files = () => {
                   </div>
 
                   <div className="basis-1/2 w-full flex">
-                    {/* <p className="font-Code text-white">Name</p> */}
                     <input
                       type="text"
                       className="w-[90%] px-2 py-1 bg-black border-2 text-white border-slate-600 font-Code text-sm"
@@ -267,6 +251,124 @@ const Files = () => {
                   {fileLoading ? "creating..." : "Create"}
                 </button>
               </div>
+            </div>
+          </div> */}
+          {/* left column */}
+          <div className="w-[15%] bg-black">
+            <div className="w-full">
+              <div className="w-full px-2 pt-2">
+                <button
+                  type="button"
+                  className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-white hover:text-black rounded-md"
+                >
+                  <span className="flex items-center gap-1">
+                    <FaPlus />
+                    Create Repl
+                  </span>
+                </button>
+              </div>
+              <div className="w-full px-2 pt-2">
+                <button
+                  type="button"
+                  className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-white hover:text-black rounded-md"
+                >
+                  <span className="flex items-center gap-1">
+                    <FaGithub />
+                    Import from Github
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div className="py-4 flex justify-center">
+              <hr className="border-slate-400 w-[90%]" />
+            </div>
+            <div className="w-full">
+              <div className="w-full px-2 pt-2">
+                <button
+                  type="button"
+                  className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-white hover:text-black rounded-md"
+                >
+                  <span className="flex items-center gap-1">
+                    <MdHomeFilled />
+                    Home
+                  </span>
+                </button>
+              </div>
+              <div className="w-full px-2 pt-2">
+                <button
+                  type="button"
+                  className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-white hover:text-black rounded-md"
+                >
+                  <span className="flex items-center gap-1">
+                    <FaFolder />
+                    Repls
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* right column */}
+          <div className="w-[85%] bg-black">
+            <div className="w-full pl-[3rem] pt-[1rem] text-white font-Code font-bold text-[2rem]">
+              Nexus-Editor
+            </div>
+            <div className="w-[40%] ml-10 pt-2 flex justify-evenly gap-2">
+              <button
+                type="button"
+                className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-blue-600 rounded-md ml-2 bg-blue-700"
+              >
+                <span className="flex items-center gap-1">
+                  <FaPlus />
+                  Create Repl
+                </span>
+              </button>
+              <button
+                type="button"
+                className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-red-500 rounded-md bg-red-600"
+              >
+                <span className="flex items-center gap-1">
+                  <FaFolder />
+                  All Repls
+                </span>
+              </button>
+            </div>
+            <div className="pl-[3rem] pt-4 text-white font-Code font-bold">
+              Recent Repls
+            </div>
+            <div className="pl-[3rem] w-[40%]">
+              {allFiles
+                .map((file, index) => (
+                  <div
+                    className="w-[90%] font-Code hover:bg-slate-700 text-white hover:cursor-pointer border-2 border-slate-700 px-2 py-2 my-1"
+                    key={index}
+                    onClick={() => {
+                      navigate(
+                        `/editor?userId=${userId}&filename=${file.filename}`
+                      );
+                    }}
+                  >
+                    <div className="flex">
+                      <div className="">
+                        {handleLanguageLogo(file.template)}
+                      </div>
+                      <div className="pl-2 flex items-center">
+                        {file.filename}
+                      </div>
+                      <div className="w-full flex items-center justify-end">
+                        <button
+                          type="button"
+                          className="hover:bg-slate-600 p-1 rounded-md"
+                          onClick={() => {
+                            console.log("hwllo");
+                          }}
+                        >
+                          <IoMdMore className="text-2xl" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+                .reverse()}
             </div>
           </div>
         </div>

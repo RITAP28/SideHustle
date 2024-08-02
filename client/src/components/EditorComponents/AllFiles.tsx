@@ -35,7 +35,7 @@ const AllFiles = () => {
     }, [handleFetchFile]);
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-screen">
         <div className="w-full flex justify-center font-Code font-bold text-white">
             file: {filename} <br />
             template: {file?.template} <br />
