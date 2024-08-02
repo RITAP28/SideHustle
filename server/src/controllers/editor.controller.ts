@@ -2,7 +2,17 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
+import { redisClient } from "../server";
 const prisma = new PrismaClient();
+
+interface File {
+    filename: string;
+    template: string;
+    version: string;
+    content: string;
+    userId: number;
+    username: string;
+}
 
 export const handleCodeEditor = async (req: Request, res: Response) => {
   const { language, sourceCode } = req.body;
@@ -113,17 +123,38 @@ export const handleCreateNewFile = async (req: Request, res: Response) => {
 };
 
 export const handleGetAllFiles = async (req: Request, res: Response) => {
+    let isCached = false;
+    const cacheKey = "allFiles";
     try {
-        const files = await prisma.file.findMany({
-            where: {
-                userId: Number(req.query.userId)
-            }
-        });
-        return res.status(200).json({
-            success: true,
-            msg: "Files found successfully",
-            files
-        });
+        const cachedFiles = await redisClient.get(cacheKey);
+        if(cachedFiles){
+            let files: Array<File> = [];
+            isCached: true;
+            files = JSON.parse(cachedFiles);
+            console.log("All files obtained from redis succesfully.");
+            return res.status(200).json({
+                success: true,
+                msg: 'All files retrieved successfully',
+                files
+            });
+        } else {
+            const files = await prisma.file.findMany({
+                where: {
+                    userId: Number(req.query.userId)
+                }
+            });
+            console.log('database queried for files');
+            await redisClient.set(cacheKey, JSON.stringify(files), {
+                EX: 60,
+                NX: true
+            });
+            console.log('data set into the redis');
+            return res.status(200).json({
+                success: true,
+                msg: 'Files found successfully',
+                files
+            });
+        };
     } catch (error) {
         console.error("Error while getting files: ", error);
         return res.status(500).json({

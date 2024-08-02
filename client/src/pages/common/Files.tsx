@@ -5,6 +5,22 @@ import { LANGUAGE_VERSIONS } from "../../utils/constants";
 import { FaGithub, FaPlus } from "react-icons/fa";
 import { MdHomeFilled } from "react-icons/md";
 import { FaFolder } from "react-icons/fa";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from '@chakra-ui/react';
+import { SiTypescript } from "react-icons/si";
+import { IoLogoJavascript } from "react-icons/io5";
+import { FaJava } from "react-icons/fa";
+import { SiPhp } from "react-icons/si";
+import { FaPython } from "react-icons/fa";
+import { useToast } from "@chakra-ui/react";
+import { IoMdMore } from "react-icons/io";
 
 interface filesProps {
   filename: string;
@@ -14,13 +30,6 @@ interface filesProps {
   userId: number;
   username: string;
 }
-import { SiTypescript } from "react-icons/si";
-import { IoLogoJavascript } from "react-icons/io5";
-import { FaJava } from "react-icons/fa";
-import { SiPhp } from "react-icons/si";
-import { FaPython } from "react-icons/fa";
-import { useToast } from "@chakra-ui/react";
-import { IoMdMore } from "react-icons/io";
 
 const languages = LANGUAGE_VERSIONS;
 // const defaultCode = CODE_SNIPPETS;
@@ -30,7 +39,7 @@ const Files = () => {
   const toast = useToast();
 
   const [allFiles, setAllFiles] = useState<filesProps[]>([]);
-  const [, setFilesLoading] = useState<boolean>(false);
+  const [filesLoading, setFilesLoading] = useState<boolean>(false);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [template, setTemplate] = useState<string>("");
@@ -39,6 +48,7 @@ const Files = () => {
   const [fileName, setFileName] = useState<string>("");
   const [extension, setExtension] = useState<string>(".ext");
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const urlParams = new URLSearchParams(window.location.search);
   const userId = Number(urlParams.get("userId"));
@@ -130,6 +140,42 @@ const Files = () => {
 
   return (
     <>
+      <div className="">
+        {menuOpen && (
+          <>
+            <div className="w-[95%] z-20 absolute top-full left-0 mt-1">
+              {languages.map((lang, index) => (
+                <>
+                  <div
+                    className="flex flex-row w-full bg-slate-700 text-white py-1 hover:cursor-pointer hover:bg-black hover:text-white"
+                    key={index}
+                    onMouseDown={() => {
+                      setTemplate(lang.language);
+                      setVersion(lang.version);
+                      setTempSelected(true);
+                      console.log(lang.language);
+                      handleSelectExtension(lang.language);
+                    }}
+                    onMouseUp={() => {
+                      setMenuOpen(false);
+                      setTempSelected(false);
+                      console.log("Nothing selected!");
+                    }}
+                  >
+                    <div className="basis-1/2 flex justify-center">
+                      {lang.language}
+                    </div>
+                    <div className="basis-1/2 flex justify-center">
+                      {lang.version}
+                    </div>
+                  </div>
+                  <hr className="border-slate-600" />
+                </>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
       <div className="w-full min-h-screen bg-black flex">
         <div className="w-full flex bg-black pt-[5rem]">
           {/* <div className="w-[70%] h-[15rem] flex flex-row overflow-hidden">
@@ -260,6 +306,7 @@ const Files = () => {
                 <button
                   type="button"
                   className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-white hover:text-black rounded-md"
+                  onClick={handleCreateNewFile}
                 >
                   <span className="flex items-center gap-1">
                     <FaPlus />
@@ -316,6 +363,7 @@ const Files = () => {
               <button
                 type="button"
                 className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-blue-600 rounded-md ml-2 bg-blue-700"
+                onClick={handleCreateNewFile}
               >
                 <span className="flex items-center gap-1">
                   <FaPlus />
@@ -336,39 +384,47 @@ const Files = () => {
               Recent Repls
             </div>
             <div className="pl-[3rem] w-[40%]">
-              {allFiles
-                .map((file, index) => (
-                  <div
-                    className="w-[90%] font-Code hover:bg-slate-700 text-white hover:cursor-pointer border-2 border-slate-700 px-2 py-2 my-1"
-                    key={index}
-                    onClick={() => {
-                      navigate(
-                        `/editor?userId=${userId}&filename=${file.filename}`
-                      );
-                    }}
-                  >
-                    <div className="flex">
-                      <div className="">
-                        {handleLanguageLogo(file.template)}
-                      </div>
-                      <div className="pl-2 flex items-center">
-                        {file.filename}
-                      </div>
-                      <div className="w-full flex items-center justify-end">
-                        <button
-                          type="button"
-                          className="hover:bg-slate-600 p-1 rounded-md"
-                          onClick={() => {
-                            console.log("hwllo");
-                          }}
-                        >
-                          <IoMdMore className="text-2xl" />
-                        </button>
+              {filesLoading ? (
+                <>
+                  <p className="text-white font-Code text-xl font-bold">
+                    Loading all your files
+                  </p>
+                </>
+              ) : (
+                allFiles
+                  .map((file, index) => (
+                    <div
+                      className="w-[90%] font-Code hover:bg-slate-700 text-white hover:cursor-pointer border-2 border-slate-700 px-2 py-2 my-1"
+                      key={index}
+                      onClick={() => {
+                        navigate(
+                          `/editor?userId=${userId}&filename=${file.filename}`
+                        );
+                      }}
+                    >
+                      <div className="flex">
+                        <div className="">
+                          {handleLanguageLogo(file.template)}
+                        </div>
+                        <div className="pl-2 flex items-center">
+                          {file.filename}
+                        </div>
+                        <div className="w-full flex items-center justify-end">
+                          <button
+                            type="button"
+                            className="hover:bg-slate-600 p-1 rounded-md"
+                            onClick={() => {
+                              console.log("hwllo");
+                            }}
+                          >
+                            <IoMdMore className="text-2xl" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
-                .reverse()}
+                  ))
+                  .reverse()
+              )}
             </div>
           </div>
         </div>

@@ -13,7 +13,7 @@ interface Video {
 export const getAllVideos = async (req: Request, res: Response) => {
     let allVideos: Array<Video> = [];
     let isCached = false;
-    const cacheKey = 'allvides';
+    const cacheKey = 'allvideos';
     try {
         const cachedVideos = await redisClient.get(cacheKey);
         if(cachedVideos){
