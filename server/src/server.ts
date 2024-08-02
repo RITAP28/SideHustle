@@ -1,10 +1,14 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import router from './routes/user.routes';
-import path from 'path';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import { createClient } from 'redis';
 
+export const redisClient = createClient();
+redisClient.on('error', (err) => {
+    console.log('Redis client error: ', err);
+});
 const app = express();
 const PORT = 7070;
 
@@ -22,6 +26,17 @@ app.use(cookieParser());
 app.use(express.static("public"));
 app.use('/', router());
 
-app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`)
-});
+async function startServer() {
+    try {
+        await redisClient.connect();
+        console.log('Redis server connected successfully');
+
+        app.listen(PORT, () => {
+            console.log(`Server listening on ${PORT}`)
+        });
+    } catch (error) {
+        console.log(`Error starting server: `, error);
+    };
+};
+
+startServer();
