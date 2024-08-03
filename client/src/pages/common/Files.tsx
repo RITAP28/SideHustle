@@ -247,7 +247,7 @@ const Files = () => {
               {filesLoading ? (
                 <>
                   <p className="text-white font-Code text-xl font-bold">
-                    Loading all your files
+                    Loading all your files...
                   </p>
                 </>
               ) : (

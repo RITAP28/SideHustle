@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CODE_SNIPPETS } from "../../utils/constants";
 import * as monaco from "monaco-editor";
 import { useToast } from "@chakra-ui/react";
+import { FaPlay } from "react-icons/fa";
 
 interface fileProps {
   filename: string;
@@ -119,11 +120,14 @@ const CodeEditor = () => {
           <div className="w-full flex justify-center">
             <button
               type="button"
-              className="px-4 py-1 font-Code font-bold bg-black text-white hover:bg-white hover:text-black hover:cursor-pointer border-2 border-white"
+              className="px-4 py-1 font-Code font-bold bg-green-800 text-white hover:bg-green-500 hover:cursor-pointer rounded-md"
               onClick={handleRunCode}
               disabled={running}
             >
-              {running ? "Running..." : "Run"}
+              <span className="flex flex-row items-center gap-2">
+                <FaPlay className="text-[0.75rem]" />
+                {running ? "Running..." : "Run"}
+              </span>
             </button>
           </div>
           <div className="w-full pt-2">

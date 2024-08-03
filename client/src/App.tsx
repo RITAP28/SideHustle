@@ -20,7 +20,7 @@ import Files from "./pages/common/Files";
 function App() {
   const location = useLocation();
   const { isAuthenticated } = useAppSelector((state) => state.user);
-  const hideAppBarRoutes = ["/", "/login", "register"];
+  const hideAppBarRoutes = ["/", "/login", "register", "/editor"];
   return (
     <>
       {!hideAppBarRoutes.includes(location.pathname) && <Appbar />}

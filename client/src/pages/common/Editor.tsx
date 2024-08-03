@@ -1,9 +1,15 @@
+import Editortopbar from "../../components/Editor.topbar"
 import AllFiles from "../../components/EditorComponents/AllFiles"
 import CodeEditor from "../../components/EditorComponents/CodeEditor"
 
 const Editor = () => {
   return (
-    <div className="w-full min-h-screen flex flex-row bg-black pt-[5rem]">
+    <>
+    <div className="w-full min-h-screen">
+    <div className="bg-black">
+      <Editortopbar />
+    </div>
+    <div className="flex flex-row bg-black">
         <div className="basis-1/6">
           <AllFiles />
         </div>
@@ -11,6 +17,8 @@ const Editor = () => {
           <CodeEditor />
         </div>
     </div>
+    </div>
+    </>
   )
 }
 
