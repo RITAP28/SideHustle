@@ -81,15 +81,17 @@ const CodeEditor = () => {
         console.log(file?.version);
         if (!sourceCode) return;
         const codeOutput = await axios.post(
-          "https://emkc.org/api/v2/piston/execute",
+          "http://localhost:7070/run",
           {
+            fullName: file ? file.filename : "test",
             language: file ? file.template : "javascript",
             version: file ? file.version : "18.15.0",
-            files: [
-              {
-                content: sourceCode,
-              },
-            ],
+            content: sourceCode,
+          }, {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json'
+            }
           }
         );
         console.log(codeOutput.data);

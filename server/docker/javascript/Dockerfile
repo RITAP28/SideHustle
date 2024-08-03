@@ -1,7 +1,7 @@
 FROM node:22
 
-WORKDIR /app
+WORKDIR /public/files
 
 COPY . .
 
-CMD ["node", "./user_code.js"]
+CMD ["sh", "-c", "node $CODE_FILE"]
