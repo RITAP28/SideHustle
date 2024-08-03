@@ -135,28 +135,31 @@ export const handleRunCode = async (req: Request, res: Response) => {
       fullName,
       version,
       content,
+      userId
     }: {
       language: string;
       fullName: string;
       version: string;
       content: string;
+      userId: number;
     } = req.body;
 
-    // const existingFile = await prisma.file.findUnique({
-    //   where: {
-    //     filename_userId: {
-    //       filename: fullName,
-    //       userId: userId,
-    //     },
-    //   },
-    // });
 
-    // if (!existingFile) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     msg: "File not found",
-    //   });
-    // }
+    const existingFile = await prisma.file.findUnique({
+      where: {
+        filename_userId: {
+          filename: fullName,
+          userId: userId,
+        },
+      },
+    });
+
+    if (!existingFile) {
+      return res.status(404).json({
+        success: false,
+        msg: "File not found",
+      });
+    }
 
     let codeFileName;
     let imageName;
@@ -174,8 +177,15 @@ export const handleRunCode = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Unsupported language' });
     }
 
-    const codeFilePath = path.join(__dirname, 'public', 'files', codeFileName!);
-    await fs.promises.writeFile(codeFilePath, content);
+    const codeFilePath = path.join(__dirname, 'public', 'files', codeFileName);
+    // await fs.promises.writeFile(codeFilePath, content);
+    fs.writeFile(codeFilePath, content, (err) => {
+        if(err){
+            console.error(err);
+        } else {
+            console.log('file written successfully')
+        }
+    });
 
     const command = `docker run --rm -v ${codeFilePath}:/public/files/${codeFileName} -e CODE_FILE=${codeFileName} ${imageName}`;
 
@@ -188,6 +198,24 @@ export const handleRunCode = async (req: Request, res: Response) => {
       } else {
         res.json({ output: stdout });
       }
+    });
+
+    let cacheKey = fullName;
+    // await redisClient.set(cacheKey, JSON.stringify(content), {
+    //     EX: 3600,
+    //     NX: true
+    // });
+    await prisma.file.update({
+        where: {
+            filename_userId: {
+                filename: fullName,
+                userId: userId
+            }
+        },
+        data: {
+            content: content,
+            updatedAt: new Date(Date.now())
+        }
     });
   } catch (error) {
     console.error("Error while running the code: ", error);

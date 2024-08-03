@@ -1,7 +1,7 @@
-FROM python:3
+FROM python
 
-WORKDIR /app
+WORKDIR /public/files
 
 COPY . .
 
-CMD ["python", "./user_code.py"]
+CMD ["sh", "-c", "python $CODE_FILE"]

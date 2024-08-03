@@ -1,7 +1,7 @@
 import { Editor } from "@monaco-editor/react";
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CODE_SNIPPETS } from "../../utils/constants";
+// import { CODE_SNIPPETS } from "../../utils/constants";
 import * as monaco from "monaco-editor";
 import { useToast } from "@chakra-ui/react";
 import { FaPlay } from "react-icons/fa";
@@ -15,7 +15,7 @@ interface fileProps {
   userId: number;
 }
 
-const defaultCode = CODE_SNIPPETS;
+// const defaultCode = CODE_SNIPPETS;
 
 const CodeEditor = () => {
     const toast = useToast();
@@ -27,7 +27,7 @@ const CodeEditor = () => {
 
   const [file, setFile] = useState<fileProps | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [changedContent, setChangedContent] = useState<string>("");
+  const [, setChangedContent] = useState<string>("");
   const [running, setRunning] = useState<boolean>(false);
   const [output, setOutput] = useState<string>("Run Code to see output!");
 
@@ -58,19 +58,7 @@ const CodeEditor = () => {
   };
 
   const handleChangeContent = (value: string | undefined) => {
-    console.log(value as string);
     setChangedContent(value as string);
-  };
-
-  const handleUpdateFile = async (content: string) => {
-    try {
-        const updatedFile = await axios.put(`http://localhost:7070/updatefile?userId=${userId}&filename=${filename}`, content, {
-            withCredentials: true
-        });
-        console.log(updatedFile);
-    } catch (error) {
-        console.error("Error updating file: ", error);
-    }
   };
 
   const handleRunCode = async () => {
@@ -80,13 +68,14 @@ const CodeEditor = () => {
         const sourceCode = editorRef.current.getValue();
         console.log(file?.version);
         if (!sourceCode) return;
-        const codeOutput = await axios.post(
+        const codeOutput = await axios.put(
           "http://localhost:7070/run",
           {
-            fullName: file ? file.filename : "test",
-            language: file ? file.template : "javascript",
-            version: file ? file.version : "18.15.0",
+            fullName: file && file.filename,
+            language: file && file.template,
+            version: file && file.version,
             content: sourceCode,
+            userId: userId
           }, {
             withCredentials: true,
             headers: {
@@ -102,8 +91,7 @@ const CodeEditor = () => {
             duration: 4000,
             isClosable: true,
           });
-        setOutput(codeOutput.data.run.output);
-        await handleUpdateFile(changedContent);
+        setOutput(codeOutput.data.output);
       }
     } catch (error) {
       console.error("Error running code: ", error);
@@ -137,7 +125,7 @@ const CodeEditor = () => {
               language={file ? `${file.template}` : "javascript"}
               defaultValue={
                 file
-                  ? `${defaultCode[file.template]}`
+                  ? `${file.content}`
                   : `null`
               }
               className="w-full h-full"

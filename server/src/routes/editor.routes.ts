@@ -4,7 +4,7 @@ import { handleCreateNewFile, handleGetAllFiles, handleGetSpecificFile, handleRu
 
 export default (router: express.Router) => {
     router.post('/createnewfile', isAuthenticated, handleCreateNewFile);
-    router.post("/run", isAuthenticated, handleRunCode);
+    router.put("/run", isAuthenticated, handleRunCode);
     router.get('/getallfiles', isAuthenticated, handleGetAllFiles);
     router.get('/getfile', isAuthenticated, handleGetSpecificFile);
     router.put('/updatefile', isAuthenticated, handleUpdateContent);
