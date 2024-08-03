@@ -120,7 +120,7 @@ const CodeEditor = () => {
           <div className="w-full flex justify-center">
             <button
               type="button"
-              className="px-4 py-1 font-Code font-bold bg-green-800 text-white hover:bg-green-500 hover:cursor-pointer rounded-md"
+              className="px-4 py-1 font-Code font-bold bg-green-800 text-white hover:bg-green-600 hover:cursor-pointer rounded-md"
               onClick={handleRunCode}
               disabled={running}
             >

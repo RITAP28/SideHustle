@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 import { redisClient } from "../server";
+import { uuid } from "uuidv4";
 const prisma = new PrismaClient();
 
 interface File {
@@ -120,6 +121,42 @@ export const handleCreateNewFile = async (req: Request, res: Response) => {
       msg: "Internal Server Error",
     });
   }
+};
+
+export const handleRunCode = async (req: Request, res: Response) => {
+    try {
+        const { template, fullName, version, content } : {
+            template: string;
+            fullName: string;
+            version: string;
+            content: string
+        } = req.body;
+        const userId = Number(req.query.userId);
+        const lang = req.body.template;
+
+        const existingFile = await prisma.file.findUnique({
+            where: {
+                filename_userId: {
+                    filename: fullName,
+                    userId: userId
+                }
+            }
+        });
+
+        if(!existingFile){
+            return res.status(404).json({
+                success: false,
+                msg: "File not found"
+            });
+        };
+
+        const codeId = uuid();
+        switch(lang) {
+            case 'python':  
+        }
+    } catch (error) {
+        console.error('Error while running the code: ', error);
+    };
 };
 
 export const handleGetAllFiles = async (req: Request, res: Response) => {

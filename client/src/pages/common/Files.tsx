@@ -58,7 +58,7 @@ const Files = () => {
   const [extension, setExtension] = useState<string>(".ext");
   const [loading, setLoading] = useState<boolean>(false);
   const [shortEmail, setShortEmail] = useState<string>("");
-  const [timeAgo, setTimeAgo] = useState<string | null>(null);
+  // const [timeAgo, setTimeAgo] = useState<string | null>(null);
 
   const urlParams = new URLSearchParams(window.location.search);
   const userId = Number(urlParams.get("userId"));
@@ -369,6 +369,7 @@ const Files = () => {
                           type="text"
                           className="w-[100%] px-2 py-1 bg-black border-2 text-white border-slate-600 font-bold font-Code text-sm"
                           placeholder="enter name"
+                          disabled={!template}
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
@@ -413,9 +414,13 @@ const Files = () => {
               <div className="w-full flex justify-center pb-4 pt-20">
                 <button
                   onClick={() => {
+                    if(!fileName){
+                      return new Error('Please enter a fileName');
+                    }
                     handleCreateNewFile();
                   }}
                   className="text-white px-4 py-1 border-white border-2 font-Code rounded-md hover:bg-white hover:text-black"
+                  disabled={!fileName}
                 >
                   {fileLoading ? "Getting done..." : "Create"}
                 </button>

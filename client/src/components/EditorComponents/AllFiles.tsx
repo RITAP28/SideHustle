@@ -16,7 +16,7 @@ const AllFiles = () => {
     const userId = Number(urlParams.get("userId"));
     const filename = String(urlParams.get("filename"));
 
-    const [file, setFile] = useState<FileProps | null>(null);
+    const [, setFile] = useState<FileProps | null>(null);
 
     const handleFetchFile = useCallback(async () => {
         try {
@@ -37,9 +37,7 @@ const AllFiles = () => {
   return (
     <div className="w-full min-h-screen">
         <div className="w-full flex justify-center font-Code font-bold text-white">
-            file: {filename} <br />
-            template: {file?.template} <br />
-            createdAt: {file && new Date(file.createdAt).toLocaleDateString()}
+             
         </div>
     </div>
   )

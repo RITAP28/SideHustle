@@ -38,4 +38,11 @@ export const handleFileCreator = async (req: Request, res: Response) => {
             msg: "Internal Server Error"
         })
     };
+};
+
+export const handleRunCode = async (req: Request, res: Response) => {
+    try {
+    } catch (error) {
+        console.error("Error while running code: ", error);
+    }
 }
