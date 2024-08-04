@@ -1,7 +1,7 @@
-FROM eclipse-temurin
+FROM amazoncorretto
 
 WORKDIR /public/files
 
 COPY . .
 
-CMD ["java", "-jar", "$CODE_FILE"]
+CMD ["sh", "-c", "javac $CODE_FILE && java ${CODE_FILE%.*}"]

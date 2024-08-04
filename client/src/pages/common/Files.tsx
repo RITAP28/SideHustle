@@ -155,6 +155,13 @@ const Files = () => {
     }
   };
 
+  const sortedFiles = allFiles.sort();
+  console.log(sortedFiles);
+
+  // const handleSortFiles = (files: filesProps[]) => {
+
+  // }
+
   return (
     <>
       <div className="w-full min-h-screen bg-black flex">

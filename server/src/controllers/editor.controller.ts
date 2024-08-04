@@ -173,6 +173,10 @@ export const handleRunCode = async (req: Request, res: Response) => {
             codeFileName = fullName;
             imageName = 'javascript-runner';
             break;
+        case 'java':
+            codeFileName = fullName.replace('java', '');
+            imageName = 'java-runner';
+            break;
         default:
             return res.status(400).json({ error: 'Unsupported language' });
     }

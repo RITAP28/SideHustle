@@ -1,7 +1,7 @@
 import { Editor } from "@monaco-editor/react";
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
-// import { CODE_SNIPPETS } from "../../utils/constants";
+import { CODE_SNIPPETS } from "../../utils/constants";
 import * as monaco from "monaco-editor";
 import { useToast } from "@chakra-ui/react";
 import { FaPlay } from "react-icons/fa";
@@ -13,9 +13,11 @@ interface fileProps {
   version: string;
   username: string;
   userId: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// const defaultCode = CODE_SNIPPETS;
+const defaultCode = CODE_SNIPPETS;
 
 const CodeEditor = () => {
     const toast = useToast();
@@ -27,9 +29,10 @@ const CodeEditor = () => {
 
   const [file, setFile] = useState<fileProps | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [, setChangedContent] = useState<string>("");
+  const [changedContent, setChangedContent] = useState<string>("");
   const [running, setRunning] = useState<boolean>(false);
   const [output, setOutput] = useState<string>("Run Code to see output!");
+  const [template, setTemplate] = useState<string>("");
 
   const handleGetFileByFilename = useCallback(async () => {
     setLoading(true);
@@ -42,6 +45,7 @@ const CodeEditor = () => {
       );
       console.log(file.data);
       setFile(file.data.file);
+      setTemplate(file.data.file.template);
     } catch (error) {
       console.error("Error getting this specific file: ", error);
     }
@@ -57,8 +61,18 @@ const CodeEditor = () => {
     editor.focus();
   };
 
-  const handleChangeContent = (value: string | undefined) => {
+  const handleChangeContent = async (value: string | undefined) => {
     setChangedContent(value as string);
+    try {
+      const updatedContent = await axios.put(`http://localhost:7070/updatefile?filename=${filename}&userId=${userId}`, {
+        content: changedContent
+      },{
+        withCredentials: true
+      });
+      console.log(updatedContent.data); 
+    } catch (error) {
+      console.error("Error while updating content: ", error);
+    }
   };
 
   const handleRunCode = async () => {
@@ -124,9 +138,9 @@ const CodeEditor = () => {
             <Editor
               language={file ? `${file.template}` : "javascript"}
               defaultValue={
-                file
-                  ? `${file.content}`
-                  : `null`
+                (file?.createdAt === file?.updatedAt)
+                  ? `${defaultCode[template]}`
+                  : `${file?.content}`
               }
               className="w-full h-full"
               theme="vs-dark"
