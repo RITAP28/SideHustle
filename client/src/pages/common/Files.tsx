@@ -8,7 +8,7 @@ import { FaFolder } from "react-icons/fa";
 import { TfiWorld } from "react-icons/tfi";
 import { RiGitRepositoryPrivateFill } from "react-icons/ri";
 import { LuDot } from "react-icons/lu";
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from "date-fns";
 import {
   Modal,
   ModalOverlay,
@@ -25,6 +25,7 @@ import { FaPython } from "react-icons/fa";
 import { useToast } from "@chakra-ui/react";
 import { IoMdMore } from "react-icons/io";
 import { useAppSelector } from "../../redux/hooks/hook";
+import WebProjectCreation from "../../components/WebProjectCreation";
 
 interface filesProps {
   filename: string;
@@ -58,7 +59,6 @@ const Files = () => {
   const [extension, setExtension] = useState<string>(".ext");
   const [loading, setLoading] = useState<boolean>(false);
   const [shortEmail, setShortEmail] = useState<string>("");
-  // const [timeAgo, setTimeAgo] = useState<string | null>(null);
 
   const urlParams = new URLSearchParams(window.location.search);
   const userId = Number(urlParams.get("userId"));
@@ -94,7 +94,7 @@ const Files = () => {
       );
       console.log(files.data);
       setAllFiles(files.data.files);
-      if(currentUser){
+      if (currentUser) {
         shortenedEmail(currentUser.email);
       }
     } catch (error) {
@@ -247,58 +247,70 @@ const Files = () => {
                 </span>
               </button>
             </div>
-            <div className="pl-[3rem] pt-4 text-white font-Code font-bold">
-              Recent Repls
-            </div>
-            <div className="pl-[3rem] w-[40%]">
-              {filesLoading ? (
-                <>
-                  <p className="text-white font-Code text-xl font-bold">
-                    Loading all your files...
-                  </p>
-                </>
-              ) : (
-                allFiles
-                  .map((file, index) => (
-                    <div
-                      className="w-[90%] font-Code hover:bg-slate-700 text-white hover:cursor-pointer border-2 border-slate-700 px-2 py-2 my-1"
-                      key={index}
-                      onClick={() => {
-                        navigate(
-                          `/editor?userId=${userId}&filename=${file.filename}`
-                        );
-                      }}
-                    >
-                      <div className="flex">
-                        <div className="w-[10%] flex items-center">
-                          {handleLanguageLogo(file.template)}
+            <div className="w-full flex flex-row">
+              <div className="basis-1/2 w-full">
+                <div className="pl-[3rem] pt-4 text-white font-Code font-bold">
+                  Recent Repls
+                </div>
+                <div className="pl-[3rem] w-[80%]">
+                  {filesLoading ? (
+                    <>
+                      <p className="text-white font-Code text-xl font-bold">
+                        Loading all your files...
+                      </p>
+                    </>
+                  ) : (
+                    allFiles
+                      .map((file, index) => (
+                        <div
+                          className="w-[90%] font-Code hover:bg-slate-700 text-white hover:cursor-pointer border-2 border-slate-700 px-2 py-2 my-1"
+                          key={index}
+                          onClick={() => {
+                            navigate(
+                              `/editor?userId=${userId}&filename=${file.filename}`
+                            );
+                          }}
+                        >
+                          <div className="flex">
+                            <div className="w-[10%] flex items-center">
+                              {handleLanguageLogo(file.template)}
+                            </div>
+                            <div className="flex flex-col w-[80%]">
+                              <div className="pl-2 flex items-center w-full">
+                                {file.filename}
+                              </div>
+                              <div className="pl-2 text-sm font-Philosopher font-bold text-slate-500 w-full">
+                                <span className="flex items-center">
+                                  @{shortEmail}
+                                  <LuDot />
+                                  {formatDistanceToNow(
+                                    new Date(file.updatedAt),
+                                    { addSuffix: true }
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="w-[10%] flex items-center justify-end">
+                              <button
+                                type="button"
+                                className="hover:bg-slate-600 p-1 rounded-md"
+                                onClick={() => {
+                                  console.log("hwllo");
+                                }}
+                              >
+                                <IoMdMore className="text-2xl" />
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex flex-col w-[80%]">
-                        <div className="pl-2 flex items-center w-full">
-                          {file.filename}
-                        </div>
-                        <div className="pl-2 text-sm font-Philosopher font-bold text-slate-500 w-full">
-                          <span className="flex items-center">
-                          @{shortEmail}<LuDot />{formatDistanceToNow(new Date(file.updatedAt), {addSuffix: true})}
-                          </span>
-                        </div>
-                        </div>
-                        <div className="w-[10%] flex items-center justify-end">
-                          <button
-                            type="button"
-                            className="hover:bg-slate-600 p-1 rounded-md"
-                            onClick={() => {
-                              console.log("hwllo");
-                            }}
-                          >
-                            <IoMdMore className="text-2xl" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                  .reverse()
-              )}
+                      ))
+                      .reverse()
+                  )}
+                </div>
+              </div>
+              <div className="basis-1/2 w-full">
+                <WebProjectCreation />
+              </div>
             </div>
           </div>
         </div>
@@ -310,7 +322,9 @@ const Files = () => {
           <ModalContent>
             <div className="bg-slate-800">
               <div className="pt-2 pl-4">
-                <h2 className="font-Code text-white font-bold text-lg">Create Repl</h2>
+                <h2 className="font-Code text-white font-bold text-lg">
+                  Create Repl
+                </h2>
               </div>
               <ModalCloseButton className="text-white" />
               <ModalBody>
@@ -421,8 +435,8 @@ const Files = () => {
               <div className="w-full flex justify-center pb-4 pt-20">
                 <button
                   onClick={() => {
-                    if(!fileName){
-                      return new Error('Please enter a fileName');
+                    if (!fileName) {
+                      return new Error("Please enter a fileName");
                     }
                     handleCreateNewFile();
                   }}

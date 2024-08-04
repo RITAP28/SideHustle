@@ -33,3 +33,47 @@ export const CODE_SNIPPETS: CodeSnippets = {
     java: `\npublic class HelloWorld {\n\tpublic static void main(String[] args) {\n\tSystem.out.println("Hello, World!");\n\t}\n}\n`,
     php: "<?php\n\n$name = 'Alex';\necho $name;\n"
 };
+
+export const frontendTech = [
+    {
+        name: "React"
+    },{
+        name: "Angular"
+    },{
+        name: "Vue"
+    },{
+        name: "NextJS"
+    }
+];
+
+export const backendTech = [
+    {
+        name: "NodeJS"
+    },{
+        name: "Golang"
+    },{
+        name: "Python"
+    },{
+        name: "Rust"
+    }
+];
+
+export const databaseTech = [
+    {
+        name: "MySQL"
+    },{
+        name: "PostgreS"
+    },{
+        name: "SQLite"
+    },{
+        name: "MongoDB"
+    }
+];
+
+export const otherTech = [
+    {
+        name: "Prisma"
+    },{
+        name: "Drizzle"
+    }
+];
