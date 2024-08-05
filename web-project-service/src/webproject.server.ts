@@ -27,7 +27,7 @@ wss.on('connection', function connection(ws) {
     };
 
     const ptyProcess = pty.spawn('bash', [], {
-        name: 'xterm-color',
+        name: 'xterm-bash',
         cols: 80,
         rows: 30,
         cwd: process.env.INIT_CWD,
@@ -41,7 +41,7 @@ wss.on('connection', function connection(ws) {
 
     ws.on('message', (data: string) => {
         console.log('received data from the client: ', data);
-        ptyProcess.write(data);
+        ptyProcess.write(data + '\r');
     });
 
     ws.on('close', () => {

@@ -16,11 +16,12 @@ import Community from "./pages/common/Community";
 import Friend from "./pages/common/Friend";
 import IndividualRoom from "./pages/common/IndividualRoom";
 import Files from "./pages/common/Files";
+import WebProject from "./pages/webproject/WebProject";
 
 function App() {
   const location = useLocation();
   const { isAuthenticated } = useAppSelector((state) => state.user);
-  const hideAppBarRoutes = ["/", "/login", "register", "/editor"];
+  const hideAppBarRoutes = ["/", "/login", "register", "/editor", "/webproject"];
   return (
     <>
       {!hideAppBarRoutes.includes(location.pathname) && <Appbar />}
@@ -95,6 +96,11 @@ function App() {
         <Route path="/friend" element={
           <ProtectedRoutes>
             <Friend />
+          </ProtectedRoutes>
+        } />
+        <Route path="/webproject" element={
+          <ProtectedRoutes>
+            <WebProject />
           </ProtectedRoutes>
         } />
       </Routes>

@@ -27,9 +27,11 @@ import { SiMongodb } from "react-icons/si";
 import { BiLogoPostgresql } from "react-icons/bi";
 import { SiPrisma } from "react-icons/si";
 import { SiDrizzle } from "react-icons/si";
+import { useNavigate } from "react-router-dom";
 
 const WebProjectCreation = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   const handleLogoData = (language: string) => {
     if (language === "React") {
@@ -48,18 +50,18 @@ const WebProjectCreation = () => {
       return <FaPython className="" />;
     } else if (language === "Rust") {
       return <FaRust className="" />;
-    } else if(language === 'MySQL') {
-        return <SiMysql className="" />
-    } else if(language === 'PostgreS') {
-        return <BiLogoPostgresql className="" />
-    } else if(language === 'SQLite') {
-        return <SiSqlite className="" />
-    } else if(language === 'MongoDB') {
-        return <SiMongodb className="" />
-    } else if(language === 'Prisma') {
-        return <SiPrisma className="" />
-    } else if(language === 'Drizzle') {
-        return <SiDrizzle className="" />
+    } else if (language === "MySQL") {
+      return <SiMysql className="" />;
+    } else if (language === "PostgreS") {
+      return <BiLogoPostgresql className="" />;
+    } else if (language === "SQLite") {
+      return <SiSqlite className="" />;
+    } else if (language === "MongoDB") {
+      return <SiMongodb className="" />;
+    } else if (language === "Prisma") {
+      return <SiPrisma className="" />;
+    } else if (language === "Drizzle") {
+      return <SiDrizzle className="" />;
     }
   };
 
@@ -120,7 +122,7 @@ const WebProjectCreation = () => {
                       {backendTech.map((tech, index) => (
                         <div className=" py-2 w-[90%]" key={index}>
                           <div className="flex justify-center">
-                          <button
+                            <button
                               type="button"
                               className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
                             >
@@ -139,12 +141,12 @@ const WebProjectCreation = () => {
                     </div>
                   </div>
                   <div className="basis-1/4 w-full font-Philosopher">
-                  <div className="w-full flex justify-center">Database</div>
+                    <div className="w-full flex justify-center">Database</div>
                     <div className="w-full">
                       {databaseTech.map((tech, index) => (
                         <div className=" py-2 w-[95%]" key={index}>
                           <div className="flex justify-center">
-                          <button
+                            <button
                               type="button"
                               className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
                             >
@@ -163,12 +165,15 @@ const WebProjectCreation = () => {
                     </div>
                   </div>
                   <div className="basis-1/4 w-full font-Philosopher">
-                  <div className="w-full flex justify-center">Others</div>
+                    <div className="w-full flex justify-center">Others</div>
                     <div className="w-full">
                       {otherTech.map((tech, index) => (
-                        <div className=" py-2 w-[90%] flex justify-center" key={index}>
+                        <div
+                          className=" py-2 w-[90%] flex justify-center"
+                          key={index}
+                        >
                           <div className="flex justify-center w-full">
-                          <button
+                            <button
                               type="button"
                               className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
                             >
@@ -188,15 +193,24 @@ const WebProjectCreation = () => {
                   </div>
                 </div>
                 <div className="w-full flex justify-center pt-[2rem]">
-                    <button type="button" className="px-4 py-1 border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition ease-in-out duration-150 font-Code text-[15px] rounded-md">
-                        {`Launch this damn project :)`}
-                    </button>
+                  <button
+                    type="button"
+                    className="px-4 py-1 border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition ease-in-out duration-150 font-Code text-[15px] rounded-md"
+                    onClick={() => {
+                      navigate('/webproject');
+                    }}
+                  >
+                    {`Launch this damn project :)`}
+                  </button>
                 </div>
                 <div className="w-full pt-[2rem] flex justify-center text-[10px] font-Philosopher">
-                    <p>p.s. you can always import packages after clicking on 'launch',</p>
+                  <p>
+                    p.s. you can always import packages after clicking on
+                    'launch',
+                  </p>
                 </div>
                 <div className="w-full flex justify-center text-[14px] font-Philosopher">
-                    <p>this is just the beginning!</p>
+                  <p>this is just the beginning!</p>
                 </div>
               </ModalBody>
             </div>
