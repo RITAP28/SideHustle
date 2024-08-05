@@ -1,3 +1,5 @@
+import Terminal from "./components/Terminal"
+
 
 const WebProject = () => {
   return (
@@ -13,7 +15,7 @@ const WebProject = () => {
                 <p className="">Web Browser</p>
             </div>
             <div className="w-full h-[30vh] bg-slate-700 text-white">
-                Terminal
+                <Terminal />
             </div>
         </div>
     </div>

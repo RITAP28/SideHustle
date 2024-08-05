@@ -26,11 +26,11 @@ wss.on('connection', function connection(ws) {
         return;
     };
 
-    const ptyProcess = pty.spawn('bash', [], {
-        name: 'xterm-bash',
+    const ptyProcess = pty.spawn('zsh', [], {
+        name: 'xterm-zsh',
         cols: 80,
         rows: 30,
-        cwd: process.env.INIT_CWD,
+        cwd: process.env.INIT_CWD + '/user',
         env: process.env
     });
 
