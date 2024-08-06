@@ -1,11 +1,16 @@
 import express from 'express';
 import {WebSocket, WebSocketServer} from 'ws';
 import * as pty from 'node-pty';
+import cookieParser from 'cookie-parser';
 
 const PORT = 8082;
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({
+    extended: true
+}));
+app.use(cookieParser());
 const httpServer = app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });

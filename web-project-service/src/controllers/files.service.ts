@@ -4,7 +4,7 @@ import path from "path";
 
 export const handleReadFiles = async (req: Request, res: Response) => {
   try {
-    const files = await getFileTree("./user");
+    const files = await getFileTree("../../user");
     return res.status(200).json({
       success: true,
       msg: "Files found successfully",
@@ -21,8 +21,12 @@ export const handleReadFiles = async (req: Request, res: Response) => {
 };
 
 async function getFileTree(directory: string) {
+  console.log("directory: ", directory);
   const tree: Record<string, any> = {};
-  async function buildTree (currentDir: string, currentTree: Record<string, any>): Promise<void> {
+  async function buildTree(
+    currentDir: string,
+    currentTree: Record<string, any>
+  ): Promise<void> {
     const files = await fs.readdir(currentDir);
     for (const file of files) {
       const filePath = path.join(currentDir, file);
@@ -34,7 +38,7 @@ async function getFileTree(directory: string) {
         currentTree[file] = null;
       }
     }
-  };
+  }
 
   await buildTree(directory, tree);
   return tree;

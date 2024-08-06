@@ -13,14 +13,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.18.0",
     "@types/express": "^4.17.21",
     "@types/ws": "^8.5.12",
+    "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "node-pty": "^1.0.0",
     "websocket": "^1.0.35",
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "@types/jsonwebtoken": "^9.0.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   }
