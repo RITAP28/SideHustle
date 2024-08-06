@@ -201,6 +201,9 @@ const Files = () => {
                 <button
                   type="button"
                   className="py-1 border-2 border-white w-full flex justify-center font-Philosopher text-white hover:bg-white hover:text-black rounded-md"
+                  onClick={() => {
+                    navigate('/home');
+                  }}
                 >
                   <span className="flex items-center gap-1">
                     <MdHomeFilled />
