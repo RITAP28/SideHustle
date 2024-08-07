@@ -263,7 +263,8 @@ const Files = () => {
                       </p>
                     </>
                   ) : (
-                    allFiles
+                    (allFiles.length > 0) ? (
+                      allFiles
                       .map((file, index) => (
                         <div
                           className="w-[90%] font-Code hover:bg-slate-700 text-white hover:cursor-pointer border-2 border-slate-700 px-2 py-2 my-1"
@@ -308,6 +309,11 @@ const Files = () => {
                         </div>
                       ))
                       .reverse()
+                    ) : (
+                      <p className="text-white font-Code text-xl font-semibold">
+                        No recent repls found. Create one now!
+                      </p>
+                    )
                   )}
                 </div>
               </div>

@@ -4,7 +4,7 @@ import path from "path";
 
 export const handleReadFiles = async (req: Request, res: Response) => {
   try {
-    const files = await getFileTree("../../user");
+    const files = await getFileTree("./user");
     return res.status(200).json({
       success: true,
       msg: "Files found successfully",

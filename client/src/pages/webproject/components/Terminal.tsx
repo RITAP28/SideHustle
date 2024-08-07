@@ -6,7 +6,6 @@ import socket from '../../../utils/socket';
 const Terminal = () => {
     const terminalRef = useRef<HTMLDivElement>(null);
     const isRendered = useRef<boolean>(false);
-    // const [buffer, setBuffer] = useState<string>('');
     const buffer = useRef<string>('');
   useEffect(() => {
     if(isRendered.current) return;

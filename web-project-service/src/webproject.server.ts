@@ -2,6 +2,8 @@ import express from 'express';
 import {WebSocket, WebSocketServer} from 'ws';
 import * as pty from 'node-pty';
 import cookieParser from 'cookie-parser';
+import router from './routes/router';
+import cors from 'cors';
 
 const PORT = 8082;
 
@@ -11,6 +13,11 @@ app.use(express.urlencoded({
     extended: true
 }));
 app.use(cookieParser());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
+app.use('/', router());
 const httpServer = app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
