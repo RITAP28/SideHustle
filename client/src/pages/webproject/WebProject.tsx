@@ -1,5 +1,5 @@
 import axios from "axios";
-import FilesSidebar from "./components/FilesSidebar";
+// import FilesSidebar from "./components/FilesSidebar";
 import Terminal from "./components/Terminal";
 import { useEffect, useState } from "react";
 
@@ -18,10 +18,16 @@ const WebProject = () => {
 
     handleFilesSideBar();
   }, []);
+
+  console.log(fileTree);
   return (
     <div className="w-full min-h-screen flex flex-row bg-black">
       <div className="w-[20%] bg-slate-700">
-        <FilesSidebar fileTree={fileTree} onSelect={} />
+      {(Object.keys(fileTree).length === 0) ? (
+      <p className="">Loading...</p>
+    ) : (
+      <RenderNode nodes={fileTree} />
+    )}
       </div>
       <div className="w-[80%] flex flex-col h-[100vh]">
         <div className="flex flex-row w-full h-[70vh]">
@@ -37,3 +43,35 @@ const WebProject = () => {
 };
 
 export default WebProject;
+
+const RenderNode = ({
+  nodes,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  nodes: Record<string, any>;
+}) => {
+  return (
+    <ul className="">
+      {Object.entries(nodes).map(([fileName, childNode]) => (
+        <li key={fileName}>
+          <div
+            className=""
+            onClick={(e) => {
+              e.stopPropagation();
+              if (typeof childNode === 'object' && childNode !== null) return;
+            }}
+          >
+            <p className={typeof childNode === 'object' && childNode !== null ? "text-white pl-2" : "text-red-400 pl-2"}>
+              {fileName}
+            </p>
+            {typeof childNode === 'object' && childNode !== null && (
+              <div className="pl-2">
+                <RenderNode nodes={childNode} />
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}
