@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import { redisClient } from "../server";
-const prisma = new PrismaClient();
+import { prisma } from "db";
 
 interface Video {
     videoId: number;

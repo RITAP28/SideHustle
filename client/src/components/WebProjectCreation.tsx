@@ -32,7 +32,6 @@ import { useState } from "react";
 
 const WebProjectCreation = () => {
   const [newProject, setNewProject] = useState<boolean | null>(null);
-  const [oldProject, setOldProject] = useState<boolean>(false);
   const [githubProject, setGithubProject] = useState<boolean | null>();
   const [techStack, setTechStack] = useState<boolean | null>(null);
   const [blankProject, setBlankProject] = useState<boolean | null>(null);
@@ -92,7 +91,15 @@ const WebProjectCreation = () => {
         <Modal isOpen={isOpen} onClose={onClose} isCentered size={"xl"}>
           <ModalOverlay />
           <ModalContent>
-            <ModalCloseButton className="text-white hover:bg-slate-700" />
+            <ModalCloseButton
+              className="text-white hover:bg-slate-700"
+              onClick={() => {
+                setBlankProject(false);
+                setGithubProject(false);
+                setNewProject(false);
+                setTechStack(false);
+              }}
+            />
             <div className="bg-slate-800 text-white">
               <div className="w-full flex justify-center py-3 font-Code font-bold">
                 Configure your settings:
@@ -127,47 +134,49 @@ const WebProjectCreation = () => {
                 </div>
                 {newProject && (
                   <>
-                  <div className="w-full flex justify-center font-Code font-semibold pt-4 pb-2">
-                    <p className="underline">
-                    Starting a new project:
-                    </p>
-                  </div>
-                  <div className="w-full flex flex-col">
-                    <div className="w-full flex flex-row py-2">
-                      <div className="w-[50%]">
-                        <p className="font-Code text-sm">
-                          Start with a blank project:
-                        </p>
+                    <div className="w-full flex justify-center font-Code font-semibold pt-4 pb-2">
+                      <p className="underline">Starting a new project:</p>
+                    </div>
+                    <div className="w-full flex flex-col">
+                      <div className="w-full flex flex-row py-2">
+                        <div className="w-[50%]">
+                          <p className="font-Code text-sm">
+                            Start with a blank project:
+                          </p>
+                        </div>
+                        <div className="w-[50%] flex justify-center items-center">
+                          <button
+                            type="button"
+                            className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
+                            onClick={() => {
+                              setBlankProject(true);
+                              setTechStack(false);
+                            }}
+                          >
+                            Blank Project
+                          </button>
+                        </div>
                       </div>
-                      <div className="w-[50%] flex justify-center items-center">
-                        <button
-                          type="button"
-                          className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
-                        >
-                          Blank Project
-                        </button>
+                      <div className="w-full flex flex-row py-2">
+                        <div className="w-[50%]">
+                          <p className="font-Code text-sm">
+                            Start with an initial tech-stack:
+                          </p>
+                        </div>
+                        <div className="w-[50%] flex justify-center items-center">
+                          <button
+                            type="button"
+                            className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
+                            onClick={() => {
+                              setTechStack(true);
+                              setBlankProject(false);
+                            }}
+                          >
+                            Choose your tech-stack
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="w-full flex flex-row py-2">
-                      <div className="w-[50%]">
-                        <p className="font-Code text-sm">
-                          Start with an initial tech-stack:
-                        </p>
-                      </div>
-                      <div className="w-[50%] flex justify-center items-center">
-                        <button
-                          type="button"
-                          className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
-                          onClick={() => {
-                            setTechStack(true);
-                            setBlankProject(false);
-                          }}
-                        >
-                          Choose your tech-stack
-                        </button>
-                      </div>
-                    </div>
-                  </div>
                   </>
                 )}
                 {githubProject && (
@@ -186,7 +195,6 @@ const WebProjectCreation = () => {
                           placeholder="repo link"
                         />
                       </div>
-                      <div className="w-[50%]"></div>
                     </div>
                     <div className="w-full flex justify-center pt-[2rem] pb-2">
                       <button
@@ -198,132 +206,185 @@ const WebProjectCreation = () => {
                     </div>
                   </>
                 )}
+                {blankProject && (
+                  <>
+                    <div className="w-full flex justify-center pt-[1rem]">
+                      <hr className="text-slate-600 w-[80%]" />
+                    </div>
+                    <div className="w-full flex flex-row pt-6 pb-4">
+                      <div className="w-[40%] flex justify-center">
+                        <p className="font-Code font-semibold text-sm">
+                          Name of the project:
+                        </p>
+                      </div>
+                      <div className="w-[60%] flex justify-center items-center">
+                        <input
+                          type="text"
+                          name=""
+                          className="font-Code px-2 py-1 text-slate-800 font-semibold w-[300px]"
+                          placeholder="name of the project"
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full flex justify-center py-4">
+                      <button
+                        type="button"
+                        className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
+                      >
+                        Create Project
+                      </button>
+                    </div>
+                  </>
+                )}
                 {techStack && (
                   <>
-                  <div className="w-full flex justify-center py-4">
-                    <hr className="w-[80%]" />
-                  </div>
-                  <div className="w-full flex flex-row">
-                  <div className="basis-1/4 w-full font-Philosopher">
-                    <div className="w-full flex justify-center">Frontend</div>
-                    <div className="w-full">
-                      {frontendTech.map((tech, index) => (
-                        <div className="py-2 w-[90%]" key={index}>
-                          <div className="flex justify-center">
-                            <button
-                              type="button"
-                              className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
-                            >
-                              <div className="flex flex-row">
-                                <div className="basis-1/3 flex justify-end items-center hover:text-black">
-                                  {handleLogoData(tech.name)}
-                                </div>
-                                <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
-                                  {tech.name}
-                                </div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="w-full flex justify-center py-4">
+                      <hr className="w-[80%]" />
                     </div>
-                  </div>
-                  <div className="basis-1/4 w-full font-Philosopher">
-                    <div className="w-full flex justify-center">Backend</div>
-                    <div className="w-full">
-                      {backendTech.map((tech, index) => (
-                        <div className=" py-2 w-[90%]" key={index}>
-                          <div className="flex justify-center">
-                            <button
-                              type="button"
-                              className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
-                            >
-                              <div className="flex flex-row">
-                                <div className="basis-1/3 flex justify-end items-center hover:text-black">
-                                  {handleLogoData(tech.name)}
-                                </div>
-                                <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
-                                  {tech.name}
-                                </div>
-                              </div>
-                            </button>
-                          </div>
+                    <div className="w-full flex flex-row">
+                      <div className="basis-1/4 w-full font-Philosopher">
+                        <div className="w-full flex justify-center">
+                          Frontend
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="basis-1/4 w-full font-Philosopher">
-                    <div className="w-full flex justify-center">Database</div>
-                    <div className="w-full">
-                      {databaseTech.map((tech, index) => (
-                        <div className=" py-2 w-[95%]" key={index}>
-                          <div className="flex justify-center">
-                            <button
-                              type="button"
-                              className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
-                            >
-                              <div className="flex flex-row">
-                                <div className="basis-1/3 flex justify-end items-center hover:text-black">
-                                  {handleLogoData(tech.name)}
-                                </div>
-                                <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
-                                  {tech.name}
-                                </div>
+                        <div className="w-full">
+                          {frontendTech.map((tech, index) => (
+                            <div className="py-2 w-[90%]" key={index}>
+                              <div className="flex justify-center">
+                                <button
+                                  type="button"
+                                  className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
+                                >
+                                  <div className="flex flex-row">
+                                    <div className="basis-1/3 flex justify-end items-center hover:text-black">
+                                      {handleLogoData(tech.name)}
+                                    </div>
+                                    <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
+                                      {tech.name}
+                                    </div>
+                                  </div>
+                                </button>
                               </div>
-                            </button>
-                          </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="basis-1/4 w-full font-Philosopher">
-                    <div className="w-full flex justify-center">Others</div>
-                    <div className="w-full">
-                      {otherTech.map((tech, index) => (
-                        <div
-                          className=" py-2 w-[90%] flex justify-center"
-                          key={index}
-                        >
-                          <div className="flex justify-center w-full">
-                            <button
-                              type="button"
-                              className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
-                            >
-                              <div className="flex flex-row">
-                                <div className="basis-1/3 flex justify-end items-center hover:text-black">
-                                  {handleLogoData(tech.name)}
-                                </div>
-                                <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
-                                  {tech.name}
-                                </div>
+                      </div>
+                      <div className="basis-1/4 w-full font-Philosopher">
+                        <div className="w-full flex justify-center">
+                          Backend
+                        </div>
+                        <div className="w-full">
+                          {backendTech.map((tech, index) => (
+                            <div className=" py-2 w-[90%]" key={index}>
+                              <div className="flex justify-center">
+                                <button
+                                  type="button"
+                                  className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
+                                >
+                                  <div className="flex flex-row">
+                                    <div className="basis-1/3 flex justify-end items-center hover:text-black">
+                                      {handleLogoData(tech.name)}
+                                    </div>
+                                    <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
+                                      {tech.name}
+                                    </div>
+                                  </div>
+                                </button>
                               </div>
-                            </button>
-                          </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
+                      <div className="basis-1/4 w-full font-Philosopher">
+                        <div className="w-full flex justify-center">
+                          Database
+                        </div>
+                        <div className="w-full">
+                          {databaseTech.map((tech, index) => (
+                            <div className=" py-2 w-[95%]" key={index}>
+                              <div className="flex justify-center">
+                                <button
+                                  type="button"
+                                  className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
+                                >
+                                  <div className="flex flex-row">
+                                    <div className="basis-1/3 flex justify-end items-center hover:text-black">
+                                      {handleLogoData(tech.name)}
+                                    </div>
+                                    <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
+                                      {tech.name}
+                                    </div>
+                                  </div>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="basis-1/4 w-full font-Philosopher">
+                        <div className="w-full flex justify-center">Others</div>
+                        <div className="w-full">
+                          {otherTech.map((tech, index) => (
+                            <div
+                              className=" py-2 w-[90%] flex justify-center"
+                              key={index}
+                            >
+                              <div className="flex justify-center w-full">
+                                <button
+                                  type="button"
+                                  className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
+                                >
+                                  <div className="flex flex-row">
+                                    <div className="basis-1/3 flex justify-end items-center hover:text-black">
+                                      {handleLogoData(tech.name)}
+                                    </div>
+                                    <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
+                                      {tech.name}
+                                    </div>
+                                  </div>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div className="w-full flex justify-center pt-[2rem]">
-                  <button
-                    type="button"
-                    className="px-4 py-1 border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition ease-in-out duration-150 font-Code text-[15px] rounded-md"
-                    onClick={() => {
-                      navigate('/webproject');
-                    }}
-                  >
-                    {`Launch this damn project :)`}
-                  </button>
-                </div>
-                <div className="w-full pt-[2rem] flex justify-center text-[10px] font-Philosopher">
-                  <p>
-                    p.s. you can always import packages after clicking on
-                    'launch',
-                  </p>
-                </div>
-                <div className="w-full flex justify-center text-[14px] font-Philosopher">
-                  <p>this is just the beginning!</p>
-                </div>
+                    <div className="w-full pt-4">
+                    <div className="w-full flex flex-row">
+                      <div className="w-[40%] flex justify-center items-center">
+                        <p className="font-Philosopher font-semibold text-lg">
+                          Name of the project:
+                        </p>
+                      </div>
+                      <div className="w-[60%] flex justify-center items-center">
+                        <input
+                          type="text"
+                          name=""
+                          className="font-Code px-2 py-1 text-slate-800 font-semibold w-[300px]"
+                          placeholder="name of the project"
+                        />
+                      </div>
+                    </div>
+                    </div>
+                    <div className="w-full flex justify-center pt-[2rem]">
+                      <button
+                        type="button"
+                        className="px-4 py-1 border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition ease-in-out duration-150 font-Code text-[15px] rounded-md"
+                        onClick={() => {
+                          navigate("/webproject");
+                        }}
+                      >
+                        {`Launch this damn project :)`}
+                      </button>
+                    </div>
+                    <div className="w-full pt-[2rem] flex justify-center text-[10px] font-Philosopher">
+                      <p>
+                        p.s. you can always import packages after clicking on
+                        'launch',
+                      </p>
+                    </div>
+                    <div className="w-full flex justify-center text-[14px] font-Philosopher">
+                      <p>this is just the beginning!</p>
+                    </div>
                   </>
                 )}
               </ModalBody>
@@ -331,142 +392,6 @@ const WebProjectCreation = () => {
           </ModalContent>
         </Modal>
       </div>
-      {/* <div className="flex items-center">
-        <Modal isOpen={isOpen} onClose={onClose} isCentered size={"xl"}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalCloseButton className="text-white hover:bg-slate-700" />
-            <div className="bg-slate-800 text-white">
-              <div className="w-full flex justify-center py-3 font-Code font-bold">
-                Choose your preferred tech stack:
-              </div>
-              <ModalBody>
-                <div className="w-full flex flex-row">
-                  <div className="basis-1/4 w-full font-Philosopher">
-                    <div className="w-full flex justify-center">Frontend</div>
-                    <div className="w-full">
-                      {frontendTech.map((tech, index) => (
-                        <div className="py-2 w-[90%]" key={index}>
-                          <div className="flex justify-center">
-                            <button
-                              type="button"
-                              className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
-                            >
-                              <div className="flex flex-row">
-                                <div className="basis-1/3 flex justify-end items-center hover:text-black">
-                                  {handleLogoData(tech.name)}
-                                </div>
-                                <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
-                                  {tech.name}
-                                </div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="basis-1/4 w-full font-Philosopher">
-                    <div className="w-full flex justify-center">Backend</div>
-                    <div className="w-full">
-                      {backendTech.map((tech, index) => (
-                        <div className=" py-2 w-[90%]" key={index}>
-                          <div className="flex justify-center">
-                            <button
-                              type="button"
-                              className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
-                            >
-                              <div className="flex flex-row">
-                                <div className="basis-1/3 flex justify-end items-center hover:text-black">
-                                  {handleLogoData(tech.name)}
-                                </div>
-                                <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
-                                  {tech.name}
-                                </div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="basis-1/4 w-full font-Philosopher">
-                    <div className="w-full flex justify-center">Database</div>
-                    <div className="w-full">
-                      {databaseTech.map((tech, index) => (
-                        <div className=" py-2 w-[95%]" key={index}>
-                          <div className="flex justify-center">
-                            <button
-                              type="button"
-                              className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
-                            >
-                              <div className="flex flex-row">
-                                <div className="basis-1/3 flex justify-end items-center hover:text-black">
-                                  {handleLogoData(tech.name)}
-                                </div>
-                                <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
-                                  {tech.name}
-                                </div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="basis-1/4 w-full font-Philosopher">
-                    <div className="w-full flex justify-center">Others</div>
-                    <div className="w-full">
-                      {otherTech.map((tech, index) => (
-                        <div
-                          className=" py-2 w-[90%] flex justify-center"
-                          key={index}
-                        >
-                          <div className="flex justify-center w-full">
-                            <button
-                              type="button"
-                              className="border-2 border-white w-full py-1 hover:bg-white hover:text-black transition ease-in-out duration-100"
-                            >
-                              <div className="flex flex-row">
-                                <div className="basis-1/3 flex justify-end items-center hover:text-black">
-                                  {handleLogoData(tech.name)}
-                                </div>
-                                <div className="basis-2/3 flex justify-center items-center font-bold hover:text-black">
-                                  {tech.name}
-                                </div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full flex justify-center pt-[2rem]">
-                  <button
-                    type="button"
-                    className="px-4 py-1 border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition ease-in-out duration-150 font-Code text-[15px] rounded-md"
-                    onClick={() => {
-                      navigate('/webproject');
-                    }}
-                  >
-                    {`Launch this damn project :)`}
-                  </button>
-                </div>
-                <div className="w-full pt-[2rem] flex justify-center text-[10px] font-Philosopher">
-                  <p>
-                    p.s. you can always import packages after clicking on
-                    'launch',
-                  </p>
-                </div>
-                <div className="w-full flex justify-center text-[14px] font-Philosopher">
-                  <p>this is just the beginning!</p>
-                </div>
-              </ModalBody>
-            </div>
-          </ModalContent>
-        </Modal>
-      </div> */}
     </>
   );
 };

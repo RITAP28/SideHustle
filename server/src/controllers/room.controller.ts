@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { PrismaClient, Status } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prisma, Status } from "db/index"
 
 const generateUniqueRoomId = (roomlink: string) => {
   return bcrypt.hash(roomlink, 10);

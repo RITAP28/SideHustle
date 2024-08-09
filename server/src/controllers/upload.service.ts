@@ -3,10 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
 import { exec } from "child_process";
-import { PrismaClient } from "@prisma/client";
 import sharp from "sharp";
 import dotenv from "dotenv";
-const prisma = new PrismaClient();
+import { prisma } from "db";
 dotenv.config();
 import ffmpeg from "fluent-ffmpeg";
 

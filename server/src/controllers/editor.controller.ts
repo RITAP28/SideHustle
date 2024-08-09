@@ -1,11 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "db";
 import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 import { redisClient } from "../server";
 import { uuid } from "uuidv4";
 import { exec } from "child_process";
-const prisma = new PrismaClient();
+
 
 interface File {
   filename: string;
