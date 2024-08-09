@@ -4,6 +4,9 @@ import * as pty from 'node-pty';
 import cookieParser from 'cookie-parser';
 import router from './routes/router';
 import cors from 'cors';
+import chokidar from 'chokidar';
+import path from 'path';
+import fs from 'fs';
 
 const PORT = 8082;
 
@@ -23,6 +26,11 @@ const httpServer = app.listen(PORT, () => {
 });
 const wss = new WebSocketServer({
     server: httpServer
+});
+
+chokidar.watch('../user').on('all', (event, path) => {
+    console.log('path added: ', path);
+    wss.emit('files:refresh', path);
 });
 
 wss.on('connection', function connection(ws) {
@@ -50,6 +58,18 @@ wss.on('connection', function connection(ws) {
         console.log('sending data to client: ', data);
         ws.send(data);
     });
+
+    ws.emit('files:refresh');
+
+    ws.on('files:change' ,({ path, content }) => {
+        fs.writeFile(`./user/${path}`, content, (err) => {
+            if(err){
+                console.error(err);
+            } else {
+                console.log('all ok');
+            }
+        });
+    })
 
     ws.on('message', (data: string) => {
         console.log('received data from the client: ', data);

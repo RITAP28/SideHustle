@@ -2,24 +2,34 @@ import axios from "axios";
 // import FilesSidebar from "./components/FilesSidebar";
 import Terminal from "./components/Terminal";
 import { useEffect, useState } from "react";
+import socket from "../../utils/socket";
 
 const WebProject = () => {
   const [fileTree, setFileTree] = useState({});
-  useEffect(() => {
-    const handleFilesSideBar = async () => {
-      try {
-        const res = await axios.get('http://localhost:8082/filetree');
-        console.log(res.data.files);
-        setFileTree(res.data.files);
-      } catch (error) {
-        console.error("Error while fetching files on the sidebar: ", error);
-      }
-    };
 
+  const handleFilesSideBar = async () => {
+    try {
+      const res = await axios.get('http://localhost:8082/filetree');
+      console.log(res.data.files);
+      setFileTree(res.data.files);
+    } catch (error) {
+      console.error("Error while fetching files on the sidebar: ", error);
+    }
+  };
+
+  useEffect(() => {
     handleFilesSideBar();
   }, []);
 
   console.log(fileTree);
+
+  useEffect(() => {
+    socket.addEventListener('files:refresh', handleFilesSideBar);
+
+    return () => {
+      socket.removeEventListener('files:refresh', handleFilesSideBar);
+    }
+  }, []);
   return (
     <div className="w-full min-h-screen flex flex-row bg-black">
       <div className="w-[20%] bg-slate-700">
