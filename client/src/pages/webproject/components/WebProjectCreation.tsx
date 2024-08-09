@@ -12,7 +12,7 @@ import {
   backendTech,
   otherTech,
   databaseTech,
-} from "../utils/constants";
+} from "../../../utils/constants";
 import { FaReact } from "react-icons/fa";
 import { FaAngular } from "react-icons/fa";
 import { IoLogoVue } from "react-icons/io5";
@@ -105,7 +105,7 @@ const WebProjectCreation = () => {
                 Configure your settings:
               </div>
               <ModalBody>
-                <div className="w-full flex flex-row bg-slate-800">
+                <div className="w-full flex flex-row bg-slate-800 pb-4">
                   <div className="basis-1/2 w-full flex justify-center">
                     <button
                       type="button"
@@ -122,7 +122,7 @@ const WebProjectCreation = () => {
                   <div className="basis-1/2 w-full flex justify-center">
                     <button
                       type="button"
-                      className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
+                      className={`px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150`}
                       onClick={() => {
                         setNewProject(true);
                         setGithubProject(false);
@@ -241,6 +241,23 @@ const WebProjectCreation = () => {
                     <div className="w-full flex justify-center py-4">
                       <hr className="w-[80%]" />
                     </div>
+                    <div className="w-full pb-4">
+                      <div className="w-full flex flex-row">
+                        <div className="w-[40%] flex justify-center items-center">
+                          <p className="font-Philosopher font-semibold text-lg">
+                            Name of the project:
+                          </p>
+                        </div>
+                        <div className="w-[60%] flex justify-center items-center">
+                          <input
+                            type="text"
+                            name=""
+                            className="px-2 py-1 text-slate-800 font-semibold w-[250px] text-sm font-Philosopher rounded-sm"
+                            placeholder="name of the project"
+                          />
+                        </div>
+                      </div>
+                    </div>
                     <div className="w-full flex flex-row">
                       <div className="basis-1/4 w-full font-Philosopher">
                         <div className="w-full flex justify-center">
@@ -347,23 +364,6 @@ const WebProjectCreation = () => {
                           ))}
                         </div>
                       </div>
-                    </div>
-                    <div className="w-full pt-4">
-                    <div className="w-full flex flex-row">
-                      <div className="w-[40%] flex justify-center items-center">
-                        <p className="font-Philosopher font-semibold text-lg">
-                          Name of the project:
-                        </p>
-                      </div>
-                      <div className="w-[60%] flex justify-center items-center">
-                        <input
-                          type="text"
-                          name=""
-                          className="font-Code px-2 py-1 text-slate-800 font-semibold w-[300px]"
-                          placeholder="name of the project"
-                        />
-                      </div>
-                    </div>
                     </div>
                     <div className="w-full flex justify-center pt-[2rem]">
                       <button

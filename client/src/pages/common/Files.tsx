@@ -25,7 +25,7 @@ import { FaPython } from "react-icons/fa";
 import { useToast } from "@chakra-ui/react";
 import { IoMdMore } from "react-icons/io";
 import { useAppSelector } from "../../redux/hooks/hook";
-import WebProjectCreation from "../../components/WebProjectCreation";
+import WebProjectCreation from "../webproject/components/WebProjectCreation";
 
 interface filesProps {
   filename: string;
