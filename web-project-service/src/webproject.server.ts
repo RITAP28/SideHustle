@@ -24,59 +24,11 @@ app.use('/', router());
 const httpServer = app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
-const wss = new WebSocketServer({
+export const wss = new WebSocketServer({
     server: httpServer
 });
 
 chokidar.watch('../user').on('all', (event, path) => {
     console.log('path added: ', path);
     wss.emit('files:refresh', path);
-});
-
-wss.on('connection', function connection(ws) {
-    ws.on('error', (error) => {
-        console.error('Error while establishing a websocket connection: ', error);
-    });
-
-    console.log('pty: ', pty);
-    console.log('working directory: ', process.env.INIT_CWD);
-
-    if(!pty || !pty.spawn){
-        console.error('pty spawn is not defined');
-        return;
-    };
-
-    const ptyProcess = pty.spawn('zsh', [], {
-        name: 'xterm-zsh',
-        cols: 80,
-        rows: 30,
-        cwd: process.env.INIT_CWD + '/user',
-        env: process.env
-    });
-
-    ptyProcess.onData(data => {
-        console.log('sending data to client: ', data);
-        ws.send(data);
-    });
-
-    ws.emit('files:refresh');
-
-    ws.on('files:change' ,({ path, content }) => {
-        fs.writeFile(`./user/${path}`, content, (err) => {
-            if(err){
-                console.error(err);
-            } else {
-                console.log('all ok');
-            }
-        });
-    })
-
-    ws.on('message', (data: string) => {
-        console.log('received data from the client: ', data);
-        ptyProcess.write(data + '\r');
-    });
-
-    ws.on('close', () => {
-        ptyProcess.kill();
-    });
 });

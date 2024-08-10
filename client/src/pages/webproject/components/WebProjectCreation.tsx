@@ -7,12 +7,13 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
+import { Textarea } from "@chakra-ui/react";
 import {
   frontendTech,
   backendTech,
   otherTech,
   databaseTech,
-} from "../utils/constants";
+} from "../../../utils/constants";
 import { FaReact } from "react-icons/fa";
 import { FaAngular } from "react-icons/fa";
 import { IoLogoVue } from "react-icons/io5";
@@ -29,6 +30,7 @@ import { SiPrisma } from "react-icons/si";
 import { SiDrizzle } from "react-icons/si";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
 
 const WebProjectCreation = () => {
   const [newProject, setNewProject] = useState<boolean | null>(null);
@@ -36,11 +38,18 @@ const WebProjectCreation = () => {
   const [techStack, setTechStack] = useState<boolean | null>(null);
   const [blankProject, setBlankProject] = useState<boolean | null>(null);
 
+  const [projectName, setProjectName] = useState<string>("");
+  const [, setRepoLink] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+
+  const [, setProjectLink] = useState<string>("");
+
+  // loading states
+  const [blankProjectLoading, setBlankProjectLoading] = useState<boolean>(false);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
 
-<<<<<<< Updated upstream:client/src/components/WebProjectCreation.tsx
-=======
   const URLParams = new URLSearchParams(window.location.search);
   const userId = Number(URLParams.get("userId"));
   const userName = String(URLParams.get("username"));
@@ -68,7 +77,6 @@ const WebProjectCreation = () => {
     setBlankProjectLoading(false);
   };
 
->>>>>>> Stashed changes:client/src/pages/webproject/components/WebProjectCreation.tsx
   const handleLogoData = (language: string) => {
     if (language === "React") {
       return <FaReact className="" />;
@@ -99,6 +107,12 @@ const WebProjectCreation = () => {
     } else if (language === "Drizzle") {
       return <SiDrizzle className="" />;
     }
+  };
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setDescription(e.target.value);
   };
 
   return (
@@ -135,7 +149,7 @@ const WebProjectCreation = () => {
                 Configure your settings:
               </div>
               <ModalBody>
-                <div className="w-full flex flex-row bg-slate-800">
+                <div className="w-full flex flex-row bg-slate-800 pb-4">
                   <div className="basis-1/2 w-full flex justify-center">
                     <button
                       type="button"
@@ -152,7 +166,7 @@ const WebProjectCreation = () => {
                   <div className="basis-1/2 w-full flex justify-center">
                     <button
                       type="button"
-                      className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
+                      className={`px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150`}
                       onClick={() => {
                         setNewProject(true);
                         setGithubProject(false);
@@ -223,6 +237,9 @@ const WebProjectCreation = () => {
                           name=""
                           className="font-Code px-2 py-1 text-slate-800 font-semibold w-[300px]"
                           placeholder="repo link"
+                          onChange={(e) => {
+                            setRepoLink(e.target.value);
+                          }}
                         />
                       </div>
                     </div>
@@ -242,7 +259,7 @@ const WebProjectCreation = () => {
                       <hr className="text-slate-600 w-[80%]" />
                     </div>
                     <div className="w-full flex flex-row pt-6 pb-4">
-                      <div className="w-[40%] flex justify-center">
+                      <div className="w-[40%] flex justify-center items-center">
                         <p className="font-Code font-semibold text-sm">
                           Name of the project:
                         </p>
@@ -253,22 +270,39 @@ const WebProjectCreation = () => {
                           name=""
                           className="font-Code px-2 py-1 text-slate-800 font-semibold w-[300px]"
                           placeholder="name of the project"
+                          onChange={(e) => {
+                            setProjectName(e.target.value);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full flex flex-row pt-6 pb-4">
+                      <div className="w-[40%] flex justify-center items-center">
+                        <p className="font-Code font-semibold text-sm">
+                          {`Description(optional):`}
+                        </p>
+                      </div>
+                      <div className="w-[60%] flex justify-center items-center">
+                        <Textarea
+                          placeholder="Tell learners about what you are teaching"
+                          size="sm"
+                          variant={"filled"}
+                          width={"80%"}
+                          className="ml-4 font-Code focus:text-white text-black font-semibold"
+                          resize={"none"}
+                          onChange={handleDescriptionChange}
                         />
                       </div>
                     </div>
                     <div className="w-full flex justify-center py-4">
                       <button
                         type="button"
-<<<<<<< Updated upstream:client/src/components/WebProjectCreation.tsx
-                        className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
-=======
                         className="px-4 py-1 border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition ease-in-out duration-150 font-Code text-[15px] rounded-md"
                         onClick={() => {
                           handleBlankProject();
                         }}
->>>>>>> Stashed changes:client/src/pages/webproject/components/WebProjectCreation.tsx
                       >
-                        Create Project
+                        {blankProjectLoading ? `Launching...` : `Launch this damn project :)`}
                       </button>
                     </div>
                   </>
@@ -277,6 +311,26 @@ const WebProjectCreation = () => {
                   <>
                     <div className="w-full flex justify-center py-4">
                       <hr className="w-[80%]" />
+                    </div>
+                    <div className="w-full pb-4">
+                      <div className="w-full flex flex-row">
+                        <div className="w-[40%] flex justify-center items-center">
+                          <p className="font-Philosopher font-semibold text-lg">
+                            Name of the project:
+                          </p>
+                        </div>
+                        <div className="w-[60%] flex justify-center items-center">
+                          <input
+                            type="text"
+                            name=""
+                            className="px-2 py-1 text-slate-800 font-semibold w-[250px] text-sm font-Philosopher rounded-sm"
+                            placeholder="name of the project"
+                            onChange={(e) => {
+                              setProjectName(e.target.value);
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                     <div className="w-full flex flex-row">
                       <div className="basis-1/4 w-full font-Philosopher">
@@ -384,23 +438,6 @@ const WebProjectCreation = () => {
                           ))}
                         </div>
                       </div>
-                    </div>
-                    <div className="w-full pt-4">
-                    <div className="w-full flex flex-row">
-                      <div className="w-[40%] flex justify-center items-center">
-                        <p className="font-Philosopher font-semibold text-lg">
-                          Name of the project:
-                        </p>
-                      </div>
-                      <div className="w-[60%] flex justify-center items-center">
-                        <input
-                          type="text"
-                          name=""
-                          className="font-Code px-2 py-1 text-slate-800 font-semibold w-[300px]"
-                          placeholder="name of the project"
-                        />
-                      </div>
-                    </div>
                     </div>
                     <div className="w-full flex justify-center pt-[2rem]">
                       <button
