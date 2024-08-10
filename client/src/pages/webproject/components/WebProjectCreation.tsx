@@ -7,6 +7,7 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
+import { Textarea } from "@chakra-ui/react";
 import {
   frontendTech,
   backendTech,
@@ -29,6 +30,7 @@ import { SiPrisma } from "react-icons/si";
 import { SiDrizzle } from "react-icons/si";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
 
 const WebProjectCreation = () => {
   const [newProject, setNewProject] = useState<boolean | null>(null);
@@ -36,8 +38,43 @@ const WebProjectCreation = () => {
   const [techStack, setTechStack] = useState<boolean | null>(null);
   const [blankProject, setBlankProject] = useState<boolean | null>(null);
 
+  const [projectName, setProjectName] = useState<string>("");
+  const [, setRepoLink] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+
+  const [projectLink, setProjectLink] = useState<string>("");
+
+  // loading states
+  const [blankProjectLoading, setBlankProjectLoading] = useState<boolean>(false);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+
+  const URLParams = new URLSearchParams(window.location.search);
+  const userId = Number(URLParams.get("userId"));
+  const userName = String(URLParams.get("username"));
+
+  const handleBlankProject = async () => {
+    setBlankProjectLoading(true);
+    try {
+      const project = await axios.post(
+        "http://localhost:8082/createBlankProject",
+        {
+          projectName: projectName,
+          userId: userId,
+          userName: userName,
+          description: description,
+        },{
+          withCredentials: true
+        }
+      );
+      console.log("Project details: ", project.data);
+      setProjectLink(project.data.link);
+    } catch (error) {
+      console.error("Error while creating blank project: ", error);
+    }
+    setBlankProjectLoading(false);
+  };
 
   const handleLogoData = (language: string) => {
     if (language === "React") {
@@ -69,6 +106,12 @@ const WebProjectCreation = () => {
     } else if (language === "Drizzle") {
       return <SiDrizzle className="" />;
     }
+  };
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setDescription(e.target.value);
   };
 
   return (
@@ -193,6 +236,9 @@ const WebProjectCreation = () => {
                           name=""
                           className="font-Code px-2 py-1 text-slate-800 font-semibold w-[300px]"
                           placeholder="repo link"
+                          onChange={(e) => {
+                            setRepoLink(e.target.value);
+                          }}
                         />
                       </div>
                     </div>
@@ -212,7 +258,7 @@ const WebProjectCreation = () => {
                       <hr className="text-slate-600 w-[80%]" />
                     </div>
                     <div className="w-full flex flex-row pt-6 pb-4">
-                      <div className="w-[40%] flex justify-center">
+                      <div className="w-[40%] flex justify-center items-center">
                         <p className="font-Code font-semibold text-sm">
                           Name of the project:
                         </p>
@@ -223,15 +269,40 @@ const WebProjectCreation = () => {
                           name=""
                           className="font-Code px-2 py-1 text-slate-800 font-semibold w-[300px]"
                           placeholder="name of the project"
+                          onChange={(e) => {
+                            setProjectName(e.target.value);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full flex flex-row pt-6 pb-4">
+                      <div className="w-[40%] flex justify-center items-center">
+                        <p className="font-Code font-semibold text-sm">
+                          {`Description(optional):`}
+                        </p>
+                      </div>
+                      <div className="w-[60%] flex justify-center items-center">
+                        <Textarea
+                          placeholder="Tell learners about what you are teaching"
+                          size="sm"
+                          variant={"filled"}
+                          width={"80%"}
+                          className="ml-4 font-Code focus:text-white text-black font-semibold"
+                          resize={"none"}
+                          onChange={handleDescriptionChange}
                         />
                       </div>
                     </div>
                     <div className="w-full flex justify-center py-4">
                       <button
                         type="button"
-                        className="px-2 py-1 border-2 border-white font-Code font-semibold hover:bg-white hover:text-slate-800 transition ease-in-out duration-150"
+                        className="px-4 py-1 border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition ease-in-out duration-150 font-Code text-[15px] rounded-md"
+                        onClick={async () => {
+                          await handleBlankProject();
+                          navigate(projectLink);
+                        }}
                       >
-                        Create Project
+                        {blankProjectLoading ? `Launching...` : `Launch this damn project :)`}
                       </button>
                     </div>
                   </>
@@ -254,6 +325,9 @@ const WebProjectCreation = () => {
                             name=""
                             className="px-2 py-1 text-slate-800 font-semibold w-[250px] text-sm font-Philosopher rounded-sm"
                             placeholder="name of the project"
+                            onChange={(e) => {
+                              setProjectName(e.target.value);
+                            }}
                           />
                         </div>
                       </div>

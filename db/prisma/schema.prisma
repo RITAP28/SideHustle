@@ -200,7 +200,7 @@ model Projects {
   user        User         @relation(references: [id], fields: [userId], onDelete: Cascade)
   WebDevFile  WebDevFile[]
 
-  @@unique([projectId, userId])
+  @@unique([projectName, userId])
 }
 
 model WebDevFile {

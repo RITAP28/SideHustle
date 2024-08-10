@@ -33,15 +33,15 @@ const Appbar = () => {
           NexusCode
         </p>
       </div>
-      <div className="basis-1/3 flex justify-center"></div>
-      <div className="basis-1/3">
-        <div className="flex flex-row">
+      {/* <div className="basis-1/3 flex justify-center"></div> */}
+      <div className="basis-2/3 flex justify-end">
+        <div className="flex flex-row w-[45rem]">
           <div className="basis-1/4 flex justify-center">
             <button
               type="button"
               className="px-4 py-1 bg-black text-white rounded-md hover:cursor-pointer"
             >
-              Our Story
+              Create a course
             </button>
           </div>
           <div className="basis-1/4 flex justify-center">

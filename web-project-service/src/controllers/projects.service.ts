@@ -7,6 +7,23 @@ import fs from 'fs';
 export const handleCreateBlankProject = async (req: Request, res: Response) => {
     try {
         const { projectName, userId, userName, description } = req.body;
+
+        const existingProject = await prisma.projects.findUnique({
+            where: {
+                projectName_userId: {
+                    projectName: projectName,
+                    userId: userId
+                }
+            }
+        });
+
+        if(existingProject){
+            return res.status(409).json({
+                success: false,
+                msg: "Project already exists"
+            });
+        };
+
         const newProject = await prisma.projects.create({
             data: {
                 projectName: projectName,
@@ -33,6 +50,8 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
             }
         });
         console.log("Info about readme file: ", initialFile);
+
+        const link = `http://localhost:5173/webproject?username=${userName}&project=${projectName}`;
 
         // opening a socket connection connecting the client and the server having the project as the bridge
         wss.on('connection', function connection(ws) {
@@ -81,6 +100,12 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
             ws.on('close', () => {
                 ptyProcess.kill();
             });
+        });
+
+        return res.status(200).json({
+            success: true,
+            msg: "Project created successfully!",
+            link: link
         });
     } catch (error) {
         console.error("error in creating blank project: ", error);
