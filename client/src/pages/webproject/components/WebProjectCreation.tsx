@@ -42,7 +42,7 @@ const WebProjectCreation = () => {
   const [, setRepoLink] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
-  const [projectLink, setProjectLink] = useState<string>("");
+  const [, setProjectLink] = useState<string>("");
 
   // loading states
   const [blankProjectLoading, setBlankProjectLoading] = useState<boolean>(false);
@@ -70,6 +70,7 @@ const WebProjectCreation = () => {
       );
       console.log("Project details: ", project.data);
       setProjectLink(project.data.link);
+      navigate(project.data.link);
     } catch (error) {
       console.error("Error while creating blank project: ", error);
     }
@@ -297,9 +298,8 @@ const WebProjectCreation = () => {
                       <button
                         type="button"
                         className="px-4 py-1 border-2 border-slate-600 hover:bg-slate-600 hover:text-white transition ease-in-out duration-150 font-Code text-[15px] rounded-md"
-                        onClick={async () => {
-                          await handleBlankProject();
-                          navigate(projectLink);
+                        onClick={() => {
+                          handleBlankProject();
                         }}
                       >
                         {blankProjectLoading ? `Launching...` : `Launch this damn project :)`}

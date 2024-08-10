@@ -3,6 +3,7 @@ import { prisma } from "db";
 import { wss } from "../webproject.server";
 import * as pty from 'node-pty';
 import fs from 'fs';
+import path from 'path'
 
 export const handleCreateBlankProject = async (req: Request, res: Response) => {
     try {
@@ -36,6 +37,20 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
         });
         console.log("Info about the new project: ", newProject);
 
+        const pathDirectory = process.cwd() + `/projects`;
+        fs.mkdir(path.join(pathDirectory, projectName), (err) => {
+            if(err){
+                console.error("Failed to create a project directory: ", err);
+                return res.status(500).json({
+                    success: false,
+                    msg: "Failed to create a project directory",
+                    error: err
+                });
+            } else {
+                console.log(`Project with name ${projectName} has been created!`);
+            };
+        });
+
         const initialFile = await prisma.webDevFile.create({
             data: {
                 filename: 'README.md',
@@ -51,7 +66,24 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
         });
         console.log("Info about readme file: ", initialFile);
 
-        const link = `http://localhost:5173/webproject?username=${userName}&project=${projectName}`;
+        const link = `/webproject?username=${userName}&project=${projectName}`;
+
+        const fileDirectory = process.cwd() + `/projects/${projectName}`;
+        fs.writeFile(path.join(fileDirectory, initialFile.filename), initialFile.content, {
+            encoding: 'utf8',
+            flag: 'w'
+        }, (err) => {
+            if(err){
+                console.error("Failed to create a README.md file: ", err);
+                return res.status(500).json({
+                    success: false,
+                    msg: "Failed to create a README.md file",
+                    error: err
+                });
+            } else {
+                console.log(`file with the name ${initialFile.filename} has been created`);
+            };
+        })
 
         // opening a socket connection connecting the client and the server having the project as the bridge
         wss.on('connection', function connection(ws) {
