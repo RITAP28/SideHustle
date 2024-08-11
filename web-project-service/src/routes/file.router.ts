@@ -1,6 +1,6 @@
 import express from 'express'
 import { handleReadFiles } from '../controllers/files.service'
-import { handleCreateBlankProject, handleReturnCWD } from '../controllers/projects.service';
+import { handleCreateBlankProject, handleFetchProjects, handleReturnCWD } from '../controllers/projects.service';
 import { isAuthenticated } from '../utils/auth.status';
 
 export default (router: express.Router) => {
@@ -12,4 +12,5 @@ export default (router: express.Router) => {
     
     // project routes
     router.post('/createBlankProject', handleCreateBlankProject);
+    router.get('/getprojects', handleFetchProjects);
 }

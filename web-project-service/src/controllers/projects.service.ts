@@ -25,11 +25,14 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
             });
         };
 
+        const link = `/webproject?username=${userName}&project=${projectName}`;
+
         const newProject = await prisma.projects.create({
             data: {
                 projectName: projectName,
                 userId: userId,
                 userName: userName,
+                projectLink: link,
                 description: description,
                 createAt: new Date(Date.now()),
                 updatedAt: new Date(Date.now())
@@ -65,8 +68,6 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
             }
         });
         console.log("Info about readme file: ", initialFile);
-
-        const link = `/webproject?username=${userName}&project=${projectName}`;
 
         const fileDirectory = process.cwd() + `/projects/${projectName}`;
         fs.writeFile(path.join(fileDirectory, initialFile.filename), initialFile.content, {
@@ -147,6 +148,36 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
         })
     }
 }
+
+// api for fetching projects created by the user
+export const handleFetchProjects = async (req: Request, res: Response) => {
+    try {
+        const existingProjects = await prisma.projects.findMany({
+            where: {
+                userId: Number(req.query.userId)
+            }
+        });
+
+        if(!existingProjects){
+            return res.status(404).json({
+                success: false,
+                msg: "No projects found for this user"
+            });
+        };
+
+        return res.status(200).json({
+            success: true,
+            msg: "Projects found successfully",
+            projects: existingProjects
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            msg: "Internal Server Error"
+        });
+    };
+};
 
 export const handleReturnCWD = async (req: Request, res: Response) => {
     try {

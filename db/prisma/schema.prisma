@@ -193,6 +193,7 @@ model Projects {
   projectId   Int          @id @default(autoincrement())
   projectName String       @unique
   description String?
+  projectLink String?      @default("value")
   createAt    DateTime
   updatedAt   DateTime
   userId      Int
@@ -204,7 +205,7 @@ model Projects {
 }
 
 model WebDevFile {
-  fileId    Int          @id @default(autoincrement())
+  fileId    Int           @id @default(autoincrement())
   filename  String
   content   String
   path      String
@@ -215,9 +216,9 @@ model WebDevFile {
   projectId Int
   userId    Int
   userName  String
-  user      User         @relation(references: [id], fields: [userId], onDelete: Cascade)
+  user      User          @relation(references: [id], fields: [userId], onDelete: Cascade)
   folder    WebDevFolder? @relation(references: [folderId], fields: [folderId], onDelete: Cascade)
-  projects  Projects     @relation(references: [projectId], fields: [projectId], onDelete: Cascade)
+  projects  Projects      @relation(references: [projectId], fields: [projectId], onDelete: Cascade)
 
   @@unique([fileId, userId])
 }

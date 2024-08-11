@@ -34,6 +34,23 @@ const CodeEditor = () => {
   const [output, setOutput] = useState<string>("Run Code to see output!");
   const [template, setTemplate] = useState<string>("");
 
+  monaco.editor.defineTheme('custom-theme', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      {token: 'comment', foreground: '888888'},
+      {token: 'keyword', foreground: 'ff6c6b'},
+      { token: 'string', foreground: '98c379' }, // Example: strings
+      { token: 'number', foreground: 'd19a66' },
+    ],
+    colors: {
+      'editor.background': '#1e293b',
+      'editor.foreground': '#1e293b',
+    }
+  });
+
+  monaco.editor.setTheme('custom-theme');
+
   const handleGetFileByFilename = useCallback(async () => {
     setLoading(true);
     try {

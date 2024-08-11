@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -8,6 +7,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
+import { formatDistanceToNow } from "date-fns";
 import {
   frontendTech,
   backendTech,
@@ -28,9 +28,22 @@ import { SiMongodb } from "react-icons/si";
 import { BiLogoPostgresql } from "react-icons/bi";
 import { SiPrisma } from "react-icons/si";
 import { SiDrizzle } from "react-icons/si";
+import { FaFolder } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { LuDot } from "react-icons/lu";
+import { IoMdMore } from "react-icons/io";
+
+interface ProjectProps {
+  projectId: number;
+  projectName: string;
+  description?: string;
+  projectLink? : string;
+  createAt: Date;
+  updatedAt: Date;
+  userName: string;
+}
 
 const WebProjectCreation = () => {
   const [newProject, setNewProject] = useState<boolean | null>(null);
@@ -43,9 +56,13 @@ const WebProjectCreation = () => {
   const [description, setDescription] = useState<string>("");
 
   const [, setProjectLink] = useState<string>("");
+  const [allProjects, setAllProjects] = useState<ProjectProps[]>([]);
 
   // loading states
-  const [blankProjectLoading, setBlankProjectLoading] = useState<boolean>(false);
+  const [blankProjectLoading, setBlankProjectLoading] =
+    useState<boolean>(false);
+  const [fetchProjectLoading, setFetchProjectLoading] =
+    useState<boolean>(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
@@ -64,8 +81,9 @@ const WebProjectCreation = () => {
           userId: userId,
           userName: userName,
           description: description,
-        },{
-          withCredentials: true
+        },
+        {
+          withCredentials: true,
         }
       );
       console.log("Project details: ", project.data);
@@ -76,6 +94,27 @@ const WebProjectCreation = () => {
     }
     setBlankProjectLoading(false);
   };
+
+  const handleFetchProjects = async (userId: number) => {
+    setFetchProjectLoading(true);
+    try {
+      const projects = await axios.get(
+        `http://localhost:8082/getprojects?userId=${userId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(`Projects of user with id ${userId}: `, projects.data);
+      setAllProjects(projects.data.projects);
+    } catch (error) {
+      console.error("Error while fetching projects: ", error);
+    }
+    setFetchProjectLoading(false);
+  };
+
+  useEffect(() => {
+    handleFetchProjects(userId);
+  }, [userId]);
 
   const handleLogoData = (language: string) => {
     if (language === "React") {
@@ -118,17 +157,70 @@ const WebProjectCreation = () => {
   return (
     <>
       <div className="w-full">
-        <div className="w-full font-Code font-bold text-white pt-4">
+        <div className="w-full font-Code font-bold text-white pt-4 flex justify-center">
           Start a Web Project:
         </div>
-        <div className="w-full pt-4">
-          <button
-            type="button"
-            className="px-4 py-1 font-Code font-semibold text-white hover:text-black hover:bg-white transition ease-in-out duration-300 bg-black border-2 border-white"
-            onClick={onOpen}
-          >
-            Choose the tech stack!
-          </button>
+        <div className="w-full flex flex-row pt-4">
+          <div className="basis-1/2 flex justify-end pr-2">
+            <button
+              type="button"
+              className="px-4 py-1 font-Code font-semibold text-white hover:text-black hover:bg-white transition ease-in-out duration-300 bg-black border-2 border-white"
+              onClick={onOpen}
+            >
+              Launch here!
+            </button>
+          </div>
+          <div className="basis-1/2 flex justify-start pl-2">
+            <button
+              type="button"
+              className="px-4 py-1 font-Code font-semibold text-white hover:text-black hover:bg-white transition ease-in-out duration-300 bg-black border-2 border-white"
+            >
+              Your Projects
+            </button>
+          </div>
+        </div>
+        <div className="w-full text-white flex justify-center pt-4">
+          <div className="w-[70%]">
+            {fetchProjectLoading ? "Fetching your projects..." : (
+              allProjects.length > 0 ? (allProjects.map((project, index) => (
+                <>
+                  <div
+                    key={index}
+                    className="w-full flex flex-row border-2 border-white py-2 my-1 hover:bg-white transition ease-in-out duration-150 hover:cursor-pointer hover:text-black hover:border-black rounded-md"
+                    onClick={() => {
+                      navigate(String(project.projectLink))
+                    }}
+                  >
+                    <div className="w-[20%] flex justify-center items-center">
+                      <FaFolder className="text-4xl" />
+                    </div>
+                    <div className="w-[90%] flex flex-col">
+                      <div className="w-full font-Philosopher font-bold text-xl">
+                        {project.projectName}
+                      </div>
+                      <div className="w-full flex flex-row items-center font-Philosopher">
+                        @{project.userName} <LuDot />{" "}
+                        {formatDistanceToNow(new Date(project.updatedAt), {
+                          addSuffix: true,
+                        })}
+                      </div>
+                    </div>
+                    <div className="w-[10%] flex items-center justify-start">
+                      <IoMdMore className="text-4xl hover:bg-black hover:text-white transition ease-in-out duration-150 py-1 px-1 rounded-md" />
+                    </div>
+                  </div>
+                </>
+              ))) : (
+                <>
+                <div className="w-full flex justify-center">
+                  <p className="font-Code font-semibold text-xl text-yellow-300">
+                   You have created no new projects
+                  </p>
+                </div>
+                </>
+              )
+            )}
+          </div>
         </div>
       </div>
       <div className="flex items-center">
@@ -302,7 +394,9 @@ const WebProjectCreation = () => {
                           handleBlankProject();
                         }}
                       >
-                        {blankProjectLoading ? `Launching...` : `Launch this damn project :)`}
+                        {blankProjectLoading
+                          ? `Launching...`
+                          : `Launch this damn project :)`}
                       </button>
                     </div>
                   </>

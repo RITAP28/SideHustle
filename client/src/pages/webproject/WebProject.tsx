@@ -1,5 +1,5 @@
 import axios from "axios";
-// import FilesSidebar from "./components/FilesSidebar";
+import { Editor } from "@monaco-editor/react";
 import Terminal from "./components/Terminal";
 import { useEffect, useState } from "react";
 import socket from "../../utils/socket";
@@ -48,7 +48,12 @@ const WebProject = () => {
       </div>
       <div className="w-[80%] flex flex-col h-[100vh]">
         <div className="flex flex-row w-full h-[70vh]">
-          <div className="basis-1/2 w-full bg-red-800">Code Editor</div>
+          <div className="basis-1/2 w-full bg-slate-800">
+            <Editor
+              className="w-full h-full"
+              theme="vs-dark"
+            />
+          </div>
           <div className="basis-1/2 w-full bg-red-400">Web Browser</div>
         </div>
         <div className="w-full h-[30vh] bg-slate-700 text-white">
