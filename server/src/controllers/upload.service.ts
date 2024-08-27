@@ -7,7 +7,6 @@ import sharp from "sharp";
 import dotenv from "dotenv";
 import { prisma } from "db";
 dotenv.config();
-import ffmpeg from "fluent-ffmpeg";
 
 interface MulterRequest extends Request {
   files: {
@@ -57,7 +56,6 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
     `${Date.now()}-${lessonId}`
   );
   try {
-    // const resizedImageBuffer = await sharp(thumbnail.path).webp({ quality: 20 }).toFile(thumbnailPath);
     const resizedImageBuffer = await sharp(thumbnail.path)
       .webp({ quality: 20 })
       .toBuffer();

@@ -1,5 +1,4 @@
 import axios from "axios";
-// import FilesSidebar from "./components/FilesSidebar";
 import Terminal from "./components/Terminal";
 import { useEffect, useState } from "react";
 import socket from "../../utils/socket";
