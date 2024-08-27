@@ -45,3 +45,16 @@ async function getFileTree(directory: string) {
   await buildTree(directory, tree);
   return tree;
 }
+
+export const handleFetchSingularFile = async (req: Request, res: Response) => {
+  try {
+    const fileName = String(req.query.fileName);
+  } catch (error) {
+    console.error("Error fetching this singular file: ", error);
+    return res.status(404).json({
+      success: false,
+      msg: "File not found",
+      error: error
+    });
+  };
+};

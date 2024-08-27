@@ -30,7 +30,7 @@ const Appbar = () => {
         <p className="text-white font-bold text-xl flex items-center hover:cursor-pointer" onClick={() => {
           navigate('/');
         }}>
-          NexusCode
+          NexusCode<span className="font-Philosopher pl-1 flex items-end font-light">Beta</span>
         </p>
       </div>
       {/* <div className="basis-1/3 flex justify-center"></div> */}

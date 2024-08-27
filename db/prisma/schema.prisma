@@ -226,6 +226,7 @@ model WebDevFile {
 model WebDevFolder {
   folderId      Int          @id @default(autoincrement())
   folderName    String
+  path          String
   numberOfFiles Int
   userId        Int
   userName      String
