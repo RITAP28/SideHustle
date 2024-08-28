@@ -8,7 +8,7 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
     try {
         const { projectName, userId, userName, description } = req.body;
 
-        const existingProject = await prisma.projects.findUnique({
+        const existingProject = await prisma.project.findUnique({
             where: {
                 projectName_userId: {
                     projectName: projectName,
@@ -24,19 +24,29 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
             });
         };
 
-        const newProject = await prisma.projects.create({
+        const link = `/webproject?userId=${userId}&project=${projectName}`;
+
+        const newProject = await prisma.project.create({
             data: {
                 projectName: projectName,
                 userId: userId,
+                link: link,
                 userName: userName,
                 description: description,
-                createAt: new Date(Date.now()),
+                createdAt: new Date(Date.now()),
                 updatedAt: new Date(Date.now())
             }
         });
         console.log("Info about the new project: ", newProject);
 
-        const initialFile = await prisma.webDevFile.create({
+        const projectLocation = process.cwd() + '/projects' + `/${projectName}`;
+        if(!fs.existsSync(projectLocation)){
+            fs.mkdirSync(projectLocation, {
+                recursive: true
+            })
+        };
+
+        const initialFile = await prisma.webdevFile.create({
             data: {
                 filename: 'README.md',
                 content: `# Welcome to your new project ${projectName}\n\nThis is your project README.md, edit it as you wish.`,
@@ -51,7 +61,11 @@ export const handleCreateBlankProject = async (req: Request, res: Response) => {
         });
         console.log("Info about readme file: ", initialFile);
 
-        const link = `http://localhost:5173/webproject?username=${userName}&project=${projectName}`;
+        if(!fs.existsSync(initialFile.path)){
+            fs.writeFile(initialFile.path, initialFile.content, (err) => {
+                if(err) throw err;
+            });
+        };
 
         // opening a socket connection connecting the client and the server having the project as the bridge
         wss.on('connection', function connection(ws) {
@@ -131,3 +145,27 @@ export const handleReturnCWD = async (req: Request, res: Response) => {
         })
     }
 }
+
+export const handleGetProjects = async (req: Request, res: Response) => {
+    try {
+        const projects = await prisma.project.findMany({
+            where: {
+                userId: Number(req.query.userId)
+            }
+        });
+        if(!projects){
+            return res.status(404).json({
+                success: false,
+                msg: "Projects not found"
+            });
+        };
+        console.log(projects);
+        return res.status(200).json({
+            success: true,
+            msg: "Projects found successfully",
+            projects
+        });
+    } catch (error) {
+        console.error("Error while fetching projects: ", error);
+    };
+};

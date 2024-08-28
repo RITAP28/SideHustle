@@ -45,6 +45,9 @@ model User {
   StarVideo       StarVideo[]
   DislikeVideo    DislikeVideo[]
   File            File[]
+  WebDevFolder    WebDevFolder[]
+  WebdevFile      WebdevFile[]
+  Project         Project[]
 }
 
 model Session {
@@ -184,4 +187,56 @@ model File {
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 
   @@unique([filename, userId])
+}
+
+model WebdevFile {
+  fileId    Int      @id @default(autoincrement())
+  filename  String
+  template  String
+  content   String
+  path      String
+  projectId Int
+  userId    Int
+  userName  String
+  createdAt DateTime
+  updatedAt DateTime
+
+  user    User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+  project Project @relation(references: [projectId], fields: [projectId], onDelete: Cascade)
+
+  @@unique([fileId, projectId])
+}
+
+model Project {
+  projectId    Int            @id @default(autoincrement())
+  projectName  String
+  link         String         @default("null")
+  userId       Int
+  userName     String
+  description  String?
+  createdAt    DateTime
+  updatedAt    DateTime
+  WebDevFolder WebDevFolder[]
+  WebdevFile   WebdevFile[]
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@unique([projectName, userId])
+}
+
+model WebDevFolder {
+  folderId      Int      @id @default(autoincrement())
+  folderName    String
+  path          String
+  numberOfFiles Int
+  projectId     Int
+  userId        Int
+  userName      String
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  user    User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+  project Project @relation(references: [projectId], fields: [projectId], onDelete: Cascade)
+
+  @@unique([folderId, projectId])
 }

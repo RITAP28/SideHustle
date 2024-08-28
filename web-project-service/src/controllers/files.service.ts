@@ -3,8 +3,11 @@ import fs from "fs/promises";
 import path from "path";
 
 export const handleReadFiles = async (req: Request, res: Response) => {
+  // const userId = Number(req.query.userId);
+  const projectName = String(req.query.project);
+  console.log("projectName: ", projectName);
   try {
-    const files = await getFileTree("./user");
+    const files = await getFileTree(`./projects/${projectName}`);
     return res.status(200).json({
       success: true,
       msg: "Files found successfully",

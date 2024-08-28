@@ -5,10 +5,18 @@ import socket from "../../utils/socket";
 
 const WebProject = () => {
   const [fileTree, setFileTree] = useState({});
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = Number(urlParams.get('userId'));
+  const project = String(urlParams.get('project'));
 
   const handleFilesSideBar = async () => {
     try {
-      const res = await axios.get('http://localhost:8082/filetree');
+      const res = await axios.get(`http://localhost:8082/filetree?project=${project}`, {
+        data: {
+          userId: userId,
+          project: project
+        }
+      });
       console.log(res.data.files);
       setFileTree(res.data.files);
     } catch (error) {

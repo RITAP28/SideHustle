@@ -34,7 +34,7 @@ interface ProjectProps {
   projectId: number;
   projectName: string;
   description?: string;
-  projectLink? : string;
+  link: string;
   createAt: Date;
   updatedAt: Date;
   userName: string;
@@ -178,12 +178,11 @@ const WebProjectCreation = () => {
           <div className="w-[70%]">
             {fetchProjectLoading ? "Fetching your projects..." : (
               allProjects.length > 0 ? (allProjects.map((project, index) => (
-                <>
                   <div
                     key={index}
                     className="w-full flex flex-row border-2 border-white py-2 my-1 hover:bg-white transition ease-in-out duration-150 hover:cursor-pointer hover:text-black hover:border-black rounded-md"
                     onClick={() => {
-                      navigate(String(project.projectLink))
+                      navigate(String(project.link))
                     }}
                   >
                     <div className="w-[20%] flex justify-center items-center">
@@ -204,7 +203,6 @@ const WebProjectCreation = () => {
                       <IoMdMore className="text-4xl hover:bg-black hover:text-white transition ease-in-out duration-150 py-1 px-1 rounded-md" />
                     </div>
                   </div>
-                </>
               ))) : (
                 <>
                 <div className="w-full flex justify-center">
