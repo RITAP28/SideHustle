@@ -1,3 +1,4 @@
+import { prisma } from "db";
 import { Request, Response } from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -45,4 +46,35 @@ async function getFileTree(directory: string) {
 
   await buildTree(directory, tree);
   return tree;
-}
+};
+
+export const handleCreateFile = async (req: Request, res: Response) => {
+  try {
+    
+  } catch (error) {
+    console.error("Error while creating a file: ", error);
+    return res.status(500).json({
+      success: false,
+      msg: "Internal Server Error"
+    });
+  };
+};
+
+// when a file is clicked by a user, the content is fetched from the database
+export const handleFetchFileContent = async (req: Request, res: Response) => {
+  try {
+    const fileContent = await prisma.webdevFile.findUnique({
+      where: {
+        fileId_projectId: {
+          fileId: 
+        }
+      }
+    })
+  } catch (error) {
+    console.error("Error while fetching file content: ", error);
+    return res.status(500).json({
+      success: false,
+      msg: "Internal Server Error"
+    });
+  };
+};

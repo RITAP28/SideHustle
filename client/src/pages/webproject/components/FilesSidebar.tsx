@@ -39,7 +39,7 @@ const RenderNode = ({
         {isDirectory && (
           <ul className="">
             {Object.keys(nodes).map(([childName, childNode], index) => (
-              <li key={index}>
+              <li key={index} className="">
                 <RenderNode
                   fileName={childName}
                   path={`${path}/${childName}`}
