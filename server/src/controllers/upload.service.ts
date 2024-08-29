@@ -79,10 +79,12 @@ export const handleUploadVideo = async (req: Request, res: Response) => {
           data: {
             title: title,
             description: desc,
-            dateOfPublishing: new Date(Date.now()),
-            link: videoURL,
-            thumbnail: thumbnailLink,
+            videoLink: videoURL,
+            thumbnailLink: thumbnailLink,
             publisherId: userId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            expiresAt: new Date(),
           },
         });
 

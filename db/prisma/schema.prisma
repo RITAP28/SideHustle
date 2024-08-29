@@ -61,11 +61,13 @@ model Videos {
   videoId          Int            @id @unique @default(autoincrement())
   title            String
   description      String
-  dateOfPublishing DateTime
-  thumbnail        String
+  videoLink        String         @unique
+  thumbnailLink    String
   publisher        User           @relation(references: [id], fields: [publisherId], onDelete: Cascade)
   publisherId      Int
-  link             String         @unique
+  createdAt        DateTime
+  updatedAt        DateTime
+  expiresAt        DateTime
   Review           Review[]
   StarVideo        StarVideo[]
   DislikeVideo     DislikeVideo[]

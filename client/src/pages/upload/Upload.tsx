@@ -68,7 +68,7 @@ const Upload = () => {
     e.preventDefault();
     console.log(formData);
     try {
-      const res = await axios.post("http://localhost:7070/upload", formData, {
+      const res = await axios.post("http://localhost:8083/upload", formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -128,6 +128,7 @@ const Upload = () => {
                   </label>
                   <input
                     type="text"
+                    name="title"
                     className="border-2 border-black text-black font-Code text-sm font-bold pl-2 py-2 ml-4 w-[80%] focus:border-black"
                     placeholder="Add a Title which describes your video"
                     onChange={handleTitleChange}
@@ -169,6 +170,7 @@ const Upload = () => {
                     rows={6}
                   /> */}
                   <Textarea
+                  name="description"
                     placeholder="Tell learners about what you are teaching"
                     size="sm"
                     variant={"filled"}

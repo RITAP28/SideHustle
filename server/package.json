@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/server.js",
-    "dev": "ts-node src/server.ts",
+    "dev": "nodemon --exec ts-node src/server.ts",
     "build": "tsc"
   },
   "keywords": [],
@@ -47,6 +47,7 @@
     "@types/uuid": "^9.0.8",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
+    "nodemon": "^3.1.4",
     "prisma": "^5.17.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"

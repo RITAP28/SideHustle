@@ -5,8 +5,7 @@ import { prisma } from "db";
 interface Video {
     videoId: number;
     title: string;
-    link: string;
-    dateOfPublishing: Date;
+    videoLink: string;
 }
 
 export const getAllVideos = async (req: Request, res: Response) => {
