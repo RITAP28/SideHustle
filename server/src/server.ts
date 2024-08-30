@@ -14,7 +14,7 @@ const PORT = 7070;
 
 app.use(
     cors({
-        origin: ['http://localhost:5173', 'https://side-hustle-frontend-alpha.vercel.app'],
+        origin: ['http://localhost:5173', 'https://side-hustle-frontend-alpha.vercel.app', 'http://localhost:8083'],
         credentials: true,
     })
 );

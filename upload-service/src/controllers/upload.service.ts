@@ -11,6 +11,9 @@ import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import { prisma } from "db";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import dotenv from 'dotenv';
+
+dotenv.config()
 
 interface MulterRequest extends Request {
   files: {
@@ -29,7 +32,9 @@ interface MulterRequest extends Request {
 }
 
 const bucketName = String(process.env.BUCKET_NAME);
+// const bucketName = 'nexuscode-videos-uploaded';
 const bucketRegion = String(process.env.BUCKET_REGION);
+// const bucketRegion = 'ap-south-1';
 const accessKeyId = String(process.env.ACCESS_KEY_ID);
 const secretAccessKey = String(process.env.SECRET_ACCESS_KEY);
 
@@ -115,7 +120,7 @@ const uploadThumbnail = async (thumbnailKey: string) => {
     const thumbnailUploadParams = {
       Bucket: bucketName,
       Key: thumbnailKey,
-      ContentType: "image/jpeg",
+      ContentType: "image/*",
     };
     const thumbnailUploadCommand = new PutObjectCommand(thumbnailUploadParams);
     const videoUploaded = await s3Client.send(thumbnailUploadCommand);
@@ -163,7 +168,11 @@ export const handleUploadVideos = async (req: Request, res: Response) => {
       success: false,
       msg: "All fields are required",
     });
-  }
+  };
+
+  console.log(bucketName);
+  console.log(bucketRegion);
+  console.log(accessKeyId);
 
   // key for initiating upload
   // video key
@@ -174,7 +183,7 @@ export const handleUploadVideos = async (req: Request, res: Response) => {
   const thumbnailExt = path.parse(videoThumbnail.originalname).ext;
 
   // thumbnail key
-  const thumbnailKey = `thumbnails/${thumbnailName}-${randomId}.${thumbnailExt}`;
+  const thumbnailKey = `thumbnails/${thumbnailName}-${randomId}${thumbnailExt}`;
   console.log("Thumbnail Key: ", thumbnailKey);
 
   try {
