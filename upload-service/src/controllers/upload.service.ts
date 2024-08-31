@@ -33,7 +33,7 @@ export const handleUploadVideos = async (req: Request, res: Response) => {
     };
 
     try {
-        await uploadQueue.add('uploadJob', {
+        const newJob = await uploadQueue.add('uploadJob', {
             videoFile,
             videoThumbnail,
             videoTitle,
@@ -43,7 +43,7 @@ export const handleUploadVideos = async (req: Request, res: Response) => {
 
         return res.status(200).json({
             success: true,
-            msg: `Video ${videoTitle} added to queue and Upload Job created successfully.`
+            msg: `Video ${videoTitle} added to queue and Upload Job created successfully with id ${newJob.id}`
         });
     } catch (error) {
         console.error("Error while adding video to upload queue: ", error);
