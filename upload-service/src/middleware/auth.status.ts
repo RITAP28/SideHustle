@@ -31,6 +31,7 @@ export const isAuthenticated = async (req: AuthenticatedRequest, res: Response, 
                 email: decodedToken.email
             }
         });
+        console.log(existingUser);
 
         if(!existingUser){
             return res.status(401).json({

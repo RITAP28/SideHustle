@@ -3,6 +3,9 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import router from './routes/route';
+import { createClient } from 'redis';
+
+export const redisClient = createClient();
 
 const app = express();
 const PORT = 8083;
