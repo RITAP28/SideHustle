@@ -68,7 +68,7 @@ const Upload = () => {
     e.preventDefault();
     console.log(formData);
     try {
-      const res = await axios.post("http://localhost:8083/upload", formData, {
+      const res = await axios.post("http://localhost:7070/upload", formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",

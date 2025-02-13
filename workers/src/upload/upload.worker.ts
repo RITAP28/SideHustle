@@ -12,24 +12,34 @@ import { prisma } from "db";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import dotenv from "dotenv";
 import { Redis } from "ioredis";
-import { Worker } from "bullmq";
+import { ConnectionOptions, Worker } from "bullmq";
+import sharp from "sharp";
+import { Request } from "express";
 
 dotenv.config();
 
-const urlRedis = process.env.REDIS_URL as string;
+// const urlRedis = process.env.REDIS_URL as string;
 
-const redisConnection = new Redis(urlRedis, {
-  lazyConnect: true,
-  enableOfflineQueue: false,
-  maxRetriesPerRequest: null
-});
+// const redisConnection = new Redis(urlRedis, {
+//   lazyConnect: true,
+//   enableOfflineQueue: false,
+//   maxRetriesPerRequest: null,
+// });
+
+const redisConnection: ConnectionOptions = {
+  host: "localhost",
+  port: 6379,
+};
 
 const bucketName = String(process.env.BUCKET_NAME);
-// const bucketName = 'nexuscode-videos-uploaded';
 const bucketRegion = String(process.env.BUCKET_REGION);
-// const bucketRegion = 'ap-south-1';
 const accessKeyId = String(process.env.ACCESS_KEY_ID);
 const secretAccessKey = String(process.env.SECRET_ACCESS_KEY);
+
+interface buffer {
+  type: string;
+  data: ArrayBuffer;
+}
 
 //configuring the s3 client
 const s3Client = new S3Client({
@@ -108,11 +118,12 @@ const completeUpload = async (
   }
 };
 
-const uploadThumbnail = async (thumbnailKey: string) => {
+const uploadThumbnail = async (thumbnailKey: string, buffer: Buffer) => {
   try {
     const thumbnailUploadParams = {
       Bucket: bucketName,
       Key: thumbnailKey,
+      Body: buffer,
       ContentType: "image/*",
     };
     const thumbnailUploadCommand = new PutObjectCommand(thumbnailUploadParams);
@@ -172,30 +183,62 @@ const addVideoMetadataToDB = async (
 };
 
 export const uploadWorker = async () => {
-    const worker = new Worker(
-      "uploadQueue",
-      async (job) => {
+  const worker = new Worker(
+    "uploadQueue",
+    async (job) => {
+      if (job.name === "uploadJob") {
         const {
           videoTitle,
           videoDescription,
           videoFile,
           videoThumbnail,
+          modifiedImageBuffer,
           userId,
+        }: {
+          videoTitle: string;
+          videoDescription: string;
+          videoFile: Express.Multer.File;
+          videoThumbnail: Express.Multer.File;
+          modifiedImageBuffer: Buffer;
+          userId: number;
         } = job.data;
+        console.log("job data: ", job.data);
         console.log(`Upload Worker started`);
         console.log(`Processing job with ${job.id}`);
-        const randomId = uuidv4();
-        // key for initiating upload
+        console.log(`user id is: `, userId);
+
+        if (!userId) {
+          throw new Error("User id is missing");
+        }
+
+        const thumbnailBuffer = videoThumbnail.buffer as Buffer;
+        const videoBuffer = videoFile.buffer as Buffer;
+
+        // checking for thumbnail buffer and logging in the console
+        if (!thumbnailBuffer) {
+          throw new Error("Buffer in Thumbnail is missing");
+        }
+        console.log("Thumbnail buffer: ", thumbnailBuffer);
+
+        // checking for video buffer and logging in the console
+        if (!videoBuffer) {
+          throw new Error("Buffer in video is missing");
+        }
+        console.log("Video buffer: ", videoBuffer);
+
+        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random())}`;
+        const filename = `${path.basename(
+          videoThumbnail.originalname,
+          path.extname(videoThumbnail.originalname)
+        )}-${uniqueSuffix}.webp`;
+
+        // keys for initiating upload
+        // thumbnail key
+        const thumbnailKey = `thumbnails/${filename}`;
+        console.log("Thumbnail Key: ", thumbnailKey);
         // video key
         const videoKey = `videos/${videoTitle}.mp4`;
         console.log("Video key: ", videoKey);
-
-        const thumbnailName = path.parse(videoThumbnail.originalname).name;
-        const thumbnailExt = path.parse(videoThumbnail.originalname).ext;
-
-        // thumbnail key
-        const thumbnailKey = `thumbnails/${thumbnailName}-${randomId}${thumbnailExt}`;
-        console.log("Thumbnail Key: ", thumbnailKey);
 
         try {
           const uploadId = await initiateUpload(videoKey);
@@ -204,7 +247,6 @@ export const uploadWorker = async () => {
             throw new Error(
               `Failed to initiate upload for video ${videoTitle}`
             );
-            return;
           }
 
           // uploading the video chunk-by-chunk
@@ -212,11 +254,11 @@ export const uploadWorker = async () => {
           const videoParts = [];
           for (
             let start = 0, partNumber = 1;
-            start < videoFile.buffer.length;
+            start < videoBuffer.byteLength;
             start += chunkSize, partNumber++
           ) {
-            const end = Math.min(start + chunkSize, videoFile.buffer.length);
-            const part = videoFile.buffer.subarray(start, end);
+            const end = Math.min(start + chunkSize, videoBuffer.byteLength);
+            const part = videoBuffer.subarray(start, end);
             const ETag = await uploadParts(
               bucketName,
               videoKey,
@@ -238,7 +280,7 @@ export const uploadWorker = async () => {
           console.log("Video uploaded successfully to S3");
 
           // uploading the thumbnail file to the s3 bucket alongside bucket
-          await uploadThumbnail(thumbnailKey);
+          await uploadThumbnail(thumbnailKey, modifiedImageBuffer);
           console.log("Thumbnail uploaded successfully to S3");
 
           const videoURL = (await getPresignedUrl(
@@ -267,17 +309,26 @@ export const uploadWorker = async () => {
           console.error(`Error processing job with id ${job.id}: `, error);
           throw new Error(`Error processing job with id ${job.id}`);
         }
-      },
-      {
-        connection: redisConnection,
       }
-    );
+    },
+    {
+      connection: redisConnection,
+    }
+  );
 
-    worker.on("completed", (job) => {
-      console.log(`Job with id ${job.id} completed successfully`);
-    });
+  worker.on("completed", (job) => {
+    console.log(`Job with id ${job.id} completed successfully`);
+  });
 
-    worker.on("failed", (job, err) => {
-      console.error(`Job with id ${job?.id} failed: `, err);
-    });
+  worker.on("failed", (job, err) => {
+    console.error(`Job with id ${job?.id} failed: `, err);
+  });
+
+  worker.on("ready", () => {
+    console.log("Worker is ready to process jobs.");
+  });
+
+  worker.on("drained", () => {
+    console.log("Worker has finished processing all jobs.");
+  });
 };

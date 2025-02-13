@@ -5,12 +5,6 @@ import { sendToken } from "../../utils/send.token";
 import { sendEmail } from "../../utils/send.email";
 import crypto from "crypto";
 
-interface request extends Request {
-    user: {
-        userId: string;
-    }
-}
-
 export const registerUser = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
     if(!req.body.name || !req.body.email || !req.body.password) {

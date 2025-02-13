@@ -61,20 +61,20 @@ export const handleCreateFile = async (req: Request, res: Response) => {
 };
 
 // when a file is clicked by a user, the content is fetched from the database
-export const handleFetchFileContent = async (req: Request, res: Response) => {
-  try {
-    const fileContent = await prisma.webdevFile.findUnique({
-      where: {
-        fileId_projectId: {
-          fileId: 
-        }
-      }
-    })
-  } catch (error) {
-    console.error("Error while fetching file content: ", error);
-    return res.status(500).json({
-      success: false,
-      msg: "Internal Server Error"
-    });
-  };
-};
+// export const handleFetchFileContent = async (req: Request, res: Response) => {
+//   try {
+//     const fileContent = await prisma.webdevFile.findUnique({
+//       where: {
+//         fileId_projectId: {
+//           fileId: 
+//         }
+//       }
+//     })
+//   } catch (error) {
+//     console.error("Error while fetching file content: ", error);
+//     return res.status(500).json({
+//       success: false,
+//       msg: "Internal Server Error"
+//     });
+//   };
+// };
