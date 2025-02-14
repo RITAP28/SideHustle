@@ -46,7 +46,7 @@ export const getCreatorById = async (id: number) => {
     });
 };
 
-export const getSubscriptionById = async (id: number, creatorId: number) => {
+export const getSubscriptionById = async (id: number, creatorId: number) => { 
     return await prisma.subscriptions.findFirst({
         where: {
             userId: id,
