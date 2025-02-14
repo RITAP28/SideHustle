@@ -119,7 +119,8 @@ export const handleSubscribe = async (req: Request, res: Response) => {
         // checking authentic subscription
         const existingSubscription = await prisma.subscriptions.findFirst({
             where: {
-                userId: user.id
+                userId: user.id,
+                creatorUserId: creator.userId
             }
         });
 
