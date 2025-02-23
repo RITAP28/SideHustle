@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { getExistingUser, sendEmail, sendResponse } from "../src/utils/utils";
+import { sendEmail, sendResponse } from "../src/utils/utils";
 import crypto from "crypto";
 import { prisma } from "db";
 import bcrypt from "bcrypt";
 import { IUserProps } from "../src/utils/interface";
+import { createOTP, deleteOTP, getExistingOTP, getExistingUser, makeUserVerified } from "../src/repositories/auth.repository";
 
 const generateOTP = () => {
   return crypto.randomInt(100000, 999999).toString(); // generates a 6-digit OTP
@@ -26,14 +27,7 @@ export const sendOTPMiddleware = async (
     const hashedOtp = await bcrypt.hash(otp, 10);
     const otpExpiry = new Date(Date.now() + 1 * 60 * 1000);
 
-    const newOTP = await prisma.oTP.create({
-      data: {
-        email: email,
-        otp: hashedOtp,
-        otpExpiresAt: otpExpiry,
-        userId: existingUser.id,
-      },
-    });
+    const newOTP = await createOTP(req, res, email, hashedOtp, otpExpiry, existingUser.id);
     console.log("new OTP has been generated");
     await sendEmail({
       to: email,
@@ -64,53 +58,28 @@ export const verifyOTPMiddleware = async (req: Request, res: Response) => {
     });
   }
   try {
-    const existingOTP = await prisma.oTP.findUnique({
-      where: {
-        email: email,
-      },
-    });
+    const existingOTP = await getExistingOTP(email);
 
     if (!existingOTP) {
-      return res.status(400).json({
-        success: false,
-        msg: "user not found",
-      });
+      return sendResponse(res, 404, false, "OTP not found");
     }
 
     const otpComparison = await bcrypt.compare(otp, existingOTP.otp);
 
     if (!otpComparison || existingOTP.otpExpiresAt < new Date(Date.now())) {
-      return res.status(400).json({
-        success: false,
-        msg: "Invalid OTP",
-      });
+      return sendResponse(res, 400, false, "Invalid OTP");
     }
 
     // OTP is verified
     // OTP, stored in the database, is deleted
-    await prisma.oTP.delete({
-      where: {
-        email: email,
-      },
-    });
+    await deleteOTP(email);
     console.log("OTP has been deleted from the database");
 
     // the isVerified field of the user should turn to true
-    const existingUser = await prisma.user.update({
-      where: {
-        email: email,
-      },
-      data: {
-        isVerified: true,
-      },
-    });
+    const existingUser = await makeUserVerified(email);
     console.log("User has been verified");
 
-    return res.status(200).json({
-      success: true,
-      msg: "OTP and user, both are verified",
-      existingUser,
-    });
+    return sendResponse(res, 200, true, "User has been verified", { existingUser });
   } catch (error) {
     console.log("Error while verifying OTP: ", error);
     return sendResponse(res, 500, false, "Internal Server Error");
