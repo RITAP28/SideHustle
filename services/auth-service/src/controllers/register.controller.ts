@@ -3,28 +3,20 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt"
 import { sendOTPMiddleware } from "../../middleware/otp.middleware";
 import { sendToken } from "../../middleware/token.middleware";
+import { findExistingUser } from "../repositories/auth.repository";
+import { sendResponse } from "../utils/utils";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { name, email, password } = req.body;
   if (!req.body.name || !req.body.email || !req.body.password) {
-    res.status(400).json({
-      success: false,
-      msg: "Enter all fields",
-    });
+    sendResponse(res, 400, false, "All fields are required");
     return;
   }
   try {
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        name: name as string,
-        email: email as string,
-      },
-    });
+    const existingUser = await findExistingUser(email);
 
     if (existingUser) {
-      res.status(400).json({
-        msg: "User already exists",
-      });
+      sendResponse(res, 400, false, "User already exists");
       return;
     }
 
@@ -45,10 +37,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     sendToken(newUser, 200, res);
   } catch (error) {
     console.error("Error while registering a user: ", error);
-    res.status(500).json({
-      status: 500,
-      success: false,
-      message: "Internal Server Error",
-    });
+    sendResponse(res, 500, false, "Internal Server Error");
   }
 };
