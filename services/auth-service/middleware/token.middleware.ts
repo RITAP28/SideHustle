@@ -2,10 +2,13 @@ import { IUserProps } from "../src/utils/interface";
 import jwt from "jsonwebtoken";
 import { Response } from "express";
 import { sendResponse } from "../src/utils/utils";
+import dotenv from 'dotenv'
 import {
   createSession,
   findExistingUser,
 } from "../src/repositories/auth.repository";
+
+dotenv.config();
 
 const TOKEN_SECRET_KEY = process.env.TOKEN_SECRET_KEY as string;
 const COOKIE_EXPIRE = process.env.COOKIE_EXPIRE;
@@ -38,6 +41,7 @@ export const sendToken = async (
       return sendResponse(res, 404, false, "User not found");
     }
     await createSession(loggedInUser?.id as number, options.expires);
+    res.cookie("token", token, options);
   } catch (error) {
     console.log("Error while inserting a session into the database: ", error);
     return sendResponse(
@@ -47,10 +51,4 @@ export const sendToken = async (
       "Error while inserting session into the database"
     );
   }
-
-  return res.status(statusCode).cookie("token", token, options).json({
-    success: true,
-    user,
-    token,
-  });
 };

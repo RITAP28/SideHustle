@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import nodemailer from "nodemailer";
 import { INodemailerOptions } from "./interface";
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 export const sendResponse = (
   res: Response,

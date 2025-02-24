@@ -32,8 +32,6 @@ export const getExistingUser = async (
 };
 
 export const createOTP = async (
-  req: Request,
-  res: Response,
   email: string,
   otp: string,
   otpExpiresAt: Date,
@@ -50,7 +48,7 @@ export const createOTP = async (
 };
 
 export const getExistingOTP = async (email: string) => {
-    return await prisma.oTP.findUnique({
+    return await prisma.oTP.findFirst({
         where: {
             email: email
         }

@@ -21,25 +21,26 @@ export const sendOTPMiddleware = async (
 
   try {
     const existingUser = await getExistingUser(req, res, email) as IUserProps;
+    console.log("user while making OTP: ", existingUser);
 
     const otp = generateOTP();
     console.log("OTP generated is: ", otp);
     const hashedOtp = await bcrypt.hash(otp, 10);
     const otpExpiry = new Date(Date.now() + 1 * 60 * 1000);
 
-    const newOTP = await createOTP(req, res, email, hashedOtp, otpExpiry, existingUser.id);
+    const newOTP = await createOTP(email, hashedOtp, otpExpiry, existingUser.id);
     console.log("new OTP has been generated");
-    await sendEmail({
-      to: email,
-      subject: "OTP for verification",
-      text: `your OTP is: ${otp}`,
-    });
+    // await sendEmail({
+    //   to: email,
+    //   subject: "OTP for verification",
+    //   text: `your OTP is: ${otp}`,
+    // });
 
     console.log("newOTP is: ", newOTP);
-    console.log("OTP is sent to new user's email address");
+    // console.log("OTP is sent to new user's email address");
   } catch (error) {
     console.error("Error while generating otp: ", error);
-    return sendResponse(res, 500, false, "Error generating OTP");
+    throw new Error("Failed to send OTP");
   }
 };
 
@@ -51,6 +52,7 @@ export const verifyOTPMiddleware = async (req: Request, res: Response) => {
     email: string;
     otp: string;
   } = req.body;
+  console.log(req.body);
   if (!otp) {
     return res.status(400).json({
       success: false,

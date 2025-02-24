@@ -1,3 +1,5 @@
+export const AuthServiceUrl = import.meta.env.VITE_AUTH_SERVICE_BASE_URL;
+
 interface language {
     language: string;
     version: string;

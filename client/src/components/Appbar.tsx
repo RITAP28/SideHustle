@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks/hook";
 import { UserNotExist } from "../redux/Slices/user.slice";
+import { AuthServiceUrl } from "../utils/constants";
 
 const Appbar = () => {
   const { isAuthenticated } = useAppSelector(
@@ -14,7 +15,7 @@ const Appbar = () => {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:7070/logout", {
+      const res = await axios.post(`${AuthServiceUrl}/logout`, {
         withCredentials: true,
       });
       console.log(res.data);

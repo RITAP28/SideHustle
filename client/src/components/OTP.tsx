@@ -3,17 +3,32 @@ import { useAppSelector } from "../redux/hooks/hook";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { SignupSuccess } from "../redux/Slices/user.slice";
+import { AuthServiceUrl } from "../utils/constants";
+import { IUserProps } from "../utils/interface";
 
 let currentOTPIndex: number = 0;
 
-const OTPComponent = () => {
+const OTPComponent = ({
+  email,
+  fullyRegistered,
+  setFullyRegistered,
+}: {
+  email: string;
+  fullyRegistered: boolean;
+  setFullyRegistered: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  const { currentUser } = useAppSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
+  const [verificationError, setVerificationError] = useState<string | null>(
+    null
+  );
+
   const [otp, setOTP] = useState(new Array(6).fill(""));
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const [seconds, setSeconds] = useState<number>(60);
-  const { currentUser } = useAppSelector((state) => state.user);
-  const dispatch = useDispatch();
 
   const handleOnChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
@@ -40,22 +55,38 @@ const OTPComponent = () => {
 
   const handleVerifyOtp = async () => {
     setVerifyLoading(true);
+    setVerificationError(null);
     const otpString = String(otp.join(""));
-    console.log(otpString);
     try {
       const res = await axios.post(
-        "http://localhost:7070/verify",
-        { otp: otpString, email: currentUser?.email },
+        `${AuthServiceUrl}/verify`,
+        { otp: otpString, email: email },
         {
           withCredentials: true,
         }
       );
       console.log(res.data);
-      dispatch(SignupSuccess(res.data.existingUser));
+      if (res.data.success) {
+        const registeredUser = res.data.newVerifiedUser as IUserProps;
+        console.log("User registered successfully: ", registeredUser);
+        setFullyRegistered(true);
+        dispatch(
+          SignupSuccess({
+            user: {
+              id: registeredUser.id,
+              name: registeredUser.name,
+              email: registeredUser.email,
+              role: registeredUser.role,
+            },
+          })
+        );
+      }
     } catch (error) {
       console.error("Error while verifying OTP: ", error);
+      setVerificationError("Error while verifying OTP");
+    } finally {
+      setVerifyLoading(false);
     }
-    setVerifyLoading(false);
   };
 
   useEffect(() => {
@@ -114,6 +145,11 @@ const OTPComponent = () => {
               {verifyLoading ? "Verifying OTP..." : "Verify"}
             </button>
           </div>
+          {verificationError && (
+            <div className="text-red-500 font-semibold">
+              {verificationError}
+            </div>
+          )}
         </div>
       </form>
     </>

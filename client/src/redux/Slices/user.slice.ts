@@ -19,19 +19,16 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         SignupSuccess: (state, action) => {
-            state.currentUser = action.payload;
+            state.currentUser = {
+                id: action.payload.user.id,
+                name: action.payload.user.name,
+                email: action.payload.user.email,
+                role: action.payload.user.role
+            };
             state.error = null;
             state.loading = false;
             state.isAuthenticated = true;
             state.isVerified = true;
-            state.isCreator = false;
-        },
-        SignUpInitial: (state, action) => {
-            state.currentUser = action.payload;
-            state.error = null;
-            state.loading = false;
-            state.isAuthenticated = true;
-            state.isVerified = false;
             state.isCreator = false;
         },
         UserExist: (state, action) => {
@@ -81,5 +78,5 @@ export const userSlice = createSlice({
     }
 });
 
-export const { SignupFailure, SignupSuccess, SigninFailure, SigninSuccess, UserExist, UserNotExist, SignUpInitial, UserBecomesCreator } = userSlice.actions;
+export const { SignupFailure, SignupSuccess, SigninFailure, SigninSuccess, UserExist, UserNotExist, UserBecomesCreator } = userSlice.actions;
 export default userSlice.reducer;

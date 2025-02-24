@@ -13,9 +13,14 @@ authAPIRouter.post(
   `/register`,
   async (req: Request, res: Response) => {
     try {
+      console.log(req.body);
       const response = await axios.post(`${AUTH_SERVICE_URL}/register`, req.body);
+      console.log("response after registering: ", response.data);
+      const registeredUser = response.data.user;
       if (response.data.success) {
-        return sendResponse(res, 200, true, "User registered successfully");
+        return sendResponse(res, 200, true, "User registered successfully", { registeredUser });
+      } else if (response.data.status === 400) {
+        return sendResponse(res, 400, false, "User already registered. Please Login");
       }
     } catch (error) {
       console.error(
@@ -49,7 +54,6 @@ authAPIRouter.post(
 )
 
 // ------------------ LOGOUT route ------------------
-
 authAPIRouter.post("/logout", async (req: Request, res: Response) => {
     try {
         const logoutResponse = await axios.post(`${AUTH_SERVICE_URL}/logout`);
@@ -60,6 +64,22 @@ authAPIRouter.post("/logout", async (req: Request, res: Response) => {
         console.error("Error while logging out: ", error);
         return sendResponse(res, 500, false, "Internal Server Error");
     }
+})
+
+// ------------------ VERIFY route ------------------
+authAPIRouter.post("/verify", async (req: Request, res: Response) => {
+  try {
+    const verifyOTPResponse = await axios.post(`${AUTH_SERVICE_URL}/verify`, req.body);
+    if (verifyOTPResponse.data.success) {
+      const newVerifiedUser = verifyOTPResponse.data.existingUser;
+      return sendResponse(res, 200, true, "OTP verified successfully", { newVerifiedUser });
+    } else {
+      return sendResponse(res, verifyOTPResponse.data.status, false, verifyOTPResponse.data.message);
+    }
+  } catch (error) {
+    console.error("Error while verifying OTP: ", error);
+    return sendResponse(res, 500, false, "Internal Server Error");
+  }
 })
 
 export default authAPIRouter;

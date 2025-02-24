@@ -1,18 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { SignUpInitial } from "../../redux/Slices/user.slice";
-import { useAppSelector } from "../../redux/hooks/hook";
 import OTPComponent from "../../components/OTP";
-
+import { AuthServiceUrl } from "../../utils/constants";
+import Verified from "../../components/auth/Verified";
 
 export default function Register() {
-  const { currentUser, isAuthenticated, isVerified } = useAppSelector((state) => state.user);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const [loading, setLoading] = useState<boolean>(false);
+  const [initialRegistered, setInitialRegistered] = useState<boolean>(false);
+  const [fullyRegistered, setFullyRegistered] = useState<boolean>(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -30,16 +25,28 @@ export default function Register() {
     setLoading(true);
     e.preventDefault();
     console.log(formData);
+    console.log("register url: ", AuthServiceUrl);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/register`, formData, {
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `${AuthServiceUrl}/register`,
+        {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       console.log(res.data);
-      dispatch(SignUpInitial(res.data.user));
+      if (res.data.success) {
+        setInitialRegistered(true);
+      }
     } catch (error) {
       console.error("Error while registering: ", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -71,7 +78,9 @@ export default function Register() {
                 <span>Login</span>
               </a>
             </div>
-            {(isAuthenticated !== true && isVerified !== true) && (
+
+            {/* Registration form */}
+            {!initialRegistered && (
               <form
                 action=""
                 className="p-4 px-[3rem]"
@@ -87,7 +96,6 @@ export default function Register() {
                     id="name"
                     placeholder="Enter your username"
                     onChange={handleInputChange}
-                    disabled={isAuthenticated}
                   />
                 </div>
                 <div className="flex flex-col pt-2 pb-2">
@@ -100,7 +108,6 @@ export default function Register() {
                     id="email"
                     placeholder="Enter your email"
                     onChange={handleInputChange}
-                    disabled={isAuthenticated}
                   />
                 </div>
                 <div className="flex flex-col pt-2 pb-8">
@@ -111,47 +118,27 @@ export default function Register() {
                     id="password"
                     placeholder="Enter your password"
                     onChange={handleInputChange}
-                    disabled={isAuthenticated}
                   />
                 </div>
                 <div className="mb-4">
                   <button
                     type="submit"
-                    disabled={loading || isAuthenticated}
+                    disabled={loading}
                     className="font-Code flex justify-center w-full"
                   >
-                    {(loading ? "Sending OTP..." : "Register") || (isAuthenticated ? "You are registered" : "Register")}
+                    {loading ? "Sending OTP..." : "Register"}
                   </button>
                 </div>
               </form>
             )}
-            {isAuthenticated && !isVerified && (
-              <OTPComponent />
+            {initialRegistered && !fullyRegistered && (
+              <OTPComponent
+                email={formData.email}
+                fullyRegistered={fullyRegistered}
+                setFullyRegistered={setFullyRegistered}
+              />
             )}
-            {isAuthenticated && isVerified && (
-              <div className="font-Code">
-                <div className="flex justify-center pt-[2rem]">
-                  Your email
-                </div>
-                <div className="flex justify-center font-bold text-xl py-1">
-                {currentUser?.email} 
-                </div>
-                <div className="flex justify-center pb-[2rem]">
-                has been verified!
-                </div>
-                <div className="pb-[2rem] w-full flex justify-center">
-                  <button
-                    type="button"
-                    className="w-[80%] py-2 border-2 border-white hover:cursor-pointer"
-                    onClick={() => {
-                      navigate("/");
-                    }}
-                  >
-                    Go to Home
-                  </button>
-                </div>
-              </div>
-            )}
+            {fullyRegistered && <Verified />}
           </div>
         </div>
       </div>
