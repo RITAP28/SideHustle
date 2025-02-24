@@ -7,10 +7,10 @@ import { logout } from '../controllers/logout.controller';
 
 dotenv.config();
 
-const router = express.Router();
+const authRouter = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
-router.post("/logout", logout);
+authRouter.post("/register", register);
+authRouter.post("/login", login);
+authRouter.post("/logout", logout);
 
-export default router;
+export default authRouter;
