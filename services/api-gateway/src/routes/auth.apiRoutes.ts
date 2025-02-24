@@ -1,29 +1,32 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
+import dotenv from "dotenv";
 import { sendResponse } from "../utils/sendResponse";
 
+dotenv.config();
+
 const authAPIRouter = express.Router();
-const AUTH_SERVER_URL = process.env.AUTH_SERVICE_URL;
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
 // ------------------ REGISTER route ------------------
 authAPIRouter.post(
-  "/register",
-  async (req: Request, res: Response): Promise<void> => {
+  `/register`,
+  async (req: Request, res: Response) => {
     try {
-      const response = await axios.post(`${AUTH_SERVER_URL}/register`, req.body);
+      const response = await axios.post(`${AUTH_SERVICE_URL}/register`, req.body);
       if (response.data.success) {
-        sendResponse(res, 200, true, "User registered successfully");
+        return sendResponse(res, 200, true, "User registered successfully");
       }
     } catch (error) {
       console.error(
-        "Error while accessing /register from the user service: ",
+        "Error while accessing /register from the auth service: ",
         error
       );
-      sendResponse(
+      return sendResponse(
         res,
         500,
         false,
-        "User server is unavailable. Please try again"
+        "Auth server is unavailable. Please try again"
       );
     }
   }
@@ -34,7 +37,7 @@ authAPIRouter.post(
     "/login",
     async (req: Request, res: Response) => {
         try {
-            const loginResponse = await axios.post(`${AUTH_SERVER_URL}/login`, req.body);
+            const loginResponse = await axios.post(`${AUTH_SERVICE_URL}/login`, req.body);
             if (loginResponse.data.success) {
                 sendResponse(res, 200, true, "User logged in successfully", loginResponse.data.data);
             }
@@ -49,7 +52,7 @@ authAPIRouter.post(
 
 authAPIRouter.post("/logout", async (req: Request, res: Response) => {
     try {
-        const logoutResponse = await axios.post(`${AUTH_SERVER_URL}/logout`);
+        const logoutResponse = await axios.post(`${AUTH_SERVICE_URL}/logout`);
         if (logoutResponse.data.success) {
             return sendResponse(res, 200, true, "Logged out successfully");
         }
@@ -58,3 +61,5 @@ authAPIRouter.post("/logout", async (req: Request, res: Response) => {
         return sendResponse(res, 500, false, "Internal Server Error");
     }
 })
+
+export default authAPIRouter;

@@ -6,6 +6,7 @@ import { SignUpInitial } from "../../redux/Slices/user.slice";
 import { useAppSelector } from "../../redux/hooks/hook";
 import OTPComponent from "../../components/OTP";
 
+
 export default function Register() {
   const { currentUser, isAuthenticated, isVerified } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Register() {
     e.preventDefault();
     console.log(formData);
     try {
-      const res = await axios.post("http://localhost:7070/register", formData, {
+      const res = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/register`, formData, {
         withCredentials: true,
       });
       console.log(res.data);

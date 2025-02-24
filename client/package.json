@@ -18,6 +18,7 @@
     "@xterm/xterm": "^5.5.0",
     "axios": "^1.7.2",
     "date-fns": "^3.6.0",
+    "dotenv": "^16.4.7",
     "framer-motion": "^11.2.11",
     "hls.js": "^1.5.11",
     "monaco-editor": "^0.50.0",
